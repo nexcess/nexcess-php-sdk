@@ -75,7 +75,10 @@ abstract class Endpoint {
     try {
       $response = $this->_getClient()->request($method, $endpoint, $params);
 
-      $data = json_decode($response->getBody(), true);
+      $data = ($response->getHeader('Content-type') === 'application/json') ?
+        json_decode($response->getBody(), true) :
+        ['response' => (string) $response->getBody()];
+
       $data['http_status'] = [
         'code' => $response->getStatusCode(),
         'reason' => $response->getReasonPhrase()
