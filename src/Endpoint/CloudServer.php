@@ -11,7 +11,8 @@ namespace Nexcess\Sdk\Endpoint;
 
 use Nexcess\Sdk\ {
   Endpoint,
-  Exception\ApiException
+  Exception\ApiException,
+  Response
 };
 
 /**
@@ -32,7 +33,7 @@ class CloudServer extends Endpoint {
    * @param string $_secure_type One of "key"|"password"
    * @param int[] $ssh_key_ids Optional if _secure_type is "password"
    * @return array API response data
-   * @throws ApiException On failure
+   * @throws ApiException If request fails
    */
   public function add(
     int $cloud_id,
@@ -41,7 +42,7 @@ class CloudServer extends Endpoint {
     int $template_id,
     string $_secure_type,
     array $ssh_key_ids = []
-  ) : array {
+  ) : Response {
     return $this->_request(
       'POST',
       self::ENDPOINT,
@@ -63,10 +64,20 @@ class CloudServer extends Endpoint {
    *
    * @param int $cloud_server_id Service id
    * @return array API response data
-   * @throws ApiException On failure
+   * @throws ApiException If request fails
    */
-  public function delete(int $cloud_server_id) : array {
+  public function delete(int $cloud_server_id) : Response {
     return $this->_request('DELETE', self::ENDPOINT . "/{$cloud_server_id}");
+  }
+
+  /**
+   * Lists all existing cloud servers.
+   *
+   * @return array API response data
+   * @throws ApiException If request fails
+   */
+  public function list() : Response {
+    return $this->_request('GET', 'service?type=virt-guest');
   }
 
   /**
@@ -74,9 +85,9 @@ class CloudServer extends Endpoint {
    *
    * @param int $cloud_server_id Service id
    * @return array API response data
-   * @throws ApiException On failure
+   * @throws ApiException If request fails
    */
-  public function reboot(int $cloud_server_id) {
+  public function reboot(int $cloud_server_id) : Response {
     return $this->_request(
       'POST',
       self::ENDPOINT . "/{$cloud_server_id}",
@@ -90,9 +101,9 @@ class CloudServer extends Endpoint {
    * @param int $cloud_server_id Service id
    * @param int $package_id Desired package id
    * @return array API response data
-   * @throws ApiException On failure
+   * @throws ApiException If request fails
    */
-  public function resize(int $cloud_server_id, int $package_id) : array {
+  public function resize(int $cloud_server_id, int $package_id) : Response {
     return $this->_request(
       'POST',
       self::ENDPOINT . "/{$cloud_server_id}",
@@ -105,9 +116,9 @@ class CloudServer extends Endpoint {
    *
    * @param int $cloud_server_id Service id
    * @return array API response data
-   * @throws ApiException On failure
+   * @throws ApiException If request fails
    */
-  public function start(int $cloud_server_id) {
+  public function start(int $cloud_server_id) : Response {
     return $this->_request(
       'POST',
       self::ENDPOINT . "/{$cloud_server_id}",
@@ -120,9 +131,9 @@ class CloudServer extends Endpoint {
    *
    * @param int $cloud_server_id Service id
    * @return array API response data
-   * @throws ApiException On failure
+   * @throws ApiException If request fails
    */
-  public function stop(int $cloud_server_id) {
+  public function stop(int $cloud_server_id) : Response {
     return $this->_request(
       'POST',
       self::ENDPOINT . "/{$cloud_server_id}",
@@ -135,9 +146,9 @@ class CloudServer extends Endpoint {
    *
    * @param int $cloud_server_id Service id
    * @return array API response data
-   * @throws ApiException On failure
+   * @throws ApiException If request fails
    */
-  public function view(int $cloud_server_id) : array {
+  public function view(int $cloud_server_id) : Response {
     return $this->_request('GET', self::ENDPOINT . "/{$cloud_server_id}");
   }
 
@@ -146,9 +157,9 @@ class CloudServer extends Endpoint {
    *
    * @param int $cloud_server_id Service id
    * @return array API response data
-   * @throws ApiException On failure
+   * @throws ApiException If request fails
    */
-  public function viewConsoleLog(int $cloud_server_id) : array {
+  public function viewConsoleLog(int $cloud_server_id) : Response {
     return $this->_request(
       'GET',
       self::ENDPOINT . "/{$cloud_server_id}/console-log"

@@ -63,8 +63,8 @@ abstract class Endpoint {
    *
    * @param string $method HTTP method to use
    * @param string $endpoint API endpoint to request
-   * @param array $params Request parameters (data, body, headers, ...)
-   * @return Response
+   * @param array $params Request parameters (json, body, headers, ...)
+   * @return array Response data
    * @throws ApiException If request fails
    */
   protected function _request(
@@ -73,19 +73,9 @@ abstract class Endpoint {
     array $params = []
   ) : Response {
     try {
-      $response = $this->_getClient()->request($method, $endpoint, $params);
-
-      $data = ($response->getHeader('Content-type') === 'application/json') ?
-        json_decode($response->getBody(), true) :
-        ['response' => (string) $response->getBody()];
-
-      $data['http_status'] = [
-        'code' => $response->getStatusCode(),
-        'reason' => $response->getReasonPhrase()
-      ];
-
-      return $data;
-
+      return new Response(
+        $this->_getClient()->request($method, $endpoint, $params)
+      );
     } catch (ConnectException $e) {
       throw new ApiException(ApiException::CANNOT_CONNECT, $e);
     } catch (ClientException $e) {

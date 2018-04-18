@@ -12,7 +12,8 @@ namespace Nexcess\Sdk\Endpoint;
 
 use Nexcess\Sdk\ {
   Endpoint,
-  Exception\ApiException
+  Exception\ApiException,
+  Response
 };
 
 /**
@@ -31,14 +32,14 @@ class CloudAccount extends Endpoint {
    * @param string $domain Desired domain name
    * @param int $package_id Service package id
    * @return array API response data
-   * @throws ApiException On failure
+   * @throws ApiException If request fails
    */
   public function add(
     int $app_id,
     int $cloud_id,
     string $domain,
     int $package_id
-  ) : array {
+  ) : Response {
     return $this->_request(
       'POST',
       self::ENDPOINT,
@@ -58,9 +59,9 @@ class CloudAccount extends Endpoint {
    *
    * @param int $cloud_account_id Service id
    * @return array API response data
-   * @throws ApiException On failure
+   * @throws ApiException If request fails
    */
-  public function view(int $cloud_account_id) : array {
+  public function view(int $cloud_account_id) : Response {
     return $this->_request('GET', self::ENDPOINT . "/{$cloud_account_id}");
   }
 }
