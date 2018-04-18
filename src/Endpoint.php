@@ -18,7 +18,7 @@ use GuzzleHttp\ {
 };
 
 use Nexcess\Sdk\ {
-  ApiException,
+  Exception\ApiException,
   Response
 };
 
@@ -27,7 +27,7 @@ use Nexcess\Sdk\ {
  */
 abstract class Endpoint {
 
-  /** @var Guzzle The Guzzle HTTP client. */
+  /** @var Guzzle The Guzzle http client. */
   private $_client;
 
   public function __construct(Guzzle $client) {
@@ -51,13 +51,12 @@ abstract class Endpoint {
       $this->_getClient()->request('GET', $endpoint, $params);
     } catch (ConnectException $e) {
       throw new ApiException(ApiException::CANNOT_CONNECT, $e);
-      // network
     } catch (ClientException $e) {
-      // 4xx
+      throw new ApiException(ApiException::BAD_REQUEST, $e);
     } catch (ServerException $e) {
-      // 5xx
+      throw new ApiException(ApiException::SERVER_ERROR, $e);
     } catch (TransferException $e) {
-      // unknown
+      throw new ApiException(ApiException::UNKNOWN_ERROR, $e);
     }
   }
 }

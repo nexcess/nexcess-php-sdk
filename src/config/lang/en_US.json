@@ -1,0 +1,10 @@
+{
+  "bad_request": "API request failed: {__rootMessage__}",
+  "cannot_connect": "Failed to connect to API host: {__rootMessage__}",
+  "json_decode_failure": "Error parsing json: {error}",
+  "invalid_language_map": "Language map must contain key:translation pairs; found: {invalid}",
+  "not_implemented": "Feature not yet implmented",
+  "no_such_endpoint": "No endpoint '{name}' exists",
+  "server_error": "API host failed to handle request: {__rootMessage__}",
+  "unknown_error": "Unknown error: {__rootMessage__}"
+}

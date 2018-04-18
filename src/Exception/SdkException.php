@@ -13,11 +13,23 @@ use Nexcess\Sdk\Exception\Exception;
 
 class SdkException extends Exception {
 
+  /** @var int Feature is not yet implemented. */
+  const NOT_IMPLEMENTED = 1;
+
   /** @var int Unknown endpoint. */
-  const NO_SUCH_ENDPOINT = 1;
+  const NO_SUCH_ENDPOINT = 2;
+
+  /** @var int Error from json_decode. */
+  const JSON_DECODE_FAILURE = 3;
+
+  /** @var int Invalid translation map or value. */
+  const INVALID_LANGUAGE_MAP = 4;
 
   /** @var array[] {@inheritDoc} */
   const INFO = [
-    self::NO_SUCH_ENDPOINT => ['message' => 'no_such_endpoint']
+    self::NOT_IMPLEMENTED => ['message' => 'not_implemented'],
+    self::NO_SUCH_ENDPOINT => ['message' => 'no_such_endpoint'],
+    self::JSON_DECODE_FAILURE => ['message' => 'json_decode_failure'],
+    self::INVALID_LANGUAGE_MAP => ['message' => 'invalid_language_map']
   ];
 }

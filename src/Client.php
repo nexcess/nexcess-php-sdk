@@ -11,16 +11,26 @@ namespace Nexcess\Sdk;
 
 use GuzzleHttp\Client as Guzzle;
 
-use Nexcess\SDK\ {
+use Nexcess\Sdk\ {
   Config,
-  ApiException,
-  Response
+  Endpoint,
+  Exception\ApiException,
+  Exception\SdkException
 };
 
 /**
  * API client for nexcess.net / thermo.io
  */
 class Client {
+
+  /** @var string SDK root namespace. */
+  const SDK_NAMESPACE = __NAMESPACE__;
+
+  /** @var string SDK root directory. */
+  const SDK_ROOT = __DIR__ . '/..';
+
+  /** @var Guzzle The Guzzle http client. */
+  private $_client;
 
   /** @var Config Client configuration object. */
   protected $_config;
@@ -38,19 +48,31 @@ class Client {
    * For convenience, endpoints can also be accessed as instance properties.
    * @see Client::__get
    *
-   * @param string $name The endpoint to get
+   * @param string $name Endpoint classname (short name or fully qualified)
    * @return Endpoint
    * @throws ApiException If there is an error, or the endpoint is unknown
    */
   public function endpoint(string $name) : Endpoint {
-    $fqcn = is_a(Endpoint::class, __NAMESPACE__ . "\\{$name}", true) ?
-      __NAMESPACE__ . "\\{$name}" :
-      $name;
+    $fqcn = strpos($name, '\\') === 0 ?
+      $name :
+      self::SDK_NAMESPACE . "\\Endpoint\\{$name}";
+
     if (! is_a(Endpoint::class, $fqcn, true)) {
       throw new ApiException(
         ApiException::NO_SUCH_ENDPOINT,
         ['name' => $name]
       );
     }
+
+    return new $fqcn($this->_getHttpClient());
+  }
+
+  /**
+   * Does the SDK need to be updated?
+   *
+   * @return bool True if a newer SDK version is available; false otherwise
+   */
+  public function shouldUpdate() : bool {
+    throw new SdkException(SdkException::NOT_IMPLEMENTED);
   }
 }
