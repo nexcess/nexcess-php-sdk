@@ -11,7 +11,8 @@ namespace Nexcess\Sdk\Util;
 
 use Nexcess\Sdk\ {
   Client,
-  Exception\SdkException
+  Exception\SdkException,
+  Util\UsesJsonFile
 };
 
 /**
@@ -19,6 +20,7 @@ use Nexcess\Sdk\ {
  * Defaults to supporting English.
  */
 class Language {
+  use UsesJsonFile;
 
   /** @var string Default language to translate if none specified. */
   const DEFAULT_LANGUAGE = 'en_US';
@@ -68,7 +70,7 @@ class Language {
    * @param string $language Identifier for language to translate to
    * @param string[] $paths List of filepaths to find language files on
    */
-  public function __construct(string $language, array $paths = []) {
+  public function __construct(string $language, string ...$paths) {
     array_unshift($paths, Client::SDK_ROOT . '/src/config/lang');
 
     foreach ($paths as $path) {
@@ -83,30 +85,10 @@ class Language {
    * Newer translations replace older ones.
    *
    * @param string $filepath Path to language json file to parse
-   * @return Language $this
    * @throws SdkException If file cannot be read, or parsing fails
    */
-  public function addFile(string $filepath) : Language {
-    if (! is_readable($filepath)) {
-      throw new SdkException(
-        SdkException::FILE_NOT_READABLE,
-        ['filepath' => $filepath]
-      );
-    }
-
-    $translations = json_decode(file_get_contents($filepath), true);
-    if (json_last_error() !== JSON_ERROR_NONE) {
-      throw new SdkException(
-        SdkException::JSON_DECODE_FAILURE,
-        ['error' => json_last_error_msg()]
-      );
-    }
-    if (! is_array($translations)) {
-      throw new SdkException(
-        SdkException::INVALID_LANGUAGE_MAP,
-        ['invalid' => $translations]
-      );
-    }
+  public function addFile(string $filepath) {
+    $translations = $this->_readJsonFile($filepath);
     array_walk(
       $translations,
       function ($v, $k) {

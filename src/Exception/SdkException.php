@@ -25,11 +25,15 @@ class SdkException extends Exception {
   /** @var int Invalid translation map or value. */
   const INVALID_LANGUAGE_MAP = 4;
 
+  /** @var int Missing api token. */
+  const MISSING_API_TOKEN = 5;
+
   /** @var array[] {@inheritDoc} */
   const INFO = [
     self::NOT_IMPLEMENTED => ['message' => 'not_implemented'],
     self::NO_SUCH_ENDPOINT => ['message' => 'no_such_endpoint'],
     self::JSON_DECODE_FAILURE => ['message' => 'json_decode_failure'],
-    self::INVALID_LANGUAGE_MAP => ['message' => 'invalid_language_map']
+    self::INVALID_LANGUAGE_MAP => ['message' => 'invalid_language_map'],
+    self::MISSING_API_TOKEN => ['message' => 'missing_api_token']
   ];
 }

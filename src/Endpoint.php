@@ -7,7 +7,7 @@
 
 declare(strict_types  = 1);
 
-namespace Nexcess\SDK;
+namespace Nexcess\Sdk;
 
 use GuzzleHttp\ {
   Client as Guzzle,
@@ -19,7 +19,9 @@ use GuzzleHttp\ {
 
 use Nexcess\Sdk\ {
   Exception\ApiException,
-  Response
+  Exception\SdkException,
+  Response,
+  Util\Config
 };
 
 /**
@@ -30,8 +32,30 @@ abstract class Endpoint {
   /** @var Guzzle The Guzzle http client. */
   private $_client;
 
-  public function __construct(Guzzle $client) {
-    $this->_client = $client;
+  /** @var Config Client configuration object. */
+  protected $_config;
+
+  public function __construct(Config $config) {
+    $this->_config = $config;
+  }
+
+  /**
+   * Gets the http client.
+   *
+   * @return Guzzle
+   */
+  private function _getClient() : Guzzle {
+    if (! $this->_client) {
+      $this->_client = new Guzzle([
+        'base_uri' => $this->_config->get('base_uri'),
+        "headers" => [
+          "Authorization" => "Bearer {$this->_config->get('api_token')}",
+          "Accept" => "application/json"
+        ]
+      ]);
+    }
+
+    return $this->_client;
   }
 
   /**
@@ -41,6 +65,7 @@ abstract class Endpoint {
    * @param string $endpoint API endpoint to request
    * @param array $params Request parameters (data, body, headers, ...)
    * @return Response
+   * @throws ApiException If request fails
    */
   protected function _request(
     string $method,
@@ -48,7 +73,16 @@ abstract class Endpoint {
     array $params = []
   ) : Response {
     try {
-      $this->_getClient()->request('GET', $endpoint, $params);
+      $response = $this->_getClient()->request($method, $endpoint, $params);
+
+      $data = json_decode($response->getBody(), true);
+      $data['http_status'] = [
+        'code' => $response->getStatusCode(),
+        'reason' => $response->getReasonPhrase()
+      ];
+
+      return $data;
+
     } catch (ConnectException $e) {
       throw new ApiException(ApiException::CANNOT_CONNECT, $e);
     } catch (ClientException $e) {

@@ -12,14 +12,16 @@ namespace Nexcess\Sdk;
 use GuzzleHttp\Client as Guzzle;
 
 use Nexcess\Sdk\ {
-  Config,
   Endpoint,
   Exception\ApiException,
-  Exception\SdkException
+  Exception\SdkException,
+  Util\Config
 };
 
 /**
  * API client for nexcess.net / thermo.io
+ *
+ * @property Endpoint $CloudServer
  */
 class Client {
 
@@ -29,9 +31,6 @@ class Client {
   /** @var string SDK root directory. */
   const SDK_ROOT = __DIR__ . '/..';
 
-  /** @var Guzzle The Guzzle http client. */
-  private $_client;
-
   /** @var Config Client configuration object. */
   protected $_config;
 
@@ -40,6 +39,14 @@ class Client {
    */
   public function __construct(Config $config) {
     $this->_config = $config;
+  }
+
+  /**
+   * Allows endpoint objects to be accessed like properties.
+   * @see https://php.net/__get
+   */
+  public function __get(string $name) {
+    return $this->endpoint($name);
   }
 
   /**
@@ -53,7 +60,7 @@ class Client {
    * @throws ApiException If there is an error, or the endpoint is unknown
    */
   public function endpoint(string $name) : Endpoint {
-    $fqcn = strpos($name, '\\') === 0 ?
+    $fqcn = is_a(Endpoint::class, $name, true) ?
       $name :
       self::SDK_NAMESPACE . "\\Endpoint\\{$name}";
 
@@ -64,7 +71,7 @@ class Client {
       );
     }
 
-    return new $fqcn($this->_getHttpClient());
+    return new $fqcn($this->_config);
   }
 
   /**
@@ -73,6 +80,16 @@ class Client {
    * @return bool True if a newer SDK version is available; false otherwise
    */
   public function shouldUpdate() : bool {
+    throw new SdkException(SdkException::NOT_IMPLEMENTED);
+  }
+
+  /**
+   * Perform self-update
+   *
+   * @return array Information about the update.
+   * @throws SdkException If update fails
+   */
+  public function update() : array {
     throw new SdkException(SdkException::NOT_IMPLEMENTED);
   }
 }
