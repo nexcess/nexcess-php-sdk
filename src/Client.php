@@ -60,11 +60,11 @@ class Client {
    * @throws ApiException If there is an error, or the endpoint is unknown
    */
   public function endpoint(string $name) : Endpoint {
-    $fqcn = is_a(Endpoint::class, $name, true) ?
+    $fqcn = is_a($name, Endpoint::class, true) ?
       $name :
       self::SDK_NAMESPACE . "\\Endpoint\\{$name}";
 
-    if (! is_a(Endpoint::class, $fqcn, true)) {
+    if (! is_a($fqcn, Endpoint::class, true)) {
       throw new ApiException(
         ApiException::NO_SUCH_ENDPOINT,
         ['name' => $name]

@@ -112,10 +112,9 @@ class Response implements JsonSerializable {
    * @return array
    */
   public function toArray() : array {
-    return (
-      reset($this->_guzzle_response->getHeader('Content-type')) ===
-        'application/json'
-    ) ?
+    $content_type = $this->_guzzle_response->getHeader('Content-type');
+
+    return (reset($content_type) === 'application/json') ?
       json_decode((string) $this->_guzzle_response->getBody(), true) :
       ['response' => $this->_guzzle_response->getBody()];
   }

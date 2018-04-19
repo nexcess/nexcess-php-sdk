@@ -10,8 +10,10 @@ declare(strict_types  = 1);
 namespace Nexcess\Sdk\Util;
 
 use Nexcess\Sdk\ {
+  Client,
   Exception\SdkException,
-  Util\UsesJsonFile
+  Util\UsesJsonFile,
+  Util\Util
 };
 
 /**
@@ -51,7 +53,7 @@ class Config {
    * @throws SdkException On failure
    */
   public function addFile(string $filepath) {
-    $this->_config = array_merge_recursive(
+    $this->_config = Util::extendRecursive(
       $this->_config,
       $this->_readJsonFile($filepath),
       $this->_options

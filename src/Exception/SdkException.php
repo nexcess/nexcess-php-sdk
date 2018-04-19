@@ -7,7 +7,7 @@
 
 declare(strict_types  = 1);
 
-namespace Nexcess\Sdk;
+namespace Nexcess\Sdk\Exception;
 
 use Nexcess\Sdk\Exception\Exception;
 
@@ -28,12 +28,16 @@ class SdkException extends Exception {
   /** @var int Missing api token. */
   const MISSING_API_TOKEN = 5;
 
+  /** @var int Unknown error. */
+  const UNKNOWN_ERROR = 6;
+
   /** @var array[] {@inheritDoc} */
   const INFO = [
     self::NOT_IMPLEMENTED => ['message' => 'not_implemented'],
     self::NO_SUCH_ENDPOINT => ['message' => 'no_such_endpoint'],
     self::JSON_DECODE_FAILURE => ['message' => 'json_decode_failure'],
     self::INVALID_LANGUAGE_MAP => ['message' => 'invalid_language_map'],
-    self::MISSING_API_TOKEN => ['message' => 'missing_api_token']
+    self::MISSING_API_TOKEN => ['message' => 'missing_api_token'],
+    self::UNKNOWN_ERROR => ['message' => 'unknown_error']
   ];
 }

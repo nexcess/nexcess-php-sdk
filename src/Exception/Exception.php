@@ -7,7 +7,7 @@
 
 declare(strict_types  = 1);
 
-namespace Nexcess\Sdk;
+namespace Nexcess\Sdk\Exception;
 
 use at\exceptable\Exception as Exceptable;
 

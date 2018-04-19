@@ -26,7 +26,7 @@ class Language {
   const DEFAULT_LANGUAGE = 'en_US';
 
   /** @var Language Default instance. */
-  protected $_instance;
+  protected static $_instance;
 
   /**
    * Makes the default instance available globally.
@@ -45,7 +45,7 @@ class Language {
    * @param string $key Identifier for the desired translation
    * @return string Translation on success; unchanged key otherwise
    */
-  public static function get() : string {
+  public static function get(string $key) : string {
     return self::getInstance()->getTranslation($key);
   }
 
@@ -58,9 +58,9 @@ class Language {
    */
   public static function init(
     string $language = self::DEFAULT_LANGUAGE,
-    array $paths = []
+    string ...$paths
   ) {
-    self::$_instance = new self($language, $paths);
+    self::$_instance = new self($language, ...$paths);
   }
 
   /** @var array Map of translations in current language. */

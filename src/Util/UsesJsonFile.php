@@ -9,6 +9,8 @@ declare(strict_types  = 1);
 
 namespace Nexcess\Sdk\Util;
 
+use Nexcess\Sdk\Util\Util;
+
 /** @var int Truncate existing json and overwrite with new data. */
 const JSONFILE_OVERWRITE = 1;
 
@@ -26,9 +28,10 @@ trait UsesJsonFile {
   /**
    * Validates that a filename ends in ".json".
    *
+   * @param string $filepath The file name to check
    * @throws SdkException If check fails
    */
-  private function _checkJsonFilename(string $filename) {
+  private function _checkJsonFilename(string $filepath) {
     if (strpos($filepath, '.json') !== strlen($filepath) - 5) {
       throw new SdkException(
         SdkException::INVALID_JSON_FILENAME,
@@ -92,7 +95,7 @@ trait UsesJsonFile {
       $this->_readJsonConfig($filepath) :
       [];
 
-    $data = array_merge_recursive($existing, $data);
+    $data = Util::extendRecursive($existing, $data);
     if (file_put_contents($filename, $data, LOCK_EX) === false) {
       throw new SdkException(
         SdkException::FILE_NOT_WRITABLE,

@@ -9,10 +9,13 @@ declare(strict_types  = 1);
 
 namespace Nexcess\Sdk;
 
+use Throwable;
+
 use GuzzleHttp\ {
   Client as Guzzle,
   Exception\ClientException,
   Exception\ConnectException,
+  Exception\RequestException,
   Exception\ServerException,
   Exception\TransferException
 };
@@ -46,13 +49,16 @@ abstract class Endpoint {
    */
   private function _getClient() : Guzzle {
     if (! $this->_client) {
-      $this->_client = new Guzzle([
+      $guzzle_options = [
         'base_uri' => $this->_config->get('base_uri'),
         "headers" => [
           "Authorization" => "Bearer {$this->_config->get('api_token')}",
           "Accept" => "application/json"
-        ]
-      ]);
+        ],
+        'verify' => false
+      ] + ($this->_config->get('guzzle_defaults') ?? []);
+
+      $this->_client = new Guzzle($guzzle_options);
     }
 
     return $this->_client;
@@ -82,8 +88,10 @@ abstract class Endpoint {
       throw new ApiException(ApiException::BAD_REQUEST, $e);
     } catch (ServerException $e) {
       throw new ApiException(ApiException::SERVER_ERROR, $e);
-    } catch (TransferException $e) {
-      throw new ApiException(ApiException::UNKNOWN_ERROR, $e);
+    } catch (RequestException $e) {
+      throw new ApiException(ApiException::REQUEST_FAILED, $e);
+    } catch (Throwable $e) {
+      throw new SdkException(SdkException::UNKNOWN_ERROR, $e);
     }
   }
 }

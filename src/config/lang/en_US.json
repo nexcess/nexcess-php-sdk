@@ -6,6 +6,7 @@
   "missing_api_token": "Missing API Token",
   "not_implemented": "Feature not yet implmented",
   "no_such_endpoint": "No endpoint '{name}' exists",
+  "request_failed": "API request failed: {__rootMessage__}",
   "server_error": "API host failed to handle request: {__rootMessage__}",
   "unknown_error": "Unknown error: {__rootMessage__}"
 }

@@ -7,13 +7,13 @@
 
 declare(strict_types  = 1);
 
-namespace Nexcess\Sdk;
+namespace Nexcess\Sdk\Exception;
 
-use at\exceptable\Exception as Exceptable;
+use Nexcess\Sdk\Exception\Exception;
 
 use Nexcess\Sdk\Util\I18n;
 
-class ApiException extends Exceptable {
+class ApiException extends Exception {
 
   /** @var int Networking/connectivity issue. */
   const CANNOT_CONNECT = 1;
@@ -24,14 +24,18 @@ class ApiException extends Exceptable {
   /** @var int Server error (i.e., 5xx response). */
   const SERVER_ERROR = 3;
 
-  /** @var int Unknown error. */
-  const UNKNOWN_ERROR = 4;
+  /** @var int Other guzzle problem. */
+  const REQUEST_FAILED = 4;
+
+  /** @var int Unknown endpoint. */
+  const NO_SUCH_ENDPOINT = 5;
 
   /** @var array[] {@inheritDoc} */
   const INFO = [
     self::CANNOT_CONNECT => ['message' => 'cannot_connect'],
     self::BAD_REQUEST => ['message' => 'bad_request'],
     self::SERVER_ERROR => ['message' => 'server_error'],
-    self::UNKNOWN_ERROR => ['message' => 'unknown_error']
+    self::REQUEST_FAILED => ['message' => 'request_failed'],
+    self::NO_SUCH_ENDPOINT => ['message' => 'no_such_endpoint']
   ];
 }
