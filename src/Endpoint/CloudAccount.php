@@ -11,7 +11,7 @@ declare(strict_types  = 1);
 namespace Nexcess\Sdk\Endpoint;
 
 use Nexcess\Sdk\ {
-  Endpoint,
+  Endpoint\ServiceEndpoint,
   Exception\ApiException,
   Response
 };
@@ -19,49 +19,36 @@ use Nexcess\Sdk\ {
 /**
  * API actions for Cloud Accounts (virtual hosting).
  */
-class CloudAccount extends Endpoint {
-
-  /** @var string API endpoint. */
-  const ENDPOINT = 'cloud-account';
+class CloudAccount extends ServiceEndpoint {
 
   /**
-   * Creates a new cloud account.
+   * {@inheritDoc}
    *
-   * @param int $app_id Application environment id
-   * @param int $cloud_id Cloud (location) id
-   * @param string $domain Desired domain name
-   * @param int $package_id Service package id
-   * @return array API response data
+   * - int "app_id": Application environment id
+   * - int "cloud_id": Cloud (location) id
+   * - string "domain": Desired domain name
+   * - int "package_id": Service package id
+   */
+  const ADD_VALUE_MAP = [
+    'app_id' => 0,
+    'cloud_id' => 0,
+    'domain' => '',
+    'package_id' => 0
+  ];
+
+  /**
+   * Switches PHP versions active on an existing cloud server.
+   *
+   * @param int $id Cloud server id
+   * @param string $version Desired PHP version
+   * @return array Response data
    * @throws ApiException If request fails
    */
-  public function add(
-    int $app_id,
-    int $cloud_id,
-    string $domain,
-    int $package_id
-  ) : Response {
-    return $this->_request(
+  public function setPhpVersion(int $id, string $version) : Response {
+    $this->_request(
       'POST',
-      self::ENDPOINT,
-      [
-        "json" => [
-          'app_id' => $app_id,
-          'cloud_id' => $cloud_id,
-          'domain' => $domain,
-          'package_id' => $package_id
-        ]
-      ]
+      self::ENDPOINT . "/{$id}",
+      ['json' => ['_action' => 'set-php-version', 'php_version' => $version]]
     );
-  }
-
-  /**
-   * Gets information about an existing cloud account.
-   *
-   * @param int $cloud_account_id Service id
-   * @return array API response data
-   * @throws ApiException If request fails
-   */
-  public function view(int $cloud_account_id) : Response {
-    return $this->_request('GET', self::ENDPOINT . "/{$cloud_account_id}");
   }
 }

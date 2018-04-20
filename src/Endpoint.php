@@ -24,7 +24,8 @@ use Nexcess\Sdk\ {
   Exception\ApiException,
   Exception\SdkException,
   Response,
-  Util\Config
+  Util\Config,
+  Util\Util
 };
 
 /**
@@ -49,19 +50,35 @@ abstract class Endpoint {
    */
   private function _getClient() : Guzzle {
     if (! $this->_client) {
-      $guzzle_options = [
-        'base_uri' => $this->_config->get('base_uri'),
-        "headers" => [
-          "Authorization" => "Bearer {$this->_config->get('api_token')}",
-          "Accept" => "application/json"
-        ],
-        'verify' => false
-      ] + ($this->_config->get('guzzle_defaults') ?? []);
+      $guzzle_options = ['base_uri' => $this->_config->get('base_uri')];
+      $guzzle_defaults = $this->_config->get('guzzle_defaults');
+      if ($guzzle_defaults) {
+        $guzzle_options =
+          Util::extendRecursive($guzzle_options, $guzzle_defaults);
+      }
 
       $this->_client = new Guzzle($guzzle_options);
     }
 
     return $this->_client;
+  }
+
+  /**
+   * Gets default headers for API requests.
+   *
+   * @return array Map of http headers
+   */
+  private function _getDefaultHeaders() : array {
+    $headers = [
+      'Accept' => 'application/json',
+      'Accept-language' => $this->_config->get('language')
+    ];
+    $api_token = $this->_config->get('api_token');
+    if ($api_token) {
+      $headers['Authorization'] = "Bearer {$api_token}";
+    }
+
+    return $headers;
   }
 
   /**
@@ -79,9 +96,12 @@ abstract class Endpoint {
     array $params = []
   ) : Response {
     try {
+      $params['headers'] = ($params['headers'] ?? []) + $this->_getDefaultHeaders();
+
       return new Response(
         $this->_getClient()->request($method, $endpoint, $params)
       );
+
     } catch (ConnectException $e) {
       throw new ApiException(ApiException::CANNOT_CONNECT, $e);
     } catch (ClientException $e) {

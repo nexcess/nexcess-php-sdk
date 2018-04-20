@@ -10,7 +10,7 @@ declare(strict_types  = 1);
 namespace Nexcess\Sdk\Endpoint;
 
 use Nexcess\Sdk\ {
-  Endpoint,
+  Endpoint\ServiceEndpoint,
   Exception\ApiException,
   Response
 };
@@ -18,67 +18,35 @@ use Nexcess\Sdk\ {
 /**
  * API actions for Cloud Servers (virtual machines).
  */
-class CloudServer extends Endpoint {
+class CloudServer extends ServiceEndpoint {
 
-  /** @var string API endpoint. */
-  const ENDPOINT = 'cloud-server';
+  /** {@inheritDoc} */
+  const BASE_LIST_FILTER = ['type' => 'virt-guest'];
 
-  /**
-   * Creates a new cloud server.
-   *
-   * @param int $cloud_id Cloud (location) id
-   * @param string $hostname Desired hostname
-   * @param int $package_id Service package id
-   * @param int $template_id Cloud template id
-   * @param string $_secure_type One of "key"|"password"
-   * @param int[] $ssh_key_ids Optional if _secure_type is "password"
-   * @return array API response data
-   * @throws ApiException If request fails
-   */
-  public function add(
-    int $cloud_id,
-    string $hostname,
-    int $package_id,
-    int $template_id,
-    string $_secure_type,
-    array $ssh_key_ids = []
-  ) : Response {
-    return $this->_request(
-      'POST',
-      self::ENDPOINT,
-      [
-        "json" => [
-          'cloud_id' => $cloud_id,
-          'hostname' => $hostname,
-          'package_id' => $package_id,
-          'template_id' => $template_id,
-          '_secure_type' => $_secure_type,
-          'ssh_key_ids' => $ssh_key_ids
-        ]
-      ]
-    );
-  }
+  /** @var string Value for add() "_secure_type". */
+  const SECURE_TYPE_PASSWORD = 'password';
+
+  /** @var string Value for add() "_secure_type". */
+  const SECURE_TYPE_KEY = 'key';
 
   /**
-   * Deletes an existing cloud server.
+   * {@inheritDoc}
    *
-   * @param int $cloud_server_id Service id
-   * @return array API response data
-   * @throws ApiException If request fails
+   * - int "cloud_id": Cloud (location) id
+   * - string "hostname": Desired hostname
+   * - int "package_id": Service package id
+   * - int[] "ssh_key_ids": Optional if _secure_type is "password"
+   * - int "template_id": Cloud template id
+   * - string "_secure_type": One of "key"|"password"
    */
-  public function delete(int $cloud_server_id) : Response {
-    return $this->_request('DELETE', self::ENDPOINT . "/{$cloud_server_id}");
-  }
-
-  /**
-   * Lists all existing cloud servers.
-   *
-   * @return array API response data
-   * @throws ApiException If request fails
-   */
-  public function list() : Response {
-    return $this->_request('GET', 'service?type=virt-guest');
-  }
+  const ADD_VALUE_MAP = [
+    'cloud_id' => 0,
+    'hostname' => '',
+    'package_id' => 0,
+    'ssh_keys' => [],
+    'template_id' => 0,
+    '_secure_type' => self::SECURE_TYPE_PASSWORD
+  ];
 
   /**
    * Reboots an existing cloud server.
@@ -139,17 +107,6 @@ class CloudServer extends Endpoint {
       self::ENDPOINT . "/{$cloud_server_id}",
       ['json' => ['_action' => 'stop']]
     );
-  }
-
-  /**
-   * Gets information about an existing cloud server.
-   *
-   * @param int $cloud_server_id Service id
-   * @return array API response data
-   * @throws ApiException If request fails
-   */
-  public function view(int $cloud_server_id) : Response {
-    return $this->_request('GET', self::ENDPOINT . "/{$cloud_server_id}");
   }
 
   /**

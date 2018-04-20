@@ -10,32 +10,23 @@ declare(strict_types  = 1);
 namespace Nexcess\Sdk\Util;
 
 use Nexcess\Sdk\ {
-  Client,
-  Exception\SdkException,
-  Util\UsesJsonFile,
+  Util\Language,
   Util\Util
 };
 
 /**
- * Config class for SDK.
+ * Config container for SDK.
  */
 class Config {
-  use UsesJsonFile;
+
+  /** @var string Default language/locale. */
+  const DEFAULT_LANGUAGE = Language::DEFAULT_LANGUAGE;
 
   /** @var array Config options. */
-  private $_config = [];
-
-  /** @var array Config overrides. */
   private $_options = [];
 
-  public function __construct(array $options = [], string ...$files) {
-    $this->_config = $options;
+  public function __construct(array $options = []) {
     $this->_options = $options;
-
-    array_unshift($files, Client::SDK_ROOT . '/src/config/config.json');
-    foreach ($files as $file) {
-      $this->addFile($file);
-    }
   }
 
   /**
@@ -47,17 +38,11 @@ class Config {
   }
 
   /**
-   * Adds data from a .json config file to the config.
-   *
-   * @param string $filepath
-   * @throws SdkException On failure
+   * Allows config options to be accessed like properties.
+   * @see https://php.net/__get
    */
-  public function addFile(string $filepath) {
-    $this->_config = Util::extendRecursive(
-      $this->_config,
-      $this->_readJsonFile($filepath),
-      $this->_options
-    );
+  public function __set(string $name, $value) {
+    return $this->set($name, $value);
   }
 
   /**
@@ -67,6 +52,33 @@ class Config {
    * @return mixed Option value on success; null otherwise
    */
   public function get(string $name) {
-    return $this->_config[$name] ?? null;
+    return $this->_options[$name] ?? $this->getDefault($name);
+  }
+
+  /**
+   * Gets a default config option.
+   *
+   * @param string $name Name of option to get
+   * @return mixed Option value on success; null otherwise
+   */
+  public function getDefault(string $name) {
+    $const = 'static::DEFAULT_' . strtoupper($name);
+    return defined($const) ? constant($const) : null;
+  }
+
+  /**
+   * Sets (overrides) a config option.
+   *
+   * @param string $name Name of option to set
+   * @param mixed $value Value to set
+   * @param bool $extend Merge array values (overwrites otherwise)?
+   */
+  public function set(string $name, $value, bool $extend = false) {
+    if ($extend && isset($this->_options[$name])) {
+      $this->_options[$name] =
+        Util::extendRecursive($value, $this->_options[$name]);
+      return;
+    }
+    $this->_options[$name] = $value;
   }
 }
