@@ -7,10 +7,10 @@
 
 declare(strict_types  = 1);
 
-namespace Nexcess\Sdk;
+namespace Nexcess\Sdk\Endpoint;
 
 use Nexcess\Sdk\ {
-  Endpoint,
+  Endpoint\Endpoint,
   Response
 };
 
@@ -21,6 +21,9 @@ abstract class ServiceEndpoint extends CrudEndpoint {
 
   /** {@inheritDoc} */
   const ENDPOINT = 'service';
+
+  /** @var string Service type (must be overridden by implementing class). */
+  const TYPE = '';
 
   /**
    * Requests a service cancellation.
@@ -35,12 +38,10 @@ abstract class ServiceEndpoint extends CrudEndpoint {
   }
 
   /**
-   * Overridden to use service/ endpoint.
-   * The implementing class must define BASE_LIST_FILTER["type"].
-   *
-   * @see DoesEndpointCrud::list()
+   * {@inheritDoc}
+   * Overridden to set service type on list queries.
    */
-  public function list(array $filter = []) : Response {
-    return $this->_request('GET', "service?{$this->_buildListQuery($filter)}");
+  protected function _buildListQuery(array $filter) : string {
+    return parent::_buildListQuery(['type' => static::TYPE] + $filter);
   }
 }

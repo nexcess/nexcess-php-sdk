@@ -12,7 +12,7 @@ namespace Nexcess\Sdk;
 use GuzzleHttp\Client as Guzzle;
 
 use Nexcess\Sdk\ {
-  Endpoint,
+  Endpoint\Endpoint,
   Exception\ApiException,
   Exception\SdkException,
   Util\Config

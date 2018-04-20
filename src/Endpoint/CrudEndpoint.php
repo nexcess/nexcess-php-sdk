@@ -7,10 +7,10 @@
 
 declare(strict_types  = 1);
 
-namespace Nexcess\Sdk;
+namespace Nexcess\Sdk\Endpoint;
 
 use Nexcess\Sdk\ {
-  Endpoint,
+  Endpoint\Endpoint,
   Response
 };
 
@@ -67,11 +67,11 @@ abstract class CrudEndpoint extends Endpoint {
    * @throws ApiException If request fails
    */
   public function edit(int $id, array $values) : Response {
-    $arams = [
+    $params = [
       'json' => array_intersect_key($values, static::EDIT_VALUE_MAP) +
         static::EDIT_VALUE_MAP
     ];
-    return $this->_request('PATCH', self::ENDPOINT . "/{$id}/edit", $params);
+    return $this->_request('PATCH', static::ENDPOINT . "/{$id}/edit", $params);
   }
 
   /**

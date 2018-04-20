@@ -21,7 +21,7 @@ use Nexcess\Sdk\ {
 class CloudServer extends ServiceEndpoint {
 
   /** {@inheritDoc} */
-  const BASE_LIST_FILTER = ['type' => 'virt-guest'];
+  const TYPE = 'virt-guest';
 
   /** @var string Value for add() "_secure_type". */
   const SECURE_TYPE_PASSWORD = 'password';

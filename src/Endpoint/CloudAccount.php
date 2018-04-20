@@ -21,6 +21,9 @@ use Nexcess\Sdk\ {
  */
 class CloudAccount extends ServiceEndpoint {
 
+  /** {@inheritDoc} */
+  const TYPE = 'virt-guest-cloud';
+
   /**
    * {@inheritDoc}
    *
