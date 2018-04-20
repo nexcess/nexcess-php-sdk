@@ -19,41 +19,40 @@ use Nexcess\Sdk\ {
  */
 abstract class CrudEndpoint extends Endpoint {
 
-  /** @var array Map of field names:values for add() action. */
-  const ADD_VALUE_MAP = [];
-
-  /** @var array Default filter values for list(). */
-  const BASE_LIST_FILTER = [];
-
-  /** @var array Map of field names:values for edit() action. */
-  const EDIT_VALUE_MAP = [];
-
   /**
    * Creates a new item.
    *
-   * Implementing class must define ADD_VALUE_MAP as a name:default value map.
-   *
-   * @param array $values Map of values for new item
-   * @return array API response data
+   * @param array $data Map of values for new item
+   * @return Model
    * @throws ApiException If request fails
    */
-  public function add(array $values) : Response {
-    $params = [
-      'json' => array_intersect_key($values, static::ADD_VALUE_MAP) +
-        static::ADD_VALUE_MAP
-    ];
-    return $this->_request('POST', static::ENDPOINT, $params);
+  public function create(array $data) : Model {
+    $model = static::MODEL_NAME;
+
+    return $this->sync(
+      new $model(),
+      $this->_client
+        ->request('POST', static::ENDPOINT, ['json' => $data])
+        ->toArray()
+    );
   }
 
   /**
    * Deletes an existing item.
    *
-   * @param int $id Item id
-   * @return array API response data
+   * @param Model|int $id Model or item id to delete
    * @throws ApiException If request fails
    */
-  public function delete(int $id) : Response {
-    return $this->_request('DELETE', static::ENDPOINT . "/{$id}");
+  public function delete($model_or_id) {
+    $fqcn = static::MODEL_NAME;
+    $id = ($model_or_id instanceof $fqcn) ?
+      $model_or_id->offsetGet('id') :
+      $model_or_id;
+    if (! is_int($id)) {
+      throw new ApiException(ApiException::MISSING_ID, ['model' => $fqcn]);
+    }
+
+    $this->_request('DELETE', static::ENDPOINT . "/{$id}");
   }
 
   /**
@@ -62,50 +61,38 @@ abstract class CrudEndpoint extends Endpoint {
    * Implementing class must define EDIT_VALUE_MAP as a name:default value map.
    *
    * @param int $id Item id
-   * @param array $update Property:value map of changes to make
-   * @return array API response data
+   * @param array|null $data Map of properties:values to set before update
+   * @return Model The updated Model
    * @throws ApiException If request fails
    */
-  public function edit(int $id, array $values) : Response {
-    $params = [
-      'json' => array_intersect_key($values, static::EDIT_VALUE_MAP) +
-        static::EDIT_VALUE_MAP
-    ];
-    return $this->_request('PATCH', static::ENDPOINT . "/{$id}/edit", $params);
-  }
+  public function update(Model $model, array $data = null) : Model {
+    $id = $model->offsetGet('id');
+    if (! $id) {
+      throw new ApiException(
+        ApiException::MISSING_ID,
+        ['model' => static::NAME]
+      );
+    }
 
-  /**
-   * Gets a paginated list of existing items.
-   *
-   * @param array $filter @see DoesEndpointCrud::_buildListQuery $filter
-   * @return array API response data
-   * @throws ApiException If request fails
-   */
-  public function list(array $filter = []) : Response {
-    return $this->_request(
-      'GET',
-      static::ENDPOINT . "?{$this->_buildListQuery($filter)}"
-    );
-  }
+    foreach ($data as $key => $value) {
+      $model->offsetSet($key, $value);
+    }
 
-  /**
-   * Gets information about an existing item.
-   *
-   * @param int $id Item id
-   * @return array API response data
-   * @throws ApiException If request fails
-   */
-  public function show(int $id) : Response {
-    return $this->_request('GET', static::ENDPOINT . "/{$id}");
-  }
+    $update = empty($this->_stored[$id]) ?
+      $model->toArray() :
+      array_udiff_assoc(
+        $model->toArray(),
+        $this->_stored[$id],
+        function ($value, $stored) { return ($value === $stored) ? 0 : 1; }
+      );
 
-  /**
-   * Builds a query string for list requests.
-   *
-   * @param array $filter Map of query string parameters
-   * @return string A http query string
-   */
-  protected function _buildListQuery(array $filter) : string {
-    return http_build_query($filter + static::BASE_LIST_FILTER);
+    if (! empty($update)) {
+      return $this->_sync(
+        $this->_client
+          ->request('PATCH', static::ENDPOINT . "/{$id}/edit", $update)
+          ->toArray()
+      );
+    }
+    return $model;
   }
 }

@@ -23,6 +23,8 @@ use GuzzleHttp\ {
 use Nexcess\Sdk\ {
   Exception\ApiException,
   Exception\SdkException,
+  Model\Collection,
+  Model\Model,
   Response,
   Util\Config,
   Util\Util
@@ -33,85 +35,132 @@ use Nexcess\Sdk\ {
  */
 abstract class Endpoint {
 
+  /** @var array Default filter values for list(). */
+  const BASE_LIST_FILTER = [];
+
+  /** @var string Fully qualified classname of the Model for this endpoint. */
+  const MODEL_NAME = '';
+
   /** @var Guzzle The Guzzle http client. */
   private $_client;
 
   /** @var Config Client configuration object. */
   protected $_config;
 
-  public function __construct(Config $config) {
+  /** @var array Map of last fetched property:value pairs. */
+  protected $_stored;
+
+  public function __construct(Client $client, Config $config) {
+    $this->_client = $client;
     $this->_config = $config;
   }
 
   /**
-   * Gets the http client.
+   * Gets a new Model instance.
    *
-   * @return Guzzle
+   * @param int|null $id Model id
+   * @return Model
    */
-  private function _getClient() : Guzzle {
-    if (! $this->_client) {
-      $guzzle_options = ['base_uri' => $this->_config->get('base_uri')];
-      $guzzle_defaults = $this->_config->get('guzzle_defaults');
-      if ($guzzle_defaults) {
-        $guzzle_options =
-          Util::extendRecursive($guzzle_options, $guzzle_defaults);
-      }
-
-      $this->_client = new Guzzle($guzzle_options);
-    }
-
-    return $this->_client;
+  public function getModel(int $id = null) : Model {
+    $fqcn = static::MODEL_NAME;
+    return new $fqcn($id);
   }
 
   /**
-   * Gets default headers for API requests.
+   * Checks whether given model is in sync with stored data, or with the API.
    *
-   * @return array Map of http headers
+   * @param Model $model The model to check
+   * @param bool $hard Force hard check with API?
+   * @return bool True if data is in sync; false otherwise
+   * @throws ApiException If API request fails
    */
-  private function _getDefaultHeaders() : array {
-    $headers = [
-      'Accept' => 'application/json',
-      'Accept-language' => $this->_config->get('language')
-    ];
-    $api_token = $this->_config->get('api_token');
-    if ($api_token) {
-      $headers['Authorization'] = "Bearer {$api_token}";
+  public function isInSync(Model $model, bool $hard = false) : bool {
+    $data = $model->toArray();
+    $id = $model->offsetGet('id');
+    if ($id === null || empty($this->_stored[$id])) {
+      return false;
     }
 
-    return $headers;
+    return empty(
+      $this->_diff(
+        $model->toArray(),
+        ($hard) ? $this->_read($id) : $this->_stored[$id]
+      )
+    );
   }
 
   /**
-   * Makes a request to the API.
+   * Fetches a paginated list of items from the API.
    *
-   * @param string $method HTTP method to use
-   * @param string $endpoint API endpoint to request
-   * @param array $params Request parameters (json, body, headers, ...)
-   * @return array Response data
-   * @throws ApiException If request fails
+   * @param array $filter Pagination and Model-specific filter options
+   * @return array API response data
+   * @throws ApiException If API request fails
    */
-  protected function _request(
-    string $method,
-    string $endpoint,
-    array $params = []
-  ) : Response {
-    try {
-      $params['headers'] = ($params['headers'] ?? []) + $this->_getDefaultHeaders();
+  public function list(array $filter = []) : array {
+    $response = $this->_client->request(
+      'GET',
+      static::ENDPOINT . "?{$this->_buildListQuery($filter)}"
+    );
 
-      return new Response(
-        $this->_getClient()->request($method, $endpoint, $params)
-      );
-
-    } catch (ConnectException $e) {
-      throw new ApiException(ApiException::CANNOT_CONNECT, $e);
-    } catch (ClientException $e) {
-      throw new ApiException(ApiException::BAD_REQUEST, $e);
-    } catch (ServerException $e) {
-      throw new ApiException(ApiException::SERVER_ERROR, $e);
-    } catch (RequestException $e) {
-      throw new ApiException(ApiException::REQUEST_FAILED, $e);
-    } catch (Throwable $e) {
-      throw new SdkException(SdkException::UNKNOWN_ERROR, $e);
+    $collection = new Collection(static::MODEL_NAME);
+    foreach ($response->toArray() as $data) {
+      $item = $this->getModel();
+      $item->sync($data);
+      $collection->add($item);
     }
+
+    return $collection;
   }
+
+  /**
+   * Fetches an item from the API.
+   *
+   * @param int $id Item id
+   * @return Model The model read from the API
+   * @throws ModelException If the id is invalid
+   * @throws ApiException If the API request fails (e.g., item doesn't exist)
+   */
+  public function read(int $id) : Model {
+    $this->sync($this->getModel($id), true);
+  }
+
+  /**
+   * Syncs a Model with most recently fetched data from the API,
+   * or re-fetches the item from the API.
+   *
+   * @param bool $hard Force hard sync with API?
+   * @return Endpoint $this
+   */
+  public function sync(Model $model, bool $hard = false) : Model {
+    $id = $model->getOffset('id');
+
+    if ($hard || empty($this->_stored[$id])) {
+      $this->_stored[$id] = $this->_read($id);
+    }
+
+    $model->sync($this->_stored[$id], true);
+    return $model;
+  }
+
+  /**
+   * Builds a query string for list requests.
+   *
+   * @param array $filter Map of query string parameters
+   * @return string A http query string
+   */
+  protected function _buildListQuery(array $filter) : string {
+    return http_build_query($filter + static::BASE_LIST_FILTER);
+  }
+
+  /**
+   * Reads an item from the API and returns its response data as an array.
+   *
+   * @param int $id Item id
+   * @return array API response data
+   * @throws ApiException If API request fails
+   */
+  protected function _read(int $id) : array {
+    return $this->_client
+        ->request('GET', static::ENDPOINT . "/{$id}")
+        ->toArray();
 }
