@@ -1,8 +1,8 @@
 <?php
 /**
  * @package Nexcess-SDK
- * @license TBD
- * @copyright 2018 Nexcess.net
+ * @license https://opensource.org/licenses/MIT
+ * @copyright 2018 Nexcess.net, LLC
  */
 
 declare(strict_types  = 1);
@@ -16,24 +16,44 @@ use GuzzleHttp\ {
   Exception\ClientException,
   Exception\ConnectException,
   Exception\RequestException,
-  Exception\ServerException,
-  Exception\TransferException
+  Exception\ServerException
 };
 
 use Nexcess\Sdk\ {
-  Endpoint,
+  Endpoint\Endpoint,
+  Endpoint\Response,
   Exception\ApiException,
   Exception\SdkException,
   Model\Model,
-  Response,
   Util\Config,
+  Util\Language,
   Util\Util
 };
 
 /**
  * API client for nexcess.net / thermo.io
+ *
+ * API Endpoints. These are created on first access.
+ *
+ * @property Endpoint $ApiToken
+ * @property Endpoint $CloudAccount
+ * @property Endpoint $CloudServer
+ *
+ * Proxies for List|Create|Retrieve|Update actions on an API Endpoint.
+ * Argument may be one of:
+ *  - array: Create a new Model from given key:value map.
+ *  - int: Id for a Model to retrieve from the API.
+ *  - Model: A Model with modified properties to submit to the API.
+ *  - void: Omit the argument to get a list of Models from the API.
+ *
+ * @method Model|Collection ApiToken(array|int|Model|null $arg)
+ * @method Model|Collection CouldAccount(array|int|Model|null $arg)
+ * @method Model|Collection CloudServer(array|int|Model|null $arg)
  */
 class Client {
+
+  /** @var string Api version. */
+  const API_VERSION = '0.1-alpha';
 
   /** @var string SDK root namespace. */
   const SDK_NAMESPACE = __NAMESPACE__;
@@ -50,19 +70,31 @@ class Client {
   /** @var Endpoint[] Cache of Endpoint instances. */
   protected $_endpoints = [];
 
+  /** @var array API request log. */
+  protected $_request_log = [];
+
   /**
    * @param Config $config Client configuration object
    */
   public function __construct(Config $config) {
     $this->_config = $config;
 
+    // set up preferred language, if configured
+    $language = $this->_config->get('language');
+    if ($language) {
+      Language::init(
+        $language['language'] ?? Language::DEFAULT_LANGUAGE,
+        $language['paths'] ?? []
+      );
+    }
+
+    // set up guzzle client
     $guzzle_options = ['base_uri' => $this->_config->get('base_uri')];
     $guzzle_defaults = $this->_config->get('guzzle_defaults');
     if ($guzzle_defaults) {
       $guzzle_options =
         Util::extendRecursive($guzzle_options, $guzzle_defaults);
     }
-
     $this->_client = new Guzzle($guzzle_options);
   }
 
@@ -71,6 +103,9 @@ class Client {
    * Allows create/read/update actions to be accessed as a method call.
    *
    * @example <?php
+   *  // get a list of existing items
+   *  $tokens = $Client->ApiToken();
+   *
    *  // create a new item
    *  $token = $Client->ApiToken(['name' => 'foo']);
    *
@@ -88,32 +123,36 @@ class Client {
    * @throws ApiException If API request fails
    * @throws ModelException If Model cannot be created/updated
    */
-  public function __call($name, $args) : Model {
+  public function __call($name, $args) {
     $endpoint = $this->getEndpoint($name);
-    $arg = reset($args);
-
-    if (is_int($arg)) {
-      return $endpoint->read($arg);
-    }
-
     $model = $endpoint::MODEL_NAME;
-    if ($arg instanceof $model && $arg instanceof CrudModel) {
-      return $endpoint->update($arg);
+    $arg = array_shift($args);
+
+    if ($arg === null) {
+      return $endpoint->list();
     }
 
     if (is_array($arg)) {
-      return $this->_getEndpoint($name)->create($arg);
+      return $endpoint->create($arg);
     }
 
-    throw new ModelException(
-      ModelException::READONLY_MODEL,
-      ['model' => $name]
+    if ($arg instanceof Model) {
+      return $endpoint->update($arg);
+    }
+
+    if (is_int($arg)) {
+      return $endpoint->retrieve($arg);
+    }
+
+    throw new SdkException(
+      SdkException::INVALID_RETRIEVE,
+      ['model' => $model, 'type' => gettype($arg)]
     );
   }
 
   /**
    * @see https://php.net/__get
-   * Allows new (empty) models to be accessed as properties.
+   * Allows endpoints to be accessed as properties.
    *
    * @example <?php
    *  // get the "api-token" endpoint
@@ -170,8 +209,9 @@ class Client {
       $params['headers'] =
         ($params['headers'] ?? []) + $this->_getDefaultHeaders();
 
+      $config = $this->_config;
       $request_key = null;
-      if ($this->_config->get('debug') || $this->_config->get('request.log')) {
+      if ($config->get('debug') || $config->get('request.log')) {
         $request_key = count($this->_request_log);
         $this->_request_log[$request_key] = [
           'method' => $method,
@@ -182,7 +222,7 @@ class Client {
       }
 
       $response = new Response(
-        $this->_client()->request($method, $endpoint, $params)
+        $this->_client->request($method, $endpoint, $params)
       );
 
       if ($request_key !== null) {
@@ -194,13 +234,45 @@ class Client {
     } catch (ConnectException $e) {
       throw new ApiException(ApiException::CANNOT_CONNECT, $e);
     } catch (ClientException $e) {
-      throw new ApiException(ApiException::BAD_REQUEST, $e);
+      switch ($e->getResponse()->getStatusCode()) {
+        case 401 :
+          $code = ApiException::UNAUTHORIZED;
+          break;
+        case 403:
+          $code = ApiException::FORBIDDEN;
+          break;
+        case 404:
+          $code = ApiException::NOT_FOUND;
+          break;
+        case 422:
+          $code = ApiException::UNPROCESSABLE_ENTITY;
+          break;
+        default:
+          $code = ApiException::BAD_REQUEST;
+          break;
+      }
+      throw new ApiException(
+        $code,
+        ['method' => $method, 'endpoint' => $endpoint],
+        $e
+      );
+
     } catch (ServerException $e) {
       throw new ApiException(ApiException::SERVER_ERROR, $e);
+
     } catch (RequestException $e) {
       throw new ApiException(ApiException::REQUEST_FAILED, $e);
+
     } catch (Throwable $e) {
       throw new SdkException(SdkException::UNKNOWN_ERROR, $e);
+
+    } finally {
+      if ($request_key !== null) {
+        $this->_request_log[$request_key]['response'] = $response ??
+          ($e instanceof RequestException) ?
+            new Response($e->getResponse()) :
+            null;
+      }
     }
   }
 
@@ -230,6 +302,21 @@ class Client {
   }
 
   /**
+   * Gets a log of API requests performed by this client.
+   *
+   * @return array[] Info about API request, categorized by endpoint
+   * @throws If request logging is disabled
+   */
+  public function getRequestLog() : array {
+    $config = $this->_config;
+    if (! ($config->get('debug') || $config->get('request.log'))) {
+      throw new SdkException(SdkException::REQUEST_LOG_NOT_ENABLED);
+    }
+
+    return $this->_request_log;
+  }
+
+  /**
    * Gets default headers for API requests.
    *
    * @return array Map of http headers
@@ -237,7 +324,8 @@ class Client {
   protected function _getDefaultHeaders() : array {
     $headers = [
       'Accept' => 'application/json',
-      'Accept-language' => $this->_config->get('language')
+      'Accept-language' => $this->_config->get('language'),
+      "Api-version" => static::API_VERSION
     ];
     $api_token = $this->_config->get('api_token');
     if ($api_token) {

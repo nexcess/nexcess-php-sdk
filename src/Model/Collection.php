@@ -1,8 +1,8 @@
 <?php
 /**
  * @package Nexcess-SDK
- * @license TBD
- * @copyright 2018 Nexcess.net
+ * @license https://opensource.org/licenses/MIT
+ * @copyright 2018 Nexcess.net, LLC
  */
 
 declare(strict_types  = 1);
@@ -10,6 +10,8 @@ declare(strict_types  = 1);
 namespace Nexcess\Sdk\Model;
 
 use ArrayAccess,
+  Iterator,
+  JsonSerializable,
   Throwable;
 
 use Nexcess\Sdk\ {
@@ -21,7 +23,7 @@ use Nexcess\Sdk\ {
 /**
  * Container for a collection of Models.
  */
-class Collection implements Iterable {
+class Collection implements Iterator, JsonSerializable {
 
   /** @var Model[] List of models. */
   protected $_models = [];
@@ -58,9 +60,20 @@ class Collection implements Iterable {
   }
 
   /**
+   * Consts how many items are in this collection.
+   *
+   * @return int
+   */
+  public function count() : int {
+    return count($this->_models);
+  }
+
+  /**
    * @see https://php.net/Iterator.current
    */
   public function current() {
+    // @todo should we check+sync() items when accessed?
+    //  maybe an option to enable this? or a getGenerator() -like method?
     return current($this->_models);
   }
 
@@ -86,6 +99,61 @@ class Collection implements Iterable {
   }
 
   /**
+   * Filters items and builds a new collection.
+   *
+   * Criteria can be a property:value map or a callback function.
+   * Callback signature is like
+   *  bool $filter(Model $item) Return true to take item, false to discard
+   *
+   * @param array|callable $filter Map of property:value|callback pairs
+   * @return Collection A new collection of zero or more matching items
+   * @throws SdkException If filter callback errors
+   */
+  public function filter($filter) {
+    throw new SdkException(
+      SdkException::NOT_IMPLEMENTED,
+      ['class' => __CLASS__, 'method' => __FUNCTION__]
+    );
+  }
+
+  /**
+   * Finds an item in this collection that meet given criteria.
+   *
+   * Criteria can be a property:value map or a callback function.
+   * Callback signature is like
+   *  bool $criteria(Model $item) Return true to match item; false to discard
+   *
+   * Note, this method returns zero or one items.
+   * If you want a list of items, @see Collection::filter
+   *
+   * @param array|callable $criteria Map of property:value|callback pairs
+   * @return Model|null A matching item, if any found; null otherwise
+   * @throws SdkException If criteria callback errors
+   */
+  public function find($criteria) {
+    throw new SdkException(
+      SdkException::NOT_IMPLEMENTED,
+      ['class' => __CLASS__, 'method' => __FUNCTION__]
+    );
+  }
+
+  /**
+   * Gets list of ids of items in this collection.
+   *
+   * @return int[]
+   */
+  public function getIds() : array {
+    return $this->each(function ($item) { return $item->offsetGet('id'); });
+  }
+
+  /**
+   * @see https://php.net/JsonSerializable.jsonSerialize
+   */
+  public function jsonSerialize() {
+    return $this->toArray();
+  }
+
+  /**
    * @see https://php.net/Iterator.key
    */
   public function key() {
@@ -97,6 +165,23 @@ class Collection implements Iterable {
    */
   public function next() {
     next($this->_models);
+  }
+
+  /**
+   * Builds a new collection by applying a callback function to each item.
+   *
+   * This method duplicates items.
+   * If you want to operate on items "in place," @see Collection::each
+   *
+   * @param callable $function The callback to invoke
+   * @return Collection
+   * @throws SdkException If the callback function throws
+   */
+  public function map(callable $function) : Collection {
+    throw new SdkException(
+      SdkException::NOT_IMPLEMENTED,
+      ['class' => __CLASS__, 'method' => __FUNCTION__]
+    );
   }
 
   /**
@@ -149,6 +234,15 @@ class Collection implements Iterable {
     );
 
     return $this;
+  }
+
+  /**
+   * Gets the collection as an array.
+   *
+   * @return array
+   */
+  public function toArray() : array {
+    return $this->_models;
   }
 
   /**

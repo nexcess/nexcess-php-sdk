@@ -1,13 +1,18 @@
 <?php
 /**
  * @package Nexcess-SDK
- * @license TBD
- * @copyright 2018 Nexcess.net
+ * @license https://opensource.org/licenses/MIT
+ * @copyright 2018 Nexcess.net, LLC
  */
 
 declare(strict_types  = 1);
 
 namespace Nexcess\Sdk\Model;
+
+use Nexcess\Sdk\ {
+  Model\Collection,
+  Model\SshKey
+};
 
 /**
  * Cloud Server (virtual machine).
@@ -15,26 +20,27 @@ namespace Nexcess\Sdk\Model;
 class CloudServer extends ServiceModel {
 
   /** {@inheritDoc} */
-  const NAME = 'CloudServer';
+  const PROPERTY_ALIASES = ['id' => 'service_id'];
 
-  /** {@inheritDoc} */
-  const PROPERTY_ALIASES = [
-    'cloud_id' => 'location',
-    'hostname' => 'host',
+  const PROPERTY_COLLAPSED = [
+    'cloud' => 'cloud_id',
+    'package' => 'package_id',
+    'ssh_keys' => 'ssh_key_ids',
+    'template' => 'template_id'
   ];
 
   /** {@inheritDoc} */
   const PROPERTY_NAMES = [
-    'id',
-    'cloud_id',
+    'service_id',
+    'cloud',
     'hostname',
-    'package_id',
+    'package',
     'ssh_keys',
-    'template_id'
+    'template'
   ];
 
   /** {@inheritDoc} */
-  const TYPE = 'virt-guest';
+  const SERVICE_TYPE = 'virt-guest';
 
   /**
    * Reboots the cloud server.
@@ -68,6 +74,11 @@ class CloudServer extends ServiceModel {
 
     return $this;
   }
+
+  /**
+   *
+   */
+  public function setSshKeys($value) {}
 
   /**
    * Starts (powers on) the cloud server.

@@ -1,8 +1,8 @@
 <?php
 /**
  * @package Nexcess-SDK
- * @license TBD
- * @copyright 2018 Nexcess.net
+ * @license https://opensource.org/licenses/MIT
+ * @copyright 2018 Nexcess.net, LLC
  */
 
 declare(strict_types  = 1);
@@ -34,7 +34,7 @@ class Util {
   }
 
   /**
-   * Merges arrays recursively, but never merges non-array values.
+   * Merges arrays recursively, but replaces (never merges) non-array values.
    * @see https://gist.github.com/adrian-enspired/e766b37334130ea04eaf
    *
    * @param array $subject The subject array
@@ -59,5 +59,38 @@ class Util {
       }
     }
     return $subject;
+  }
+
+  /**
+   * Reads and decodes a .json file.
+   *
+   * @param string $filepath Path to json file to read
+   * @return array The parsed json
+   * @throws SdkException If file cannot be read, or parsing fails
+   */
+  public static function readJsonFile(string $filepath) : array {
+    if (! is_readable($filepath)) {
+      throw new SdkException(
+        SdkException::FILE_NOT_READABLE,
+        ['filepath' => $filepath]
+      );
+    }
+
+    $data = json_decode(file_get_contents($filepath), true);
+    if (json_last_error() !== JSON_ERROR_NONE) {
+      throw new SdkException(
+        SdkException::JSON_DECODE_FAILURE,
+        ['error' => json_last_error_msg()]
+      );
+    }
+
+    if (! is_array($data)) {
+      throw new SdkException(
+        SdkException::INVALID_JSON_DATA,
+        ['invalid' => $data]
+      );
+    }
+
+    return $data;
   }
 }

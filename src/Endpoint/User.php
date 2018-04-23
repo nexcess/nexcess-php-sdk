@@ -2,8 +2,8 @@
 /**
  * @package Nexcess-SDK
  * @subpackage User
- * @license TBD
- * @copyright 2018 Nexcess.net
+ * @license https://opensource.org/licenses/MIT
+ * @copyright 2018 Nexcess.net, LLC
  */
 
 declare(strict_types  = 1);

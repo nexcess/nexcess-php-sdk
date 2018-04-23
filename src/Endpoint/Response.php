@@ -1,20 +1,20 @@
 <?php
 /**
  * @package Nexcess-SDK
- * @license TBD
- * @copyright 2018 Nexcess.net
+ * @license https://opensource.org/licenses/MIT
+ * @copyright 2018 Nexcess.net, LLC
  */
 
 declare(strict_types  = 1);
 
-namespace Nexcess\Sdk;
+namespace Nexcess\Sdk\Endpoint;
 
 use JsonSerializable;
 
 use GuzzleHttp\Psr7\Response as GuzzleResponse;
 
 use Nexcess\Sdk\ {
-  Endpoint,
+  Endpoint\Endpoint,
   Exception\SdkException
 };
 
@@ -26,7 +26,7 @@ use Nexcess\Sdk\ {
 class Response implements JsonSerializable {
 
   /** @var GuzzleResponse The guzzle psr-7 Response object. */
-  private $_guzzle_response;
+  protected $_guzzle_response;
 
   /**
    * @param GuzzleResponse The guzzle response object to wrap
@@ -55,7 +55,7 @@ class Response implements JsonSerializable {
    * Proxies GuzzleResponse::getBody
    * @see http://docs.guzzlephp.org/en/stable/psr7.html#responses
    */
-  public function getBody() : array {
+  public function getBody() {
     return $this->_guzzle_response->getBody();
   }
 
@@ -113,9 +113,10 @@ class Response implements JsonSerializable {
    */
   public function toArray() : array {
     $content_type = $this->_guzzle_response->getHeader('Content-type');
+    $body = (string) $this->_guzzle_response->getBody();
 
     return (reset($content_type) === 'application/json') ?
-      json_decode((string) $this->_guzzle_response->getBody(), true) :
-      ['response' => $this->_guzzle_response->getBody()];
+      json_decode($body, true) :
+      ['response' => $body];
   }
 }

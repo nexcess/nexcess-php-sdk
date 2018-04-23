@@ -1,9 +1,8 @@
 <?php
 /**
  * @package Nexcess-SDK
- * @subpackage User
- * @license TBD
- * @copyright 2018 Nexcess.net
+ * @license https://opensource.org/licenses/MIT
+ * @copyright 2018 Nexcess.net, LLC
  */
 
 declare(strict_types  = 1);
@@ -12,7 +11,7 @@ namespace Nexcess\Sdk\Endpoint;
 
 use Nexcess\Sdk\ {
   Endpoint\CrudEndpoint,
-  Response
+  Model\ApiToken as ApiTokenModel
 };
 
 /**
@@ -21,11 +20,11 @@ use Nexcess\Sdk\ {
 class ApiToken extends CrudEndpoint {
 
   /** {@inheritDoc} */
-  const ADD_VALUE_MAP = ['name' => ''];
-
-  /** {@inheritDoc} */
-  const EDIT_VALUE_MAP = ['name' => ''];
+  const PROPERTY_NAMES = ['service_id', 'name'];
 
   /** {@inheritDoc} */
   const ENDPOINT = 'api-token';
+
+  /** {@inheritDoc} */
+  const MODEL_NAME = ApiTokenModel::class;
 }

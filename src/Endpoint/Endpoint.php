@@ -1,8 +1,8 @@
 <?php
 /**
  * @package Nexcess-SDK
- * @license TBD
- * @copyright 2018 Nexcess.net
+ * @license https://opensource.org/licenses/MIT
+ * @copyright 2018 Nexcess.net, LLC
  */
 
 declare(strict_types  = 1);
@@ -21,11 +21,12 @@ use GuzzleHttp\ {
 };
 
 use Nexcess\Sdk\ {
+  Client,
+  Endpoint\Response,
   Exception\ApiException,
   Exception\SdkException,
   Model\Collection,
   Model\Model,
-  Response,
   Util\Config,
   Util\Util
 };
@@ -42,13 +43,13 @@ abstract class Endpoint {
   const MODEL_NAME = '';
 
   /** @var Guzzle The Guzzle http client. */
-  private $_client;
+  protected $_client;
 
   /** @var Config Client configuration object. */
   protected $_config;
 
   /** @var array Map of last fetched property:value pairs. */
-  protected $_stored;
+  protected $_retrieved = [];
 
   public function __construct(Client $client, Config $config) {
     $this->_client = $client;
@@ -67,6 +68,25 @@ abstract class Endpoint {
   }
 
   /**
+   * Gets cached data retrieved from API.
+   *
+   * Note, this method can only be used when the "debug" options is set.
+   *
+   * @return array Map of last fetched property:value pairs
+   * @throws SdkException If debug mode is not enabled
+   */
+  public function getRetrievedData() : array {
+    if (! $this->_config->get('debug')) {
+      throw new SdkException(
+        SdkException::DEBUG_NOT_ENABLED,
+        ['method' => __METHOD__]
+      );
+    }
+
+    return $this->_retrieved;
+  }
+
+  /**
    * Checks whether given model is in sync with stored data, or with the API.
    *
    * @param Model $model The model to check
@@ -77,14 +97,14 @@ abstract class Endpoint {
   public function isInSync(Model $model, bool $hard = false) : bool {
     $data = $model->toArray();
     $id = $model->offsetGet('id');
-    if ($id === null || empty($this->_stored[$id])) {
+    if ($id === null || empty($this->_retrieved[$id])) {
       return false;
     }
 
     return empty(
       $this->_diff(
         $model->toArray(),
-        ($hard) ? $this->_read($id) : $this->_stored[$id]
+        ($hard) ? $this->_retrieve($id) : $this->_retrieved[$id]
       )
     );
   }
@@ -93,10 +113,10 @@ abstract class Endpoint {
    * Fetches a paginated list of items from the API.
    *
    * @param array $filter Pagination and Model-specific filter options
-   * @return array API response data
+   * @return Collection Models returned from the API
    * @throws ApiException If API request fails
    */
-  public function list(array $filter = []) : array {
+  public function list(array $filter = []) : Collection {
     $response = $this->_client->request(
       'GET',
       static::ENDPOINT . "?{$this->_buildListQuery($filter)}"
@@ -116,11 +136,10 @@ abstract class Endpoint {
    * Fetches an item from the API.
    *
    * @param int $id Item id
-   * @return Model The model read from the API
-   * @throws ModelException If the id is invalid
+   * @return Model A new model read from the API
    * @throws ApiException If the API request fails (e.g., item doesn't exist)
    */
-  public function read(int $id) : Model {
+  public function retrieve(int $id) : Model {
     $this->sync($this->getModel($id), true);
   }
 
@@ -128,18 +147,20 @@ abstract class Endpoint {
    * Syncs a Model with most recently fetched data from the API,
    * or re-fetches the item from the API.
    *
+   * Note, this OVERWRITES the model's state with the response from the API;
+   * it *does not* update the API with the model's current state.
+   * To save changes to an updatable model, @see CrudEndpoint::update
+   *
    * @param bool $hard Force hard sync with API?
    * @return Endpoint $this
    */
   public function sync(Model $model, bool $hard = false) : Model {
-    $id = $model->getOffset('id');
-
-    if ($hard || empty($this->_stored[$id])) {
-      $this->_stored[$id] = $this->_read($id);
-    }
-
-    $model->sync($this->_stored[$id], true);
-    return $model;
+    $id = $model->offsetGet('id');
+    return $model->sync(
+      ($hard || empty($this->_retrieved[$id])) ?
+        $this->_retrieve($id) :
+        $this->_retrieved[$id]
+    );
   }
 
   /**
@@ -149,18 +170,47 @@ abstract class Endpoint {
    * @return string A http query string
    */
   protected function _buildListQuery(array $filter) : string {
+    $page_size = $this->_config->get('list.pageSize');
+    if ($page_size) {
+      $filter['pageSize'] = $filter['pageSize'] ?? $page_size;
+    }
+
     return http_build_query($filter + static::BASE_LIST_FILTER);
+  }
+
+  /**
+   * Checks that a provided model is of the correct type for this endpoint.
+   *
+   * @param Model $model The model to check
+   * @throws ApiException If the model is of the wrong class
+   */
+  protected function _checkModelType(Model $model) {
+    $fqcn = static::MODEL_NAME;
+    if (! $model instanceof $fqcn) {
+      throw new ApiException(
+        ApiException::WRONG_MODEL_FOR_ENDPOINT,
+        [
+          'endpoint' => static::class,
+          'model' => $fqcn,
+          'type' => get_class($model)
+        ]
+      );
+    }
   }
 
   /**
    * Reads an item from the API and returns its response data as an array.
    *
    * @param int $id Item id
-   * @return array API response data
+   * @return array Data returned from API request
    * @throws ApiException If API request fails
    */
-  protected function _read(int $id) : array {
-    return $this->_client
-        ->request('GET', static::ENDPOINT . "/{$id}")
-        ->toArray();
+  protected function _retrieve(int $id) : array {
+    $data = $this->_client
+      ->request('GET', static::ENDPOINT . "/{$id}")
+      ->toArray();
+
+    $this->_retrieved[$id] = $data;
+    return $data;
+  }
 }

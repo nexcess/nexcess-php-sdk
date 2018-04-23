@@ -1,8 +1,8 @@
 <?php
 /**
  * @package Nexcess-SDK
- * @license TBD
- * @copyright 2018 Nexcess.net
+ * @license https://opensource.org/licenses/MIT
+ * @copyright 2018 Nexcess.net, LLC
  */
 
 declare(strict_types  = 1);
@@ -10,6 +10,7 @@ declare(strict_types  = 1);
 namespace Nexcess\Sdk\Model;
 
 use Nexcess\Sdk\ {
+  Endpoint\Response,
   Exception\ModelException,
   Model\CrudModel
 };

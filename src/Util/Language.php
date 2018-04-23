@@ -1,8 +1,8 @@
 <?php
 /**
  * @package Nexcess-SDK
- * @license TBD
- * @copyright 2018 Nexcess.net
+ * @license https://opensource.org/licenses/MIT
+ * @copyright 2018 Nexcess.net, LLC
  */
 
 declare(strict_types  = 1);
@@ -11,7 +11,8 @@ namespace Nexcess\Sdk\Util;
 
 use Nexcess\Sdk\ {
   Client,
-  Exception\SdkException
+  Exception\SdkException,
+  Util\Util
 };
 
 /**
@@ -20,14 +21,24 @@ use Nexcess\Sdk\ {
  */
 class Language {
 
+  /** @var string English, United States. */
+  const EN_US = 'en_US';
+
+  /** @var string[] List of supported languages, indexed by locale. */
+  const SUPPORTED_LANGUAGES = [
+    self::EN_US => 'English (United States)'
+  ];
+
   /** @var string Default language to translate if none specified. */
-  const DEFAULT_LANGUAGE = 'en_US';
+  const DEFAULT_LANGUAGE = self::EN_US;
 
   /** @var Language Default instance. */
   protected static $_instance;
 
   /**
    * Makes the default instance available globally.
+   *
+   * @return Language
    */
   public static function getInstance() : Language {
     if (! self::$_instance) {
@@ -35,6 +46,15 @@ class Language {
     }
 
     return self::$_instance;
+  }
+
+  /**
+   * Gets a list of natively supported languages, indexed by locale string.
+   *
+   * @return string[]
+   */
+  public static function getSupportedLanguages() : array {
+    return self::SUPPORTED_LANGUAGES;
   }
 
   /**
@@ -61,6 +81,9 @@ class Language {
     self::$_instance = new self($language, ...$paths);
   }
 
+  /** @var string Current language. */
+  protected $_language = '';
+
   /** @var array Map of translations in current language. */
   protected $_translations = [];
 
@@ -69,10 +92,11 @@ class Language {
    * @param string[] $paths List of filepaths to find language files on
    */
   public function __construct(string $language, string ...$paths) {
-    array_unshift($paths, __DIR__ . '/lang');
+    $this->_language = $language;
 
+    array_unshift($paths, __DIR__ . '/lang');
     foreach ($paths as $path) {
-      $this->addFile("{$path}/{$language}.json");
+      $this->addFile("{$path}/{$this->_language}.json");
     }
   }
 
@@ -86,52 +110,28 @@ class Language {
    * @throws SdkException If file cannot be read, or parsing fails
    */
   public function addFile(string $filepath) {
-    $translations = $this->_readJsonFile($filepath);
+    $translations = Util::readJsonFile($filepath);
     $this->_translations = $translations + $this->_translations;
 
     return $this;
   }
 
   /**
-   * Gets a translation from the default instance.
+   * Gets the language of these translations.
+   *
+   * @return string Locale string
+   */
+  public function getLanguage() : string {
+    return $this->_language;
+  }
+
+  /**
+   * Gets a translation.
    *
    * @param string $key Identifier for the desired translation
    * @return string Translation on success; unchanged key otherwise
    */
   public function getTranslation(string $key) : string {
     return $this->_translations[$key] ?? $key;
-  }
-
-  /**
-   * Reads and decodes a .json file.
-   *
-   * @param string $filepath Path to json file to read
-   * @return array The parsed json
-   * @throws SdkException If file cannot be read, or parsing fails
-   */
-  protected function _readJsonFile(string $filepath) : array {
-    if (! is_readable($filepath)) {
-      throw new SdkException(
-        SdkException::FILE_NOT_READABLE,
-        ['filepath' => $filepath]
-      );
-    }
-
-    $data = json_decode(file_get_contents($filepath), true);
-    if (json_last_error() !== JSON_ERROR_NONE) {
-      throw new SdkException(
-        SdkException::JSON_DECODE_FAILURE,
-        ['error' => json_last_error_msg()]
-      );
-    }
-
-    if (! is_array($data)) {
-      throw new SdkException(
-        SdkException::INVALID_JSON_DATA,
-        ['invalid' => $data]
-      );
-    }
-
-    return $data;
   }
 }

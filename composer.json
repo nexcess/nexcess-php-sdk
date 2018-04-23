@@ -4,7 +4,7 @@
   "description": "SDK for interacting with the nexcess.net / thermo.io client APIs",
   "type": "library",
   "homepage": "https://github.com/nexcess/nexcess-sdk",
-  "license": "",
+  "license": "MIT",
   "support": {},
   "require": {
     "php": "^7.0",
@@ -14,11 +14,17 @@
   "autoload": {
     "psr-4": { "Nexcess\\Sdk\\": "src/" }
   },
-  "require-dev": {},
+  "require-dev": {
+    "phpunit/phpunit": "^5.0",
+    "phan/phan": "0.8.11",
+    "nocworx/phpcs": "^1.4"
+  },
   "autoload-dev": {
     "psr-4": { "Nexcess\\Sdk\\Tests\\": "tests/" }
   },
   "scripts": {
-    "tests:unit": "vendor/bin/phpunit --bootstrap tests/bootstrap.php tests/unit"
+    "tests:unit": "vendor/bin/phpunit",
+    "tests:phan": "vendor/bin/phan",
+    "tests:phpcs": "vendor/bin/phpcs --standard=NocWorx"
   }
 }

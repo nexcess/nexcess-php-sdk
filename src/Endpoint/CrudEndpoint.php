@@ -1,8 +1,8 @@
 <?php
 /**
  * @package Nexcess-SDK
- * @license TBD
- * @copyright 2018 Nexcess.net
+ * @license https://opensource.org/licenses/MIT
+ * @copyright 2018 Nexcess.net, LLC
  */
 
 declare(strict_types  = 1);
@@ -11,6 +11,8 @@ namespace Nexcess\Sdk\Endpoint;
 
 use Nexcess\Sdk\ {
   Endpoint\Endpoint,
+  Exception\ApiException,
+  Model\Model,
   Response
 };
 
@@ -29,8 +31,7 @@ abstract class CrudEndpoint extends Endpoint {
   public function create(array $data) : Model {
     $model = static::MODEL_NAME;
 
-    return $this->sync(
-      new $model(),
+    return (new $model())->sync(
       $this->_client
         ->request('POST', static::ENDPOINT, ['json' => $data])
         ->toArray()
@@ -52,13 +53,11 @@ abstract class CrudEndpoint extends Endpoint {
       throw new ApiException(ApiException::MISSING_ID, ['model' => $fqcn]);
     }
 
-    $this->_request('DELETE', static::ENDPOINT . "/{$id}");
+    $this->_client->request('DELETE', static::ENDPOINT . "/{$id}");
   }
 
   /**
    * Updates an existing item.
-   *
-   * Implementing class must define EDIT_VALUE_MAP as a name:default value map.
    *
    * @param int $id Item id
    * @param array|null $data Map of properties:values to set before update
@@ -66,11 +65,13 @@ abstract class CrudEndpoint extends Endpoint {
    * @throws ApiException If request fails
    */
   public function update(Model $model, array $data = null) : Model {
+    $this->_checkModelType($model);
+
     $id = $model->offsetGet('id');
     if (! $id) {
       throw new ApiException(
         ApiException::MISSING_ID,
-        ['model' => static::NAME]
+        ['model' => static::MODEL_NAME]
       );
     }
 
@@ -81,7 +82,7 @@ abstract class CrudEndpoint extends Endpoint {
     $update = empty($this->_stored[$id]) ?
       $model->toArray() :
       array_udiff_assoc(
-        $model->toArray(),
+        $model->toArray(true),
         $this->_stored[$id],
         function ($value, $stored) { return ($value === $stored) ? 0 : 1; }
       );

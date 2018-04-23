@@ -1,8 +1,8 @@
 <?php
 /**
  * @package Nexcess-SDK
- * @license TBD
- * @copyright 2018 Nexcess.net
+ * @license https://opensource.org/licenses/MIT
+ * @copyright 2018 Nexcess.net, LLC
  */
 
 declare(strict_types  = 1);
@@ -19,8 +19,8 @@ use Nexcess\Sdk\ {
  */
 class Config {
 
-  /** @var string Default language/locale. */
-  const DEFAULT_LANGUAGE = Language::DEFAULT_LANGUAGE;
+  /** @var array Map of default options. */
+  const DEFAULT_OPTIONS = [];
 
   /** @var array Config options. */
   private $_options = [];
@@ -62,8 +62,7 @@ class Config {
    * @return mixed Option value on success; null otherwise
    */
   public function getDefault(string $name) {
-    $const = 'static::DEFAULT_' . strtoupper(str_replace('.', '_', $name));
-    return defined($const) ? constant($const) : null;
+    return Util::dig(static::DEFAULT_OPTIONS, $name);
   }
 
   /**

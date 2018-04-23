@@ -1,8 +1,8 @@
 <?php
 /**
  * @package Nexcess-SDK
- * @license TBD
- * @copyright 2018 Nexcess.net
+ * @license https://opensource.org/licenses/MIT
+ * @copyright 2018 Nexcess.net, LLC
  */
 
 declare(strict_types  = 1);
@@ -23,17 +23,21 @@ abstract class ServiceEndpoint extends CrudEndpoint {
   const ENDPOINT = 'service';
 
   /** @var string Service type (must be overridden by implementing class). */
-  const TYPE = '';
+  const SERVICE_TYPE = '';
+
+  /** {@inheritDoc} */
+  const PROPERTY_ALIASES = ['id' => 'service_id'];
 
   /**
    * Requests a service cancellation.
    *
-   * @param int $id Service id to cancel
+   * @param Model $model Service model to cancel
    * @param array $survey Cancellation survey
-   * @return array API response data
+   * @return Model
    * @throws ApiException If request fails
    */
-  public function cancel(int $id, array $survey) : Response {
+  public function cancel(Model $model, $survey) : Model {
+    $this->_checkModelType($model);
     throw new SdkException(SdkException::NOT_IMPLEMENTED);
   }
 
@@ -42,6 +46,6 @@ abstract class ServiceEndpoint extends CrudEndpoint {
    * Overridden to set service type on list queries.
    */
   protected function _buildListQuery(array $filter) : string {
-    return parent::_buildListQuery(['type' => static::TYPE] + $filter);
+    return parent::_buildListQuery(['type' => static::SERVICE_TYPE] + $filter);
   }
 }

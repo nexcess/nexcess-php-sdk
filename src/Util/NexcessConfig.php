@@ -1,8 +1,8 @@
 <?php
 /**
  * @package Nexcess-SDK
- * @license TBD
- * @copyright 2018 Nexcess.net
+ * @license https://opensource.org/licenses/MIT
+ * @copyright 2018 Nexcess.net, LLC
  */
 
 declare(strict_types  = 1);
@@ -14,6 +14,6 @@ namespace Nexcess\Sdk\Util;
  */
 class NexcessConfig extends Config {
 
-  /** @var string Base URL for Nexcess API. */
-  const DEFAULT_BASE_URI = 'https://portal.nexcess.net/';
+  /** {@inheritDoc} */
+  const DEFAULT_OPTIONS = ['base_uri' => 'https://portal.nexcess.net/'];
 }
