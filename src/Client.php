@@ -20,11 +20,12 @@ use GuzzleHttp\ {
 };
 
 use Nexcess\Sdk\ {
-  Endpoint\Endpoint,
+  Endpoint\Readable as Endpoint,
+  Endpoint\ReadWritable,
   Endpoint\Response,
   Exception\ApiException,
   Exception\SdkException,
-  Model\Model,
+  Model\Modelable as Model,
   Util\Config,
   Util\Language,
   Util\Util
@@ -125,28 +126,45 @@ class Client {
    */
   public function __call($name, $args) {
     $endpoint = $this->getEndpoint($name);
-    $model = $endpoint::MODEL_NAME;
     $arg = array_shift($args);
 
     if ($arg === null) {
       return $endpoint->list();
     }
 
-    if (is_array($arg)) {
-      return $endpoint->create($arg);
-    }
-
-    if ($arg instanceof Model) {
-      return $endpoint->update($arg);
-    }
-
     if (is_int($arg)) {
       return $endpoint->retrieve($arg);
     }
 
+    if (is_array($arg)) {
+      if (! $endpoint instanceof ReadWritable) {
+        throw new ApiException(
+          ApiException::ENDPOINT_NOT_WRITABLE,
+          ['endpoint' => $name]
+        );
+      }
+
+      return $endpoint->create($arg);
+    }
+
+    if ($arg instanceof Model) {
+      if (! $endpoint instanceof ReadWritable) {
+        throw new ApiException(
+          ApiException::ENDPOINT_NOT_WRITABLE,
+          ['endpoint' => $name]
+        );
+      }
+
+      return $endpoint->update($arg);
+    }
+
     throw new SdkException(
-      SdkException::INVALID_RETRIEVE,
-      ['model' => $model, 'type' => gettype($arg)]
+      SdkException::WRONG_CALL_ARG,
+      [
+        'class' => __CLASS__,
+        'expected' => 'null|int|array|Model',
+        'type' => is_object($arg) ? get_class($arg) : gettype($arg)
+      ]
     );
   }
 
@@ -253,8 +271,8 @@ class Client {
       }
       throw new ApiException(
         $code,
-        ['method' => $method, 'endpoint' => $endpoint],
-        $e
+        $e,
+        ['method' => $method, 'endpoint' => $endpoint]
       );
 
     } catch (ServerException $e) {
@@ -268,10 +286,11 @@ class Client {
 
     } finally {
       if ($request_key !== null) {
-        $this->_request_log[$request_key]['response'] = $response ??
-          ($e instanceof RequestException) ?
+        $this->_request_log[$request_key]['response'] = $response ?? (
+          (isset($e) && $e instanceof RequestException) ?
             new Response($e->getResponse()) :
-            null;
+            null
+        );
       }
     }
   }
@@ -314,6 +333,34 @@ class Client {
     }
 
     return $this->_request_log;
+  }
+
+  /**
+   * Blocks until the provided callback returns true.
+   *
+   * The callback signature is like
+   *  bool $until(Client $client) Returns true when done waiting
+   *
+   * @param callback $until The callback to wait for
+   * @throws SdkException If the callback errors
+   */
+  public function wait(callable $until) {
+    $config = $this->_config;
+    $wait = $config->get('wait.interval') ?? self::DEFAULT_WAIT_INTERVAL;
+    $timeout = $config->get('wait.timeout') ?? self::DEFAULT_WAIT_TIMEOUT;
+    $deadline = time() + $timeout;
+
+    try {
+      while ($until($this) !== true) {
+        if (time() > $deadline) {
+          throw new SdkException(SdkException::WAIT_TIMEOUT_EXCEEDED);
+        }
+
+        sleep($wait);
+      }
+    } catch (Throwable $e) {
+      throw new SdkException(SdkException::CALLBACK_ERROR, $e);
+    }
   }
 
   /**

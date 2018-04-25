@@ -10,35 +10,11 @@ declare(strict_types  = 1);
 namespace Nexcess\Sdk\Model;
 
 use Nexcess\Sdk\ {
-  Endpoint\Response,
-  Exception\ModelException,
-  Model\CrudModel
+  Model\Model
 };
 
-abstract class ServiceModel extends CrudModel {
+abstract class ServiceModel extends Model {
 
   /** {@inheritDoc} */
-  const ENDPOINT = 'service';
-
-  /** @var string Service type. */
-  const TYPE = '';
-
-  /**
-   * Requests a service cancellation.
-   *
-   * @param int $id Service id to cancel
-   * @param array $survey Cancellation survey
-   * @return array API response data
-   * @throws ApiException If request fails
-   */
-  public function cancel(int $id, array $survey) : Response {
-    throw new SdkException(SdkException::NOT_IMPLEMENTED);
-  }
-
-  /**
-   * Overridden to set service type on list queries.
-   */
-  protected function _buildListQuery(array $filter) : string {
-    return parent::_buildListQuery(['type' => static::TYPE] + $filter);
-  }
+  const PROPERTY_ALIASES = ['id' => 'service_id'];
 }

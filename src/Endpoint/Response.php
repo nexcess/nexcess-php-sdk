@@ -14,7 +14,7 @@ use JsonSerializable;
 use GuzzleHttp\Psr7\Response as GuzzleResponse;
 
 use Nexcess\Sdk\ {
-  Endpoint\Endpoint,
+  Endpoint\Readable as Endpoint,
   Exception\SdkException
 };
 

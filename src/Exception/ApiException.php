@@ -45,6 +45,12 @@ class ApiException extends Exception {
   /** @var int Data submitted to endpoint has errors (i.e., 422 response). */
   const UNPROCESSABLE_ENTITY = 10;
 
+  /** @var int Attempt to create/update on a read-only endpoint. */
+  const ENDPOINT_NOT_WRITABLE = 11;
+
+  /** @var int Invalid argument pass to __call(). */
+  const WRONG_CALL_ARG = 12;
+
   /** {@inheritDoc} */
   const INFO = [
     self::CANNOT_CONNECT => ['message' => 'cannot_connect'],
@@ -57,6 +63,8 @@ class ApiException extends Exception {
     self::UNAUTHORIZED => ['message' => 'unauthorized'],
     self::FORBIDDEN => ['message' => 'forbidden'],
     self::NOT_FOUND => ['message' => 'not_found'],
-    self::UNPROCESSABLE_ENTITY => ['message' => 'unprocessable_entity']
+    self::UNPROCESSABLE_ENTITY => ['message' => 'unprocessable_entity'],
+    self::ENDPOINT_NOT_WRITABLE => ['message' => 'endpoint_not_writable'],
+    self::WRONG_CALL_ARG => ['message' => 'wrong_call_arg']
   ];
 }

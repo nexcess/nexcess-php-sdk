@@ -10,14 +10,15 @@ declare(strict_types  = 1);
 namespace Nexcess\Sdk\Endpoint;
 
 use Nexcess\Sdk\ {
-  Endpoint\Endpoint,
-  Response
+  Endpoint\ReadWrite,
+  Exception\ApiException,
+  Model\Modelable as Model
 };
 
 /**
- * Represents an API endpoint for items with create/read/update/delete actions.
+ * Represents an API endpoint for client services.
  */
-abstract class ServiceEndpoint extends CrudEndpoint {
+abstract class Service extends ReadWrite {
 
   /** {@inheritDoc} */
   const ENDPOINT = 'service';
@@ -36,7 +37,7 @@ abstract class ServiceEndpoint extends CrudEndpoint {
    * @return Model
    * @throws ApiException If request fails
    */
-  public function cancel(Model $model, $survey) : Model {
+  public function cancel(Model $model, array $survey) : Model {
     $this->_checkModelType($model);
     throw new SdkException(SdkException::NOT_IMPLEMENTED);
   }

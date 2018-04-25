@@ -10,23 +10,20 @@ declare(strict_types  = 1);
 namespace Nexcess\Sdk\Endpoint;
 
 use Nexcess\Sdk\ {
-  Endpoint\Endpoint,
+  Endpoint\Read,
+  Endpoint\ReadWritable,
   Exception\ApiException,
-  Model\Model,
+  Model\Modelable as Model,
   Response
 };
 
 /**
- * Represents an API endpoint for items with create/read/update/delete actions.
+ * Represents a writable API endpoint.
  */
-abstract class CrudEndpoint extends Endpoint {
+abstract class ReadWrite extends Read implements ReadWritable {
 
   /**
-   * Creates a new item.
-   *
-   * @param array $data Map of values for new item
-   * @return Model
-   * @throws ApiException If request fails
+   * {@inheritDoc}
    */
   public function create(array $data) : Model {
     $model = static::MODEL_NAME;
@@ -39,10 +36,7 @@ abstract class CrudEndpoint extends Endpoint {
   }
 
   /**
-   * Deletes an existing item.
-   *
-   * @param Model|int $id Model or item id to delete
-   * @throws ApiException If request fails
+   * {@inheritDoc}
    */
   public function delete($model_or_id) {
     $fqcn = static::MODEL_NAME;
@@ -57,14 +51,9 @@ abstract class CrudEndpoint extends Endpoint {
   }
 
   /**
-   * Updates an existing item.
-   *
-   * @param int $id Item id
-   * @param array|null $data Map of properties:values to set before update
-   * @return Model The updated Model
-   * @throws ApiException If request fails
+   * {@inheritDoc}
    */
-  public function update(Model $model, array $data = null) : Model {
+  public function update(Model $model, array $data = []) : Model {
     $this->_checkModelType($model);
 
     $id = $model->offsetGet('id');
@@ -94,6 +83,7 @@ abstract class CrudEndpoint extends Endpoint {
           ->toArray()
       );
     }
+
     return $model;
   }
 }

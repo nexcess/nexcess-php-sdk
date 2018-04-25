@@ -17,13 +17,14 @@ use ArrayAccess,
 use Nexcess\Sdk\ {
   Exception\ModelException,
   Exception\SdkException,
-  Model\Model
+  Model\Collector,
+  Model\Modelable as Model
 };
 
 /**
  * Container for a collection of Models.
  */
-class Collection implements Iterator, JsonSerializable {
+class Collection implements Collector {
 
   /** @var Model[] List of models. */
   protected $_models = [];
@@ -40,13 +41,9 @@ class Collection implements Iterator, JsonSerializable {
   }
 
   /**
-   * Adds a model to the collection.
-   *
-   * @param Model $model
-   * @return Collection $this
-   * @throws ModelException If the model is the wrong class for the collection
+   * {@inheritDoc}
    */
-  public function add(Model $model) : Collection {
+  public function add(Model $model) : Collector {
     if (! $model instanceof $this->_of) {
       throw new ModelException(
         ModelException::WRONG_MODEL_FOR_COLLECTION,
@@ -78,11 +75,7 @@ class Collection implements Iterator, JsonSerializable {
   }
 
   /**
-   * Iterates over the collection, passing each model to a callback function.
-   *
-   * @param callable $function The callback to invoke
-   * @return array List of return values from the callback function
-   * @throws SdkException If the callback function throws
+   * {@inheritDoc}
    */
   public function each(callable $function) : array {
     $results = [];
@@ -99,17 +92,9 @@ class Collection implements Iterator, JsonSerializable {
   }
 
   /**
-   * Filters items and builds a new collection.
-   *
-   * Criteria can be a property:value map or a callback function.
-   * Callback signature is like
-   *  bool $filter(Model $item) Return true to take item, false to discard
-   *
-   * @param array|callable $filter Map of property:value|callback pairs
-   * @return Collection A new collection of zero or more matching items
-   * @throws SdkException If filter callback errors
+   * {@inheritDoc}
    */
-  public function filter($filter) {
+  public function filter($filter) : Collector {
     throw new SdkException(
       SdkException::NOT_IMPLEMENTED,
       ['class' => __CLASS__, 'method' => __FUNCTION__]
@@ -117,18 +102,7 @@ class Collection implements Iterator, JsonSerializable {
   }
 
   /**
-   * Finds an item in this collection that meet given criteria.
-   *
-   * Criteria can be a property:value map or a callback function.
-   * Callback signature is like
-   *  bool $criteria(Model $item) Return true to match item; false to discard
-   *
-   * Note, this method returns zero or one items.
-   * If you want a list of items, @see Collection::filter
-   *
-   * @param array|callable $criteria Map of property:value|callback pairs
-   * @return Model|null A matching item, if any found; null otherwise
-   * @throws SdkException If criteria callback errors
+   * {@inheritDoc}
    */
   public function find($criteria) {
     throw new SdkException(
@@ -138,9 +112,7 @@ class Collection implements Iterator, JsonSerializable {
   }
 
   /**
-   * Gets list of ids of items in this collection.
-   *
-   * @return int[]
+   * {@inheritDoc}
    */
   public function getIds() : array {
     return $this->each(function ($item) { return $item->offsetGet('id'); });
@@ -168,16 +140,9 @@ class Collection implements Iterator, JsonSerializable {
   }
 
   /**
-   * Builds a new collection by applying a callback function to each item.
-   *
-   * This method duplicates items.
-   * If you want to operate on items "in place," @see Collection::each
-   *
-   * @param callable $function The callback to invoke
-   * @return Collection
-   * @throws SdkException If the callback function throws
+   * {@inheritDoc}
    */
-  public function map(callable $function) : Collection {
+  public function map(callable $function) : Collector {
     throw new SdkException(
       SdkException::NOT_IMPLEMENTED,
       ['class' => __CLASS__, 'method' => __FUNCTION__]
@@ -185,11 +150,7 @@ class Collection implements Iterator, JsonSerializable {
   }
 
   /**
-   * Removes a model from the collection.
-   *
-   * @param Model|int $id The Model or Model id to remove
-   * @return Model The removed Model
-   * @throws ModelException If the model does not exist in the collection
+   * {@inheritDoc}
    */
   public function remove($model_or_id) : Model {
     $id = $model_or_id;
@@ -216,14 +177,9 @@ class Collection implements Iterator, JsonSerializable {
   }
 
   /**
-   * Sorts the collection by property value, optionally in descending order.
-   *
-   * @param string $property Name of property to sort by
-   * @param bool $desc Sort in descending order?
-   * @return Collection $this
-   * @throws ModelException If property does not exist
+   * {@inheritDoc}
    */
-  public function sort(string $property, bool $desc = false) : Collection {
+  public function sort(string $property, bool $desc = false) : Collector {
     uasort(
       $this->_models,
       function ($a, $b) use ($desc) {
@@ -237,9 +193,7 @@ class Collection implements Iterator, JsonSerializable {
   }
 
   /**
-   * Gets the collection as an array.
-   *
-   * @return array
+   * {@inheritDoc}
    */
   public function toArray() : array {
     return $this->_models;

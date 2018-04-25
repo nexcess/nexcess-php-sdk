@@ -9,17 +9,15 @@ declare(strict_types  = 1);
 
 namespace Nexcess\Sdk\Model;
 
-use ArrayAccess,
-  JsonSerializable,
-  Throwable;
+use Throwable;
 
 use Nexcess\Sdk\ {
-  Client,
   Exception\ModelException,
-  Util\Config
+  Model\Collector as Collection,
+  Model\Modelable
 };
 
-abstract class Model implements ArrayAccess, JsonSerializable {
+abstract class Model implements Modelable {
 
   /** @var string[] Map of property aliases:names. */
   const PROPERTY_ALIASES = [];
@@ -40,13 +38,9 @@ abstract class Model implements ArrayAccess, JsonSerializable {
   protected $_values = [];
 
   /**
-   * Makes a new Model instance and populates it with given data.
-   *
-   * @param array $data Map of property:value pairs to assign
-   * @return Model On success
-   * @throws ModelException On error
+   * {@inheritDoc}
    */
-  public static function fromArray(array $data) : Model {
+  public static function fromArray(array $data) : Modelable {
     $model = new static();
 
     foreach ($data as $property => $value) {
@@ -67,22 +61,15 @@ abstract class Model implements ArrayAccess, JsonSerializable {
   }
 
   /**
-   * Checks whether this Model instance represents the same item as another.
-   *
-   * Note, this compares item identity.
-   * It does NOT compare values!
-   *
-   * @param Model $other The model to compare to this model.
+   * {@inheritDoc}
    */
-  public function equals(Model $other) : bool {
+  public function equals(Modelable $other) : bool {
     return ($other instanceof $this) &&
       $other->offsetGet('id') === $this->offsetGet('id');
   }
 
   /**
-   * Does this model represent an item which exists on the API?
-   *
-   * @return bool
+   * {@inheritDoc}
    */
   public function isReal() : bool {
     return $this->offsetGet('id') !== null;
@@ -173,7 +160,7 @@ abstract class Model implements ArrayAccess, JsonSerializable {
    * @return Model $this
    * @throws ModelException If sync fails
    */
-  public function sync(array $data, bool $hard = false) : Model {
+  public function sync(array $data, bool $hard = false) : Modelable {
     try {
       $prior = $this->_values;
 
@@ -204,13 +191,7 @@ abstract class Model implements ArrayAccess, JsonSerializable {
   }
 
   /**
-   * Gets model state as an array.
-   *
-   * This method is intended for use by Endpoints,
-   * and should generally not be used otherwise.
-   *
-   * @param bool $collapse Replace models/collections with their id/ids?
-   * @return array
+   * {@inheritDoc}
    */
   public function toArray(bool $collapse = false) : array {
     return ($collapse) ? $this->_collapse($this->_values) : $this->_values;

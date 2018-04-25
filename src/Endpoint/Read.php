@@ -22,19 +22,21 @@ use GuzzleHttp\ {
 
 use Nexcess\Sdk\ {
   Client,
+  Endpoint\Readable as Endpoint,
   Endpoint\Response,
   Exception\ApiException,
   Exception\SdkException,
   Model\Collection,
-  Model\Model,
+  Model\Collector,
+  Model\Modelable as Model,
   Util\Config,
   Util\Util
 };
 
 /**
- * Represents an API endpoint for nexcess.net / thermo.io
+ * Represents a readable API endpoint for nexcess.net / thermo.io.
  */
-abstract class Endpoint {
+abstract class Read implements Endpoint {
 
   /** @var array Default filter values for list(). */
   const BASE_LIST_FILTER = [];
@@ -57,10 +59,7 @@ abstract class Endpoint {
   }
 
   /**
-   * Gets a new Model instance.
-   *
-   * @param int|null $id Model id
-   * @return Model
+   * {@inheritDoc}
    */
   public function getModel(int $id = null) : Model {
     $fqcn = static::MODEL_NAME;
@@ -87,12 +86,7 @@ abstract class Endpoint {
   }
 
   /**
-   * Checks whether given model is in sync with stored data, or with the API.
-   *
-   * @param Model $model The model to check
-   * @param bool $hard Force hard check with API?
-   * @return bool True if data is in sync; false otherwise
-   * @throws ApiException If API request fails
+   * {@inheritDoc}
    */
   public function isInSync(Model $model, bool $hard = false) : bool {
     $data = $model->toArray();
@@ -110,13 +104,9 @@ abstract class Endpoint {
   }
 
   /**
-   * Fetches a paginated list of items from the API.
-   *
-   * @param array $filter Pagination and Model-specific filter options
-   * @return Collection Models returned from the API
-   * @throws ApiException If API request fails
+   * {@inheritDoc}
    */
-  public function list(array $filter = []) : Collection {
+  public function list(array $filter = []) : Collector {
     $response = $this->_client->request(
       'GET',
       static::ENDPOINT . "?{$this->_buildListQuery($filter)}"
@@ -133,26 +123,14 @@ abstract class Endpoint {
   }
 
   /**
-   * Fetches an item from the API.
-   *
-   * @param int $id Item id
-   * @return Model A new model read from the API
-   * @throws ApiException If the API request fails (e.g., item doesn't exist)
+   * {@inheritDoc}
    */
   public function retrieve(int $id) : Model {
     $this->sync($this->getModel($id), true);
   }
 
   /**
-   * Syncs a Model with most recently fetched data from the API,
-   * or re-fetches the item from the API.
-   *
-   * Note, this OVERWRITES the model's state with the response from the API;
-   * it *does not* update the API with the model's current state.
-   * To save changes to an updatable model, @see CrudEndpoint::update
-   *
-   * @param bool $hard Force hard sync with API?
-   * @return Endpoint $this
+   * {@inheritDoc}
    */
   public function sync(Model $model, bool $hard = false) : Model {
     $id = $model->offsetGet('id');

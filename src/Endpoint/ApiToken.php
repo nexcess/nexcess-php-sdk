@@ -10,14 +10,14 @@ declare(strict_types  = 1);
 namespace Nexcess\Sdk\Endpoint;
 
 use Nexcess\Sdk\ {
-  Endpoint\CrudEndpoint,
+  Endpoint\ReadWrite,
   Model\ApiToken as ApiTokenModel
 };
 
 /**
  * API actions for portal Login.
  */
-class ApiToken extends CrudEndpoint {
+class ApiToken extends ReadWrite {
 
   /** {@inheritDoc} */
   const PROPERTY_NAMES = ['service_id', 'name'];
