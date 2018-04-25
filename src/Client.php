@@ -81,7 +81,7 @@ class Client {
     $this->_config = $config;
 
     // set up preferred language, if configured
-    $language = $this->_config->get('language');
+    $language = $config->get('language');
     if ($language) {
       Language::init(
         $language['language'] ?? Language::DEFAULT_LANGUAGE,
@@ -90,8 +90,8 @@ class Client {
     }
 
     // set up guzzle client
-    $guzzle_options = ['base_uri' => $this->_config->get('base_uri')];
-    $guzzle_defaults = $this->_config->get('guzzle_defaults');
+    $guzzle_options = ['base_uri' => $config->get('base_uri')];
+    $guzzle_defaults = $config->get('guzzle_defaults');
     if ($guzzle_defaults) {
       $guzzle_options =
         Util::extendRecursive($guzzle_options, $guzzle_defaults);
@@ -333,34 +333,6 @@ class Client {
     }
 
     return $this->_request_log;
-  }
-
-  /**
-   * Blocks until the provided callback returns true.
-   *
-   * The callback signature is like
-   *  bool $until(Client $client) Returns true when done waiting
-   *
-   * @param callback $until The callback to wait for
-   * @throws SdkException If the callback errors
-   */
-  public function wait(callable $until) {
-    $config = $this->_config;
-    $wait = $config->get('wait.interval') ?? self::DEFAULT_WAIT_INTERVAL;
-    $timeout = $config->get('wait.timeout') ?? self::DEFAULT_WAIT_TIMEOUT;
-    $deadline = time() + $timeout;
-
-    try {
-      while ($until($this) !== true) {
-        if (time() > $deadline) {
-          throw new SdkException(SdkException::WAIT_TIMEOUT_EXCEEDED);
-        }
-
-        sleep($wait);
-      }
-    } catch (Throwable $e) {
-      throw new SdkException(SdkException::CALLBACK_ERROR, $e);
-    }
   }
 
   /**

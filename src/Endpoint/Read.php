@@ -126,7 +126,7 @@ abstract class Read implements Endpoint {
    * {@inheritDoc}
    */
   public function retrieve(int $id) : Model {
-    $this->sync($this->getModel($id), true);
+    return $this->sync($this->getModel($id), true);
   }
 
   /**

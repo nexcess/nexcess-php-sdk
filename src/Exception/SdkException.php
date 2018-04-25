@@ -46,6 +46,9 @@ class SdkException extends Exception {
   /** @var int Attempt to use a debug-only method when debug is not enabled. */
   const DEBUG_NOT_ENABLED = 11;
 
+  /** @var int A wait() callback took too long to complete. */
+  const WAIT_TIMEOUT_EXCEEDED = 12;
+
   /** {@inheritDoc} */
   const INFO = [
     self::NOT_IMPLEMENTED => ['message' => 'not_implemented'],
@@ -59,6 +62,7 @@ class SdkException extends Exception {
       ['message' => 'invalid_create_or_update'],
     self::INVALID_RETRIEVE => ['message' => 'invalid_retrieve'],
     self::REQUEST_LOG_NOT_ENABLED => ['message' => 'request_log_not_enabled'],
-    self::DEBUG_NOT_ENABLED => ['message' => 'debug_not_enabled']
+    self::DEBUG_NOT_ENABLED => ['message' => 'debug_not_enabled'],
+    self::WAIT_TIMEOUT_EXCEEDED => ['message' => 'wait_timeout_exceeded']
   ];
 }

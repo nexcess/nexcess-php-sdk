@@ -57,9 +57,7 @@ class Collection implements Collector {
   }
 
   /**
-   * Consts how many items are in this collection.
-   *
-   * @return int
+   * @see https://php.net/Countable.count
    */
   public function count() : int {
     return count($this->_models);
