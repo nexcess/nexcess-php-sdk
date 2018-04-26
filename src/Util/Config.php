@@ -73,11 +73,16 @@ class Config {
    * @param bool $extend Merge array values (overwrites otherwise)?
    */
   public function set(string $name, $value, bool $extend = false) {
-    if ($extend && isset($this->_options[$name])) {
+    if (
+      $extend &&
+      isset($this->_options[$name]) &&
+      is_array($this->_options[$name])
+    ) {
       $this->_options[$name] =
         Util::extendRecursive($value, $this->_options[$name]);
       return;
     }
+
     $this->_options[$name] = $value;
   }
 }

@@ -16,7 +16,9 @@ use GuzzleHttp\ {
   Exception\ClientException,
   Exception\ConnectException,
   Exception\RequestException,
-  Exception\ServerException
+  Exception\ServerException,
+  HandlerStack as GuzzleHandlerStack,
+  Middleware as GuzzleMiddleware
 };
 
 use Nexcess\Sdk\ {
@@ -89,14 +91,7 @@ class Client {
       );
     }
 
-    // set up guzzle client
-    $guzzle_options = ['base_uri' => $config->get('base_uri')];
-    $guzzle_defaults = $config->get('guzzle_defaults');
-    if ($guzzle_defaults) {
-      $guzzle_options =
-        Util::extendRecursive($guzzle_options, $guzzle_defaults);
-    }
-    $this->_client = new Guzzle($guzzle_options);
+    $this->_client = $this->_newGuzzleClient();
   }
 
   /**
@@ -227,25 +222,25 @@ class Client {
       $params['headers'] =
         ($params['headers'] ?? []) + $this->_getDefaultHeaders();
 
-      $config = $this->_config;
-      $request_key = null;
-      if ($config->get('debug') || $config->get('request.log')) {
-        $request_key = count($this->_request_log);
-        $this->_request_log[$request_key] = [
-          'method' => $method,
-          'endpoint' => $endpoint,
-          'params' => $params,
-          'response' => null
-        ];
-      }
+      //$config = $this->_config;
+      //$request_key = null;
+      //if ($config->get('debug') || $config->get('request.log')) {
+      //  $request_key = count($this->_request_log);
+      //  $this->_request_log[$request_key] = [
+      //    'method' => $method,
+      //    'endpoint' => $endpoint,
+      //    'params' => $params,
+      //    'response' => null
+      //  ];
+      //}
 
       $response = new Response(
         $this->_client->request($method, $endpoint, $params)
       );
 
-      if ($request_key !== null) {
-        $this->_request_log[$request_key]['response'] = $response;
-      }
+      //if ($request_key !== null) {
+      //  $this->_request_log[$request_key]['response'] = $response;
+      //}
 
       return $response;
 
@@ -285,13 +280,13 @@ class Client {
       throw new SdkException(SdkException::UNKNOWN_ERROR, $e);
 
     } finally {
-      if ($request_key !== null) {
-        $this->_request_log[$request_key]['response'] = $response ?? (
-          (isset($e) && $e instanceof RequestException) ?
-            new Response($e->getResponse()) :
-            null
-        );
-      }
+      //if ($request_key !== null) {
+      //  $this->_request_log[$request_key]['response'] = $response ?? (
+      //    (isset($e) && $e instanceof RequestException) ?
+      //      new Response($e->getResponse()) :
+      //      null
+      //  );
+      //}
     }
   }
 
@@ -371,5 +366,27 @@ class Client {
     }
 
     throw new SdkException(SdkException::NO_SUCH_ENDPOINT, ['name' => $name]);
+  }
+
+  /**
+   * Creates a new Guzzle client based on current config.
+   *
+   * @return Guzzle
+   */
+  protected function _newGuzzleClient() : Guzzle {
+    $config = $this->_config;
+    $defaults = $config->get('guzzle_defaults');
+
+    $handler = $defaults['handler'] ?? GuzzleHandlerStack::create();
+    if ($config->get('debug') || $config->get('request.log')) {
+      $handler->push(GuzzleMiddleware::history($this->_request_log));
+    }
+
+    $options = [
+      'base_uri' => $config->get('base_uri'),
+      'handler' => $handler
+    ];
+
+    return new Guzzle(Util::extendRecursive($options, $defaults));
   }
 }

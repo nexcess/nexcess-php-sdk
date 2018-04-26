@@ -31,6 +31,9 @@ class ModelException extends Exception {
   /** @var int Wrong model class provided to a Collection. */
   const WRONG_MODEL_FOR_COLLECTION = 7;
 
+  /** @var int Api tokens can be viewed only when created. */
+  const API_TOKEN_NOT_VIEWABLE = 8;
+
   /** {@inheritDoc} */
   const INFO = [
     self::NO_SUCH_PROPERTY => ['message' => 'no_such_property'],
@@ -40,6 +43,7 @@ class ModelException extends Exception {
     self::READONLY_MODEL => ['message' => 'readonly_model'],
     self::NO_SUCH_MODEL => ['message' => 'no_such_model'],
     self::WRONG_MODEL_FOR_COLLECTION =>
-      ['message' => 'wrong_model_for_collection']
+      ['message' => 'wrong_model_for_collection'],
+    self::API_TOKEN_NOT_VIEWABLE => ['message' => 'api_token_not_viewable']
   ];
 }

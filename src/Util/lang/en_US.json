@@ -1,4 +1,5 @@
 {
+  "api_token_not_viewable": "Api tokens can be viewed only when created; if you have lost your token you must create a new one",
   "bad_request": "API request failed: {__rootMessage__}",
   "callback_error": "Uncaught error while invoking callback: {__rootMessage__}",
   "cannot_connect": "Failed to connect to API host: {__rootMessage__}",
