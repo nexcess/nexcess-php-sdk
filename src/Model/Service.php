@@ -13,7 +13,7 @@ use Nexcess\Sdk\ {
   Model\Model
 };
 
-abstract class ServiceModel extends Model {
+abstract class Service extends Model {
 
   /** {@inheritDoc} */
   const PROPERTY_ALIASES = ['id' => 'service_id'];

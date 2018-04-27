@@ -24,6 +24,9 @@ use Nexcess\Sdk\ {
  */
 interface Readable {
 
+  /** @var string Base namespace for endpoint classes. */
+  const NAMESPACE = __NAMESPACE__;
+
   /**
    * Gets a new Model instance, and sets the model id if provided.
    *

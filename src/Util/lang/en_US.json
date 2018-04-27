@@ -6,6 +6,7 @@
   "debug_not_enabled": "Debug mode is not enabled; cannot use {method}",
   "forbidden": "{method} /{endpoint} is forbidden (your api token/auth has insufficient permissions)",
   "json_decode_failure": "Error parsing json: {error}",
+  "invalid_config_option": "Invalid configuration: {option} must be {rule}; '{value}' provided",
   "invalid_create_or_update": "Expected updatable Model or arg:value array for '{model}'; {type} provided",
   "invalid_language_map": "Language map must contain key:translation pairs; found: {invalid}",
   "invalid_retrieve": "Expected integer id for '{model}'; {type} provided",

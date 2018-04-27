@@ -10,23 +10,66 @@ declare(strict_types  = 1);
 namespace Nexcess\Sdk\Util;
 
 use Nexcess\Sdk\ {
+  Exception\SdkException,
   Util\Language,
   Util\Util
 };
 
 /**
  * Config container for SDK.
+ *
+ * Config options:
+ *  - string "api_token" The API Token to use for requests.
+ *  - string "base_uri" The API URL.
+ *      This is provided by the SDK Client; you don't need to set it.
+ *  - bool "debug" Enable debug mode?
+ *      Debug mode does override some other settings (e.g., logging).
+ *  - array "guzzle_defaults" Map of options for the Guzzle client.
+ *      In most cases, you shouldn't provide anything here.
+ *  - string "language" The language/locale to use. Defaults to "en_US".
+ *  - array "list" Default options for list() requests.
+ *    - int "page_size" Number of results to return per "page."
+ *      The API itself defaults to 25; the maximum value is 250.
+ *  - array "request" Map of options for handling requests.
+ *    - bool "log" Enable request+response logging?
+ *  - array "wait" Map of options for "waiting" (keeping things synchronous).
+ *      By default, the API treats most actions as commands,
+ *      which are queued and performed asynchronously.
+ *      "Waiting" blocks the SDK until the action has completed.
+ *    - bool "always" Enable waiting always (even if wait() is not called)?
+ *    - int "interval" Polling interval while waiting. Defaults to 1s.
+ *    - callable "tick_function" Callback to invoke each interval when waiting.
+ *    - int "timeout" Maximum time to wait. Defaults to 30s.
  */
 class Config {
 
   /** @var array Map of default options. */
   const DEFAULT_OPTIONS = [];
 
+  /** @var array Map of rules for option validation. */
+  const RULES = [
+    'api_token' => 'string',
+    'base_uri' => 'string',
+    'debug' => 'boolean',
+    'guzzle_defaults' => 'array',
+    'language' => 'string',
+    'list' => 'array',
+    'list.page_size' => 'integer',
+    'request' => 'array',
+    'request.log' => 'boolean',
+    'wait' => 'array',
+    'wait.always' => 'boolean',
+    'wait.interval' => 'integer',
+    'wait.tick_function' => 'callable',
+    'wait.timeout' => 'integer',
+  ];
+
   /** @var array Config options. */
   private $_options = [];
 
   public function __construct(array $options = []) {
     $this->_options = $options;
+    $this->_checkOptions();
   }
 
   /**
@@ -66,23 +109,80 @@ class Config {
   }
 
   /**
-   * Sets (overrides) a config option.
+   * Sets (overwrites) a config option.
    *
    * @param string $name Name of option to set
    * @param mixed $value Value to set
    * @param bool $extend Merge array values (overwrites otherwise)?
    */
   public function set(string $name, $value, bool $extend = false) {
-    if (
-      $extend &&
-      isset($this->_options[$name]) &&
-      is_array($this->_options[$name])
-    ) {
-      $this->_options[$name] =
-        Util::extendRecursive($value, $this->_options[$name]);
+    try {
+      $prior = $this->_options;
+
+      if (
+        $extend &&
+        isset($this->_options[$name]) &&
+        is_array($this->_options[$name])
+      ) {
+        $this->_options[$name] =
+          Util::extendRecursive($value, $this->_options[$name]);
+      } else {
+        $this->_options[$name] = $value;
+      }
+
+      $this->_checkOptions();
+
+    } catch (Throwable $e) {
+      $this->_options = $prior;
+      throw $e;
+    }
+  }
+
+  /**
+   * Checks all options against defined validation rules.
+   * @see Config::_checkOption
+   */
+  protected function _checkOptions() {
+    foreach (static::RULES as $option => $rule) {
+      $this->_checkOption($option, $this->get($option), $rule);
+    }
+  }
+
+  /**
+   * Checks that a value is a given type, callable,
+   * or an instance of a given class or interface.
+   *
+   * @param string $key The option key
+   * @param mixed $value The option value
+   * @param mixed The rule to apply
+   * @throws SdkException If the rule is not met
+   */
+  protected function _checkOption(string $key, $value, $rule = null) {
+    $rule = $rule ?? static::RULES[$option] ?? null;
+    if ($value === null || $rule === null) {
       return;
     }
 
-    $this->_options[$name] = $value;
+    if (
+      is_string($rule) && (
+        $value instanceof $rule ||
+        gettype($value) === $rule ||
+        ($rule === 'callable' && is_callable($value))
+      )
+    ) {
+      return;
+    }
+
+    if (is_array($rule) && in_array($value, $rule)) {
+      return;
+    }
+
+    if (is_array($rule)) {
+      $rule = implode('|', $rule);
+    }
+    throw new SdkException(
+      SdkException::INVALID_CONFIG_OPTION,
+      ['option' => $key, 'rule' => $rule, 'value' => $value]
+    );
   }
 }

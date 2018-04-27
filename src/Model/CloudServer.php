@@ -10,30 +10,50 @@ declare(strict_types  = 1);
 namespace Nexcess\Sdk\Model;
 
 use Nexcess\Sdk\ {
+  Exception\ModelException,
   Model\Collector as Collection,
-  Model\ServiceModel,
-  Model\SshKey
+  Model\Location,
+  Model\Service,
+  Util\Util
 };
 
 /**
  * Cloud Server (virtual machine).
  */
-class CloudServer extends ServiceModel {
+class CloudServer extends Service {
+
+  const PROPERTY_ALIASES = [
+    'cloud' => 'location',
+    'id' => 'service_id'
+  ];
 
   const PROPERTY_COLLAPSED = [
-    'cloud' => 'cloud_id',
-    'package' => 'package_id',
-    'ssh_keys' => 'ssh_key_ids',
-    'template' => 'template_id'
+    'location' => 'cloud_id',
+    'package' => 'package_id'
   ];
 
   /** {@inheritDoc} */
-  const PROPERTY_NAMES = [
-    'service_id',
-    'cloud',
-    'hostname',
+  const PROPERTY_MODELS = ['location' => Location::class];
+
+  /** {@inheritDoc} */
+  const PROPERTY_NAMES = ['service_id'];
+
+  /** {@inheritDoc} */
+  const READONLY_NAMES = [
+    'bandwidth',
+    'billing_term',
+    'client',
+    'description',
+    'host',
+    'last_bill_date',
+    'location',
+    'network',
+    'next_bill_date',
+    'os',
     'package',
-    'ssh_keys',
-    'template'
+    'power_status',
+    'start_date',
+    'state',
+    'status'
   ];
 }

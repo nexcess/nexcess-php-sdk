@@ -49,6 +49,9 @@ class SdkException extends Exception {
   /** @var int A wait() callback took too long to complete. */
   const WAIT_TIMEOUT_EXCEEDED = 12;
 
+  /** @var int A config option failed validation. */
+  const INVALID_CONFIG_OPTION = 13;
+
   /** {@inheritDoc} */
   const INFO = [
     self::NOT_IMPLEMENTED => ['message' => 'not_implemented'],
@@ -63,6 +66,7 @@ class SdkException extends Exception {
     self::INVALID_RETRIEVE => ['message' => 'invalid_retrieve'],
     self::REQUEST_LOG_NOT_ENABLED => ['message' => 'request_log_not_enabled'],
     self::DEBUG_NOT_ENABLED => ['message' => 'debug_not_enabled'],
-    self::WAIT_TIMEOUT_EXCEEDED => ['message' => 'wait_timeout_exceeded']
+    self::WAIT_TIMEOUT_EXCEEDED => ['message' => 'wait_timeout_exceeded'],
+    self::INVALID_CONFIG_OPTION => ['message' => 'invalid_config_option']
   ];
 }

@@ -12,7 +12,7 @@ namespace Nexcess\Sdk\Endpoint;
 use Nexcess\Sdk\ {
   Endpoint\Service,
   Exception\ApiException,
-  Model\Modelable as Model
+  Model\CloudServer as Model
 };
 
 /**
@@ -23,78 +23,91 @@ class CloudServer extends Service {
   /** {@inheritDoc} */
   const SERVICE_TYPE = 'virt-guest';
 
+  /** {@inheritDoc} */
+  const MODEL_NAME = Model::class;
+
   /**
    * Reboots an existing cloud server.
    *
-   * @param int $cloud_server_id Service id
-   * @return array API response data
+   * @param Model $cloud_server Cloud Server model
+   * @return CloudServer $this
    * @throws ApiException If request fails
    */
-  public function reboot(int $cloud_server_id) : Model {
-    return $this->_request(
+  public function reboot(Model $cloud_server) : CloudServer {
+    $response = $this->_client->request(
       'POST',
       self::ENDPOINT . "/{$cloud_server_id}",
       ['json' => ['_action' => 'reboot']]
     );
+
+    return $this;
   }
 
   /**
    * Resizes an existing clous server.
    *
-   * @param int $cloud_server_id Service id
+   * @param Model $cloud_server Cloud Server model
    * @param int $package_id Desired package id
-   * @return array API response data
+   * @return CloudServer $this
    * @throws ApiException If request fails
    */
-  public function resize(int $cloud_server_id, int $package_id) : Model {
-    return $this->_request(
+  public function resize(Model $cloud_server, int $package_id) : CloudServer {
+    $response = $this->_client->request(
       'POST',
       self::ENDPOINT . "/{$cloud_server_id}",
       ['json' => ['_action' => 'resize', 'package_id' => $package_id]]
     );
+
+    return $this;
   }
 
   /**
    * Starts an existing cloud server.
    *
-   * @param int $cloud_server_id Service id
-   * @return array API response data
+   * @param Model $cloud_server Cloud Server model
+   * @return CloudServer $this
    * @throws ApiException If request fails
    */
-  public function start(int $cloud_server_id) : Model {
-    return $this->_request(
+  public function start(Model $cloud_server) : CloudServer {
+    $response = $this->_client->request(
       'POST',
       self::ENDPOINT . "/{$cloud_server_id}",
       ['json' => ['_action' => 'start']]
     );
+
+    return $this;
   }
 
   /**
    * Stops an existing cloud server.
    *
-   * @param int $cloud_server_id Service id
-   * @return array API response data
+   * @param Model $cloud_server Cloud Server model
+   * @return CloudServer $this
    * @throws ApiException If request fails
    */
-  public function stop(int $cloud_server_id) : Model {
-    return $this->_request(
+  public function stop(Model $cloud_server) : CloudServer {
+    $response = $this->_client->request(
       'POST',
       self::ENDPOINT . "/{$cloud_server_id}",
       ['json' => ['_action' => 'stop']]
     );
+
+    return $this;
   }
 
   /**
    * Views an existing cloud server's console log.
    *
-   * @param int $cloud_server_id Service id
-   * @return array API response data
+   * @param Model $cloud_server Cloud Server model
+   * @return CloudServer $this
    * @throws ApiException If request fails
    */
-  public function viewConsoleLog(int $cloud_server_id) : Model {
-    return $this->_request(
+  public function viewConsoleLog(Model $cloud_server) : CloudServer {
+    $response = $this->_client->request(
       'GET',
       self::ENDPOINT . "/{$cloud_server_id}/console-log"
     );
+
+    return $this;
   }
 }

@@ -19,6 +19,9 @@ use Nexcess\Sdk\Exception\ModelException;
  */
 interface Modelable extends ArrayAccess, JsonSerializable {
 
+  /** @var string Base namespace for model classes. */
+  const NAMESPACE = __NAMESPACE__;
+
   /**
    * Makes a new Model instance and populates it with given data.
    *
@@ -31,11 +34,18 @@ interface Modelable extends ArrayAccess, JsonSerializable {
   /**
    * Checks whether this Model instance represents the same item as another.
    *
-   * Note, this most compare item identity (id), and MUST NOT compare values!
+   * Note, this compares item identity (id), and does NOT compare values!
    *
    * @param Modelable $other The model to compare to this model.
    */
   public function equals(Modelable $other) : bool;
+
+  /**
+   * Gets the model id.
+   *
+   * @return int
+   */
+  public function getId() : int;
 
   /**
    * Does this model represent an item which exists on the API?

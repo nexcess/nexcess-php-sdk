@@ -21,6 +21,8 @@ use GuzzleHttp\ {
   Middleware as GuzzleMiddleware
 };
 
+use function GuzzleHttp\default_user_agent as guzzle_user_agent;
+
 use Nexcess\Sdk\ {
   Endpoint\Readable as Endpoint,
   Endpoint\ReadWritable,
@@ -56,7 +58,10 @@ use Nexcess\Sdk\ {
 class Client {
 
   /** @var string Api version. */
-  const API_VERSION = '0.1-alpha';
+  const API_VERSION = '0';
+
+  /** @var string Sdk version. */
+  const SDK_VERSION = '0.1-alpha';
 
   /** @var string SDK root namespace. */
   const SDK_NAMESPACE = __NAMESPACE__;
@@ -158,7 +163,7 @@ class Client {
       [
         'class' => __CLASS__,
         'expected' => 'null|int|array|Model',
-        'type' => is_object($arg) ? get_class($arg) : gettype($arg)
+        'type' => Util::type($arg)
       ]
     );
   }
@@ -222,26 +227,9 @@ class Client {
       $params['headers'] =
         ($params['headers'] ?? []) + $this->_getDefaultHeaders();
 
-      //$config = $this->_config;
-      //$request_key = null;
-      //if ($config->get('debug') || $config->get('request.log')) {
-      //  $request_key = count($this->_request_log);
-      //  $this->_request_log[$request_key] = [
-      //    'method' => $method,
-      //    'endpoint' => $endpoint,
-      //    'params' => $params,
-      //    'response' => null
-      //  ];
-      //}
-
       $response = new Response(
         $this->_client->request($method, $endpoint, $params)
       );
-
-      //if ($request_key !== null) {
-      //  $this->_request_log[$request_key]['response'] = $response;
-      //}
-
       return $response;
 
     } catch (ConnectException $e) {
@@ -269,24 +257,12 @@ class Client {
         $e,
         ['method' => $method, 'endpoint' => $endpoint]
       );
-
     } catch (ServerException $e) {
       throw new ApiException(ApiException::SERVER_ERROR, $e);
-
     } catch (RequestException $e) {
       throw new ApiException(ApiException::REQUEST_FAILED, $e);
-
     } catch (Throwable $e) {
       throw new SdkException(SdkException::UNKNOWN_ERROR, $e);
-
-    } finally {
-      //if ($request_key !== null) {
-      //  $this->_request_log[$request_key]['response'] = $response ?? (
-      //    (isset($e) && $e instanceof RequestException) ?
-      //      new Response($e->getResponse()) :
-      //      null
-      //  );
-      //}
     }
   }
 
@@ -339,7 +315,9 @@ class Client {
     $headers = [
       'Accept' => 'application/json',
       'Accept-language' => $this->_config->get('language'),
-      "Api-version" => static::API_VERSION
+      'Api-version' => static::API_VERSION,
+      'User-agent' => 'Nexcess-SDK/' . static::SDK_VERSION .
+        ' (' . guzzle_user_agent() . ')'
     ];
     $api_token = $this->_config->get('api_token');
     if ($api_token) {
@@ -359,7 +337,7 @@ class Client {
   protected function _newEndpoint(string $name) : Endpoint {
     $fqcn = is_a($name, Endpoint::class, true) ?
       $name :
-      self::SDK_NAMESPACE . "\\Endpoint\\{$name}";
+      Endpoint::NAMESPACE . "\\{$name}";
 
     if (is_a($fqcn, Endpoint::class, true)) {
       return new $fqcn($this, $this->_config);
@@ -375,7 +353,7 @@ class Client {
    */
   protected function _newGuzzleClient() : Guzzle {
     $config = $this->_config;
-    $defaults = $config->get('guzzle_defaults');
+    $defaults = $config->get('guzzle_defaults') ?? [];
 
     $handler = $defaults['handler'] ?? GuzzleHandlerStack::create();
     if ($config->get('debug') || $config->get('request.log')) {

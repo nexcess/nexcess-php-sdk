@@ -25,6 +25,12 @@ abstract class Model implements Modelable {
   /** @var string[] Map of model|collection property name:id|ids name. */
   const PROPERTY_COLLAPSED = [];
 
+  /** @var string[] Map of property collection names:model classes. */
+  const PROPERTY_COLLECTIONS = [];
+
+  /** @var string[] Map of property model names:model classes. */
+  const PROPERTY_MODELS = [];
+
   /** @var string[] List of property names. */
   const PROPERTY_NAMES = [];
 
@@ -66,6 +72,13 @@ abstract class Model implements Modelable {
   public function equals(Modelable $other) : bool {
     return ($other instanceof $this) &&
       $other->offsetGet('id') === $this->offsetGet('id');
+  }
+
+  /**
+   * {@inheritDoc}
+   */
+  public function getId() : int {
+    return $this->offsetGet('id');
   }
 
   /**
@@ -172,9 +185,26 @@ abstract class Model implements Modelable {
         $key = static::PROPERTY_ALIASES[$key] ?? $key;
         if ($this->offsetExists($key)) {
           $setter = str_replace('_', '', "set{$key}");
-          (method_exists($this, $setter)) ?
-            $this->$setter($value) :
-            $this->_values[$key] = $value;
+          if (method_exists($this, $setter)) {
+            $this->$setter($value);
+            continue;
+          }
+
+          if (isset(static::PROPERTY_MODELS[$key])) {
+            $value = $this->_buildPropertyModel(
+              static::PROPERTY_MODELS[$key],
+              $value
+            );
+          }
+
+          if (isset(static::PROPERTY_COLLECTIONS[$key])) {
+            $value = $this->_buildPropertyCollection(
+              static::PROPERTY_COLLECTIONS[$key],
+              $value
+            );
+          }
+
+          $this->_values[$key] = $value;
         }
       }
 
@@ -184,8 +214,8 @@ abstract class Model implements Modelable {
       $this->_values = $prior;
       throw new ModelException(
         ModelException::SYNC_FAILED,
-        ['model' => static::class, 'id' => $data['id'] ?? $prior['id'] ?? 0],
-        $e
+        $e,
+        ['model' => static::class, 'id' => $data['id'] ?? $prior['id'] ?? 0]
       );
     }
   }
@@ -198,21 +228,58 @@ abstract class Model implements Modelable {
   }
 
   /**
+   *
+   */
+  protected function _buildPropertyCollection(
+    string $fqcn,
+    array $values
+  ) : Collection {
+    $collection = new Collection($fqcn);
+    foreach ($values as $value) {
+      $collection->add($this->_buildPropertyModel($fqcn, $value));
+    }
+
+    return $collection;
+  }
+
+  /**
+   * Builds a Model given an id or array of values.
+   *
+   * @param string $fqcn Fully qualified classname of model to build
+   * @param int|array $value Value(s) to build model from
+   */
+  protected function _buildPropertyModel(string $fqcn, $value) : Model {
+    if (is_int($value)) {
+      $value = ['id' => $value];
+    }
+
+    if (is_array($value)) {
+      $model = new $fqcn;
+      return $model->sync($value);
+    }
+
+    throw new ModelException(
+      ModelException::UNMODELABLE,
+      ['model' => $fqcn, 'type' => Util::type($value), 'data' => $value]
+    );
+  }
+
+  /**
    * Reduces a property:value map to the set of writable properties,
    * replacing models/collections with model id/ids.
    *
-   * This method normalizes data from Model::$_values
-   * as well as Model::$_retrieved.
+   * This method normalizes Model::$_values as well as raw API data.
    *
    * @param array $values Raw values
    *
    */
   protected function _collapse(array $values) : array {
-    $collapsed = [];
+    $collapsed = array_fill_keys(self::PROPERTY_NAMES, null);
+
     foreach ($values as $property => $value) {
       $property = static::PROPERTY_ALIASES[$property] ?? $property;
 
-      if (is_scalar($value) && isset(static::PROPERTY_NAMES[$property])) {
+      if (is_scalar($value) && in_array($property, static::PROPERTY_NAMES)) {
         $collapsed[$property] = $value;
         continue;
       }
@@ -240,38 +307,10 @@ abstract class Model implements Modelable {
 
       throw new ModelException(
         ModelException::UNCOLLAPSABLE,
-        [
-          'property' => $property,
-          'type' => is_object($value) ? get_class($value) : gettype($value)
-        ]
+        ['property' => $property, 'type' => Util::type($value)]
       );
     }
 
     return $collapsed;
-  }
-
-  /**
-   * Gets a collection of models from an "*_ids" property.
-   *
-   * @param string $name Property name, sans "*_ids"
-   * @param string $fqcn Fully qualified model classname
-   * @return Collection
-   */
-  protected function _getPropertyCollection(
-    string $name,
-    string $fqcn
-  ) : Collection {
-    $_name = "_{$name}";
-    $name_ids = "{$name}_ids";
-
-    if (empty($this->$_name)) {
-      $models = array_map(
-        function ($id) use ($fqcn) { return new $fqcn($id); },
-        $this->_values[$name_ids]
-      );
-      $this->$_name = new Collection($fqcn, $models);
-    }
-
-    return $this->$_name;
   }
 }

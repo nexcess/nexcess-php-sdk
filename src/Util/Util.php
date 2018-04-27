@@ -93,4 +93,14 @@ class Util {
 
     return $data;
   }
+
+  /**
+   * Gets the classname/type of the given value.
+   *
+   * @param mixed $value The value to check
+   * @return string The value's classname if an object, type otherwise
+   */
+  public static function type($value) : string {
+    return is_object($value) ? get_class($value) : gettype($value);
+  }
 }

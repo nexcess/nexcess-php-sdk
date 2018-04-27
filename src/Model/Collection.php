@@ -113,7 +113,7 @@ class Collection implements Collector {
    * {@inheritDoc}
    */
   public function getIds() : array {
-    return $this->each(function ($item) { return $item->offsetGet('id'); });
+    return $this->each(function ($item) { return $item->getId(); });
   }
 
   /**

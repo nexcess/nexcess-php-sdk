@@ -55,9 +55,6 @@ class Sandbox {
   /** @var string Fake API token (invalid). */
   const SANDBOX_TOKEN_INVALID = 'sandbox-token-invalid';
 
-  /** @var array Raw guzzle request/response history. */
-  public $history = [];
-
   /** @var Config Base configuration. */
   protected $_config;
 
@@ -85,9 +82,7 @@ class Sandbox {
     $this->_config->set('api-token', self::SANDBOX_TOKEN_VALID);
 
     $this->_handler = $request_handler;
-
-    $this->_exception_handler = $exception_handler ??
-      [$this, '_dumpException'];
+    $this->_exception_handler = $exception_handler;
   }
 
   /**
@@ -103,7 +98,7 @@ class Sandbox {
    * @param array $options Guzzle request options
    * @return Promise Response as a guzzle promise
    */
-  public function handle(Request $request, array $options) : Promise {
+  public function handle(Request $request, array $options = []) : Promise {
     $request_key = "{$request->getMethod()} {$request->getUri()->getPath()}";
 
     $response = $this->_getResponseFor($request_key) ??
@@ -111,7 +106,7 @@ class Sandbox {
       new RequestException(
         '503 Service Unavailable',
         $request,
-        new Response(503, [], 'Service Unavailable')
+        new GuzzleResponse(503, [], 'Service Unavailable')
       );
 
     if (is_callable($response)) {
@@ -145,16 +140,21 @@ class Sandbox {
    * Runs the given play with a new sandboxed API client.
    *
    * The callback signature is like
-   *
+   *  mixed $play(Client $api, Sandbox $sandbox)
    *
    * @param callable $play The action to sandbox and run
-   * @return mixed Callback's return value on success; exception otherwise
+   * @return mixed Return value of callback or exception handler
    */
   public function play(callable $play) {
     try {
-      $play($this->newClient(), $this);
+      return $play($this->newClient(), $this);
+
     } catch (Throwable $e) {
-      ($this->_exception_handler)($e);
+      if ($this->_exception_handler) {
+        return ($this->_exception_handler)($e);
+      }
+
+      throw $e;
     }
   }
 
@@ -171,7 +171,10 @@ class Sandbox {
       ! is_callable($response) &&
       ! $response instanceof Throwable
     ) {
-      throw new SandboxException(SandboxException);
+      throw new SandboxException(
+        SandboxException::INVALID_RESPONSE,
+        ['type' => Util::type($response)]
+      );
     }
 
     $this->_response_queue[$response_key][] = $response;
