@@ -23,7 +23,7 @@ abstract class Service extends ReadWrite {
   /** {@inheritDoc} */
   const ENDPOINT = 'service';
 
-  /** @var string Service type (must be overridden by implementing class). */
+  /** @var string Service type. */
   const SERVICE_TYPE = '';
 
   /** {@inheritDoc} */
@@ -39,7 +39,10 @@ abstract class Service extends ReadWrite {
    */
   public function cancel(Model $model, array $survey) : Model {
     $this->_checkModelType($model);
-    throw new SdkException(SdkException::NOT_IMPLEMENTED);
+    throw new SdkException(
+      SdkException::NOT_IMPLEMENTED,
+      ['class' => static::class, 'method' => __FUNCTION__]
+    );
   }
 
   /**

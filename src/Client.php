@@ -92,7 +92,7 @@ class Client {
     if ($language) {
       Language::init(
         $language['language'] ?? Language::DEFAULT_LANGUAGE,
-        $language['paths'] ?? []
+        ...($language['paths'] ?? [])
       );
     }
 

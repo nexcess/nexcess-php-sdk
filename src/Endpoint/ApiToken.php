@@ -26,5 +26,5 @@ class ApiToken extends ReadWrite {
   const ENDPOINT = 'api-token';
 
   /** {@inheritDoc} */
-  const MODEL_NAME = ApiTokenModel::class;
+  const MODEL = ApiTokenModel::class;
 }

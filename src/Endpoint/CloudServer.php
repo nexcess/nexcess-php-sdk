@@ -24,7 +24,7 @@ class CloudServer extends Service {
   const SERVICE_TYPE = 'virt-guest';
 
   /** {@inheritDoc} */
-  const MODEL_NAME = Model::class;
+  const MODEL = Model::class;
 
   /**
    * Reboots an existing cloud server.

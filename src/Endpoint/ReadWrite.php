@@ -30,7 +30,7 @@ abstract class ReadWrite extends Read implements ReadWritable {
    * {@inheritDoc}
    */
   public function create(array $data) : Model {
-    $model = static::MODEL_NAME;
+    $model = static::MODEL;
 
     return (new $model())->sync(
       $this->_client
@@ -72,7 +72,7 @@ abstract class ReadWrite extends Read implements ReadWritable {
     if (! $id) {
       throw new ApiException(
         ApiException::MISSING_ID,
-        ['model' => static::MODEL_NAME]
+        ['model' => static::MODEL]
       );
     }
 
@@ -149,8 +149,9 @@ abstract class ReadWrite extends Read implements ReadWritable {
   }
 
   /**
-   * Waits for a DELETE action to complete and then syncs the associated Model.
+   * Checks for a DELETE to finish and then syncs the associated Model.
    *
+   * @param Model $model
    * @return callable @see wait() $until
    */
   protected function _waitUntilDelete(Model $model) : callable {

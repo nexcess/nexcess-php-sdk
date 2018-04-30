@@ -11,14 +11,13 @@ declare(strict_types  = 1);
 namespace Nexcess\Sdk\Endpoint;
 
 use Nexcess\Sdk\ {
-  Endpoint\ReadWriteEndpoint,
-  Exception\ApiException,
-  Response
+  Endpoint\ReadWrite,
+  Exception\ApiException
 };
 
 /**
  * API actions for portal Login.
  */
-class User extends ReadWriteEndpoint {
+class User extends ReadWrite {
 
 }

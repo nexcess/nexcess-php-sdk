@@ -101,6 +101,8 @@ class Util {
    * @return string The value's classname if an object, type otherwise
    */
   public static function type($value) : string {
-    return is_object($value) ? get_class($value) : gettype($value);
+    return is_object($value) ?
+      get_class($value) :
+      strtolower(gettype($value));
   }
 }

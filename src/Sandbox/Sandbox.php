@@ -78,6 +78,7 @@ class Sandbox {
     callable $exception_handler = null
   ) {
     $this->_config = clone $config;
+    $this->_config->set('debug', true);
     $this->_config->set('sandboxed', true);
     $this->_config->set('api-token', self::SANDBOX_TOKEN_VALID);
 
@@ -103,7 +104,7 @@ class Sandbox {
 
     $response = $this->_getResponseFor($request_key) ??
       $this->_handler ??
-      new RequestException(
+      new ServerException(
         '503 Service Unavailable',
         $request,
         new GuzzleResponse(503, [], 'Service Unavailable')
@@ -171,8 +172,8 @@ class Sandbox {
       ! is_callable($response) &&
       ! $response instanceof Throwable
     ) {
-      throw new SandboxException(
-        SandboxException::INVALID_RESPONSE,
+      throw new SdkException(
+        SdkException::INVALID_RESPONSE,
         ['type' => Util::type($response)]
       );
     }

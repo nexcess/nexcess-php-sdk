@@ -13,8 +13,7 @@ namespace Nexcess\Sdk\Endpoint;
 use Nexcess\Sdk\ {
   Endpoint\Service,
   Exception\ApiException,
-  Model\Modelable as Model,
-  Response
+  Model\CloudAccount as Model
 };
 
 /**
@@ -25,21 +24,41 @@ class CloudAccount extends Service {
   /** {@inheritDoc} */
   const SERVICE_TYPE = 'virt-guest-cloud';
 
+  /** {@inheritDoc} */
+  const MODEL = Model::class;
+
   /**
    * Switches PHP versions active on an existing cloud server.
    *
    * @param int $id Cloud server id
    * @param string $version Desired PHP version
-   * @return array Response data
+   * @return CloudAccount $this
    * @throws ApiException If request fails
    */
-  public function setPhpVersion(Model $model, string $version) : Model {
+  public function setPhpVersion(Model $model, string $version) : CloudAccount {
     $this->_request(
       'POST',
       self::ENDPOINT . "/{$model->offsetGet('id')}",
       ['json' => ['_action' => 'set-php-version', 'php_version' => $version]]
     );
 
-    return $model;
+    $this->_wait($this->_waitUntilVersion($model, $version));
+    return $this;
+  }
+
+  /**
+   * Checks for php version to be updated and then syncs the associated Model.
+   *
+   * @param Model $model
+   * @param string $version
+   * @return callable @see wait() $until
+   */
+  protected function _waitUntilVersion(Model $model, string $version) {
+    return function ($endpoint) use ($model, $version) {
+      if ($endpoint->retrieve($model)->offsetGet('php_version') === $version) {
+        $model->offsetSet($version);
+        return true;
+      }
+    };
   }
 }

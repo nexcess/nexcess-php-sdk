@@ -52,6 +52,9 @@ class SdkException extends Exception {
   /** @var int A config option failed validation. */
   const INVALID_CONFIG_OPTION = 13;
 
+  /** @var int An invalid response value was provided. */
+  const INVALID_RESPONSE = 14;
+
   /** {@inheritDoc} */
   const INFO = [
     self::NOT_IMPLEMENTED => ['message' => 'not_implemented'],
@@ -67,6 +70,7 @@ class SdkException extends Exception {
     self::REQUEST_LOG_NOT_ENABLED => ['message' => 'request_log_not_enabled'],
     self::DEBUG_NOT_ENABLED => ['message' => 'debug_not_enabled'],
     self::WAIT_TIMEOUT_EXCEEDED => ['message' => 'wait_timeout_exceeded'],
-    self::INVALID_CONFIG_OPTION => ['message' => 'invalid_config_option']
+    self::INVALID_CONFIG_OPTION => ['message' => 'invalid_config_option'],
+    self::INVALID_RESPONSE => ['message' => 'invalid_response']
   ];
 }

@@ -42,7 +42,7 @@ abstract class Read implements Endpoint {
   const BASE_LIST_FILTER = [];
 
   /** @var string Fully qualified classname of the Model for this endpoint. */
-  const MODEL_NAME = '';
+  const MODEL = '';
 
   /** @var Guzzle The Guzzle http client. */
   protected $_client;
@@ -62,7 +62,7 @@ abstract class Read implements Endpoint {
    * {@inheritDoc}
    */
   public function getModel(int $id = null) : Model {
-    $fqcn = static::MODEL_NAME;
+    $fqcn = static::MODEL;
     return new $fqcn($id);
   }
 
@@ -112,7 +112,7 @@ abstract class Read implements Endpoint {
       static::ENDPOINT . "?{$this->_buildListQuery($filter)}"
     );
 
-    $collection = new Collection(static::MODEL_NAME);
+    $collection = new Collection(static::MODEL);
     foreach ($response->toArray() as $data) {
       $item = $this->getModel();
       $item->sync($data);
@@ -163,7 +163,7 @@ abstract class Read implements Endpoint {
    * @throws ApiException If the model is of the wrong class
    */
   protected function _checkModelType(Model $model) {
-    $fqcn = static::MODEL_NAME;
+    $fqcn = static::MODEL;
     if (! $model instanceof $fqcn) {
       throw new ApiException(
         ApiException::WRONG_MODEL_FOR_ENDPOINT,
