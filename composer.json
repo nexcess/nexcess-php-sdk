@@ -7,7 +7,7 @@
   "license": "MIT",
   "support": {},
   "require": {
-    "php": "^7.0",
+    "php": "^7.1",
     "guzzlehttp/guzzle": "^6.0",
     "php-enspired/exceptable": "~1.2"
   },
@@ -25,7 +25,7 @@
   "scripts": {
     "tests:unit": "vendor/bin/phpunit",
     "tests:phan": "vendor/bin/phan",
-    "tests:phpcs": "vendor/bin/phpcs --standard=NocWorx"
+    "tests:phpcs": "vendor/bin/phpcs --standard=NocWorx src tests"
   },
   "repositories": [
     { "type": "vcs", "url": "https://github.com/nocworx/phpcs" }
