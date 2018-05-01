@@ -149,7 +149,6 @@ class Sandbox {
   public function play(callable $play) {
     try {
       return $play($this->newClient(), $this);
-
     } catch (Throwable $e) {
       if ($this->_exception_handler) {
         return ($this->_exception_handler)($e);

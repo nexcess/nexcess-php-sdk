@@ -106,9 +106,9 @@ class ClientTest extends TestCase {
    * @covers Client::request
    */
   public function testRequest() {
-    $this->_getSandbox(
-      new Config(['api_token' => '123', 'language' => 'en_US'])
-    )->play(function ($api, $sandbox) {
+    $config = new Config(['api_token' => '123', 'language' => 'en_US']);
+    $this->_getSandbox($config)
+      ->play(function ($api, $sandbox) use ($config) {
         $sandbox->makeResponse('GET /test', 200);
         $api->request('GET', '/test', ['json' => ['foo' => 'bar']]);
 
@@ -119,7 +119,7 @@ class ClientTest extends TestCase {
           'Must set json accept header'
         );
         $this->assertEquals(
-          'en_US',
+          $config->get('language'),
           $request->getHeader('Accept-language')[0],
           'Must set accept-language header'
         );
@@ -129,12 +129,12 @@ class ClientTest extends TestCase {
           'Must set api version header'
         );
         $this->assertEquals(
-          'Bearer 123',
+          "Bearer {$config->get('api_token')}",
           $request->getHeader('Authorization')[0],
           'Must set provided api token in autorization header'
         );
         $this->assertEquals(
-          'Nexcess-SDK/' . Client::SDK_VERSION .
+          'Nexcess-PHP-SDK/' . Client::SDK_VERSION .
             ' (' . guzzle_user_agent() . ')',
           $request->getHeader('User-agent')[0],
           'Must set user-agent header'

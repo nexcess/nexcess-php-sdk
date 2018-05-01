@@ -13,6 +13,8 @@ use JsonSerializable;
 
 use GuzzleHttp\Psr7\Response as GuzzleResponse;
 
+use Psr\Http\Message\StreamInterface;
+
 use Nexcess\Sdk\ {
   Endpoint\Readable as Endpoint,
   Exception\SdkException
@@ -36,13 +38,14 @@ class Response implements JsonSerializable {
   }
 
   /**
+   * {@inheritDoc}
    * @see https://php.net/__toString
    */
   public function __toString() {
     try {
       $json = json_encode(
         $this,
-        JSON_PRETTY_PRINT|JSON_UNESCAPED_SLASHES|JSON_UNESCAPED_UNICODE
+        JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE
       );
     } catch (Throwable $e) {
       // __toString must not throw
@@ -55,7 +58,7 @@ class Response implements JsonSerializable {
    * Proxies GuzzleResponse::getBody
    * @see http://docs.guzzlephp.org/en/stable/psr7.html#responses
    */
-  public function getBody() {
+  public function getBody() : StreamInterface {
     return $this->_guzzle_response->getBody();
   }
 
@@ -100,6 +103,7 @@ class Response implements JsonSerializable {
   }
 
   /**
+   * {@inheritDoc}
    * @see https://php.net/JsonSerializable.jsonSerialize
    */
   public function jsonSerialize() {

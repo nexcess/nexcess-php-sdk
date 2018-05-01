@@ -100,6 +100,7 @@ class Client {
   }
 
   /**
+   * {@inheritDoc}
    * @see https://php.net/__call
    * Allows create/read/update actions to be accessed as a method call.
    *
@@ -231,12 +232,11 @@ class Client {
         $this->_client->request($method, $endpoint, $params)
       );
       return $response;
-
     } catch (ConnectException $e) {
       throw new ApiException(ApiException::CANNOT_CONNECT, $e);
     } catch (ClientException $e) {
       switch ($e->getResponse()->getStatusCode()) {
-        case 401 :
+        case 401:
           $code = ApiException::UNAUTHORIZED;
           break;
         case 403:
@@ -316,7 +316,7 @@ class Client {
       'Accept' => 'application/json',
       'Accept-language' => $this->_config->get('language'),
       'Api-version' => static::API_VERSION,
-      'User-agent' => 'Nexcess-SDK/' . static::SDK_VERSION .
+      'User-agent' => 'Nexcess-PHP-SDK/' . static::SDK_VERSION .
         ' (' . guzzle_user_agent() . ')'
     ];
     $api_token = $this->_config->get('api_token');

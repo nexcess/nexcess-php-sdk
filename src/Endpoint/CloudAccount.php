@@ -53,7 +53,10 @@ class CloudAccount extends Service {
    * @param string $version
    * @return callable @see wait() $until
    */
-  protected function _waitUntilVersion(Model $model, string $version) {
+  protected function _waitUntilVersion(
+    Model $model,
+    string $version
+  ) : callable {
     return function ($endpoint) use ($model, $version) {
       if ($endpoint->retrieve($model)->offsetGet('php_version') === $version) {
         $model->offsetSet($version);

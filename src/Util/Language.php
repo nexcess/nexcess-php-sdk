@@ -107,9 +107,10 @@ class Language {
    * Newer translations replace older ones.
    *
    * @param string $filepath Path to language json file to parse
+   * @return Language $this
    * @throws SdkException If file cannot be read, or parsing fails
    */
-  public function addFile(string $filepath) {
+  public function addFile(string $filepath) : Language {
     $translations = Util::readJsonFile($filepath);
     $this->_translations = $translations + $this->_translations;
 

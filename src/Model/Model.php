@@ -89,6 +89,7 @@ abstract class Model implements Modelable {
   }
 
   /**
+   * {@inheritDoc}
    * @see https://php.net/JsonSerializable.jsonSerialize
    */
   public function jsonSerialize() {
@@ -96,16 +97,18 @@ abstract class Model implements Modelable {
   }
 
   /**
+   * {@inheritDoc}
    * @see https://php.net/ArrayAccess.offsetExists
-   * @param $include_readonly Include "read-only" properties from check?
+   * @param bool $include_readonly Include "read-only" properties from check?
    */
-  public function offsetExists($name, $include_readonly = true) {
+  public function offsetExists($name, bool $include_readonly = true) {
     $name = static::PROPERTY_ALIASES[$name] ?? $name;
     return in_array($name, static::PROPERTY_NAMES) ||
       ($include_readonly && in_array($name, static::READONLY_NAMES));
   }
 
   /**
+   * {@inheritDoc}
    * @see https://php.net/ArrayAccess.offsetGet
    */
   public function offsetGet($name) {
@@ -126,6 +129,7 @@ abstract class Model implements Modelable {
   }
 
   /**
+   * {@inheritDoc}
    * @see https://php.net/ArrayAccess.offsetSet
    * @return Model $this
    */
@@ -144,6 +148,7 @@ abstract class Model implements Modelable {
   }
 
   /**
+   * {@inheritDoc}
    * @see https://php.net/ArrayAccess.offsetUnset
    * @return Model $this
    */
@@ -209,7 +214,6 @@ abstract class Model implements Modelable {
       }
 
       return $this;
-
     } catch (Throwable $e) {
       $this->_values = $prior;
       throw new ModelException(

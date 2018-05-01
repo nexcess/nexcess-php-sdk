@@ -105,7 +105,7 @@ interface Collector extends Countable, Iterator, JsonSerializable {
   /**
    * Removes a model from the collection.
    *
-   * @param Model|int $id The Model or Model id to remove
+   * @param Model|int $model_or_id The Model or Model id to remove
    * @return Model The removed Model
    * @throws ModelException If the model does not exist in the collection
    */

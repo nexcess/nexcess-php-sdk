@@ -110,7 +110,9 @@ abstract class ReadWrite extends Read implements ReadWritable {
 
     $until = $until ??
       $this->_wait_until ??
-      function () { return true; };
+      function () {
+        return true;
+      };
     $this->_wait_until = null;
 
     $tick = $config->get('wait.tick_function');
@@ -140,7 +142,6 @@ abstract class ReadWrite extends Read implements ReadWritable {
       }
 
       return $this;
-
     } catch (ApiException $e) {
       throw $e;
     } catch (Throwable $e) {

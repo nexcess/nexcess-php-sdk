@@ -64,6 +64,7 @@ class Collection implements Collector {
   }
 
   /**
+   * {@inheritDoc}
    * @see https://php.net/Iterator.current
    */
   public function current() {
@@ -113,10 +114,13 @@ class Collection implements Collector {
    * {@inheritDoc}
    */
   public function getIds() : array {
-    return $this->each(function ($item) { return $item->getId(); });
+    return $this->each(function ($item) {
+      return $item->getId();
+    });
   }
 
   /**
+   * {@inheritDoc}
    * @see https://php.net/JsonSerializable.jsonSerialize
    */
   public function jsonSerialize() {
@@ -124,6 +128,7 @@ class Collection implements Collector {
   }
 
   /**
+   * {@inheritDoc}
    * @see https://php.net/Iterator.key
    */
   public function key() {
@@ -198,6 +203,7 @@ class Collection implements Collector {
   }
 
   /**
+   * {@inheritDoc}
    * @see https://php.net/Iterator.valid
    */
   public function valid() {

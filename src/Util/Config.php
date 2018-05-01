@@ -74,6 +74,7 @@ class Config {
 
   /**
    * Allows config options to be accessed like properties.
+   * {@inheritDoc}
    * @see https://php.net/__get
    */
   public function __get(string $name) {
@@ -82,6 +83,7 @@ class Config {
 
   /**
    * Allows config options to be accessed like properties.
+   * {@inheritDoc}
    * @see https://php.net/__get
    */
   public function __set(string $name, $value) {
@@ -131,7 +133,6 @@ class Config {
       }
 
       $this->_checkOptions();
-
     } catch (Throwable $e) {
       $this->_options = $prior;
       throw $e;

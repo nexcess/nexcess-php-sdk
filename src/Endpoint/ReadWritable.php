@@ -18,7 +18,7 @@ use Nexcess\Sdk\ {
 /**
  * Interface for writable API endpoints.
  */
-Interface ReadWritable extends Readable {
+interface ReadWritable extends Readable {
 
   /** @var int Key for wait() $opts interval. */
   const OPT_WAIT_INTERVAL = 0;
@@ -44,7 +44,7 @@ Interface ReadWritable extends Readable {
   /**
    * Deletes an existing item.
    *
-   * @param Model|int $id Model or item id to delete
+   * @param Model|int $model_or_id Model or item id to delete
    * @return ReadWritable $this
    * @throws ApiException If request fails
    */
