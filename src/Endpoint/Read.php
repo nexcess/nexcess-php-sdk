@@ -90,7 +90,7 @@ abstract class Read implements Endpoint {
    */
   public function isInSync(Model $model, bool $hard = false) : bool {
     $data = $model->toArray();
-    $id = $model->offsetGet('id');
+    $id = $model->get('id');
     if ($id === null || empty($this->_retrieved[$id])) {
       return false;
     }
@@ -133,7 +133,7 @@ abstract class Read implements Endpoint {
    * {@inheritDoc}
    */
   public function sync(Model $model, bool $hard = false) : Model {
-    $id = $model->offsetGet('id');
+    $id = $model->get('id');
     return $model->sync(
       ($hard || empty($this->_retrieved[$id])) ?
         $this->_retrieve($id) :

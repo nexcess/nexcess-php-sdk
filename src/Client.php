@@ -228,10 +228,9 @@ class Client {
       $params['headers'] =
         ($params['headers'] ?? []) + $this->_getDefaultHeaders();
 
-      $response = new Response(
+      return new Response(
         $this->_client->request($method, $endpoint, $params)
       );
-      return $response;
     } catch (ConnectException $e) {
       throw new ApiException(ApiException::CANNOT_CONNECT, $e);
     } catch (ClientException $e) {
@@ -299,7 +298,7 @@ class Client {
    */
   public function getRequestLog() : array {
     $config = $this->_config;
-    if (! ($config->get('debug') || $config->get('request.log'))) {
+    if (! $config->get('request.log')) {
       throw new SdkException(SdkException::REQUEST_LOG_NOT_ENABLED);
     }
 

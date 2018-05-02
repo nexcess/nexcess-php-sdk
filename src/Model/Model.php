@@ -50,7 +50,7 @@ abstract class Model implements Modelable {
     $model = new static();
 
     foreach ($data as $property => $value) {
-      $model->offsetSet($property, $value);
+      $model->set($property, $value);
     }
 
     return $model;
@@ -62,7 +62,7 @@ abstract class Model implements Modelable {
   public function __construct(int $id = null) {
     $this->sync([], true);
     if ($id) {
-      $this->offsetSet('id', $id);
+      $this->set('id', $id);
     }
   }
 
@@ -71,37 +71,13 @@ abstract class Model implements Modelable {
    */
   public function equals(Modelable $other) : bool {
     return ($other instanceof $this) &&
-      $other->offsetGet('id') === $this->offsetGet('id');
+      $other->get('id') === $this->get('id');
   }
 
   /**
    * {@inheritDoc}
    */
-  public function getId() : int {
-    return $this->offsetGet('id');
-  }
-
-  /**
-   * {@inheritDoc}
-   */
-  public function isReal() : bool {
-    return $this->offsetGet('id') !== null;
-  }
-
-  /**
-   * {@inheritDoc}
-   * @see https://php.net/JsonSerializable.jsonSerialize
-   */
-  public function jsonSerialize() {
-    return $this->toArray();
-  }
-
-  /**
-   * {@inheritDoc}
-   * @see https://php.net/ArrayAccess.offsetExists
-   * @param bool $include_readonly Include "read-only" properties from check?
-   */
-  public function offsetExists($name, bool $include_readonly = true) {
+  public function exists(string $name, bool $include_readonly = true) : bool {
     $name = static::PROPERTY_ALIASES[$name] ?? $name;
     return in_array($name, static::PROPERTY_NAMES) ||
       ($include_readonly && in_array($name, static::READONLY_NAMES));
@@ -109,10 +85,9 @@ abstract class Model implements Modelable {
 
   /**
    * {@inheritDoc}
-   * @see https://php.net/ArrayAccess.offsetGet
    */
-  public function offsetGet($name) {
-    if (! $this->offsetExists($name)) {
+  public function get(string $name) {
+    if (! $this->exists($name)) {
       throw new ModelException(
         ModelException::NO_SUCH_PROPERTY,
         ['name' => $name, 'model' => static::class]
@@ -130,11 +105,63 @@ abstract class Model implements Modelable {
 
   /**
    * {@inheritDoc}
+   */
+  public function getId() : int {
+    return $this->get('id');
+  }
+
+  /**
+   * {@inheritDoc}
+   */
+  public function isReal() : bool {
+    return $this->get('id') !== null;
+  }
+
+  /**
+   * {@inheritDoc}
+   * @see https://php.net/JsonSerializable.jsonSerialize
+   */
+  public function jsonSerialize() {
+    return $this->toArray();
+  }
+
+  /**
+   * {@inheritDoc}
+   * @see https://php.net/ArrayAccess.offsetExists
+   */
+  public function offsetExists($name) {
+    return $this->exists($name);
+  }
+
+  /**
+   * {@inheritDoc}
+   * @see https://php.net/ArrayAccess.offsetGet
+   */
+  public function offsetGet($name) {
+    return $this->get($name);
+  }
+
+  /**
+   * {@inheritDoc}
    * @see https://php.net/ArrayAccess.offsetSet
-   * @return Model $this
    */
   public function offsetSet($name, $value) {
-    if (! $this->offsetExists($name, false)) {
+    $this->set($name, $value);
+  }
+
+  /**
+   * {@inheritDoc}
+   * @see https://php.net/ArrayAccess.unset
+   */
+  public function offsetUnset($name) {
+    $this->unset($name);
+  }
+
+  /**
+   * {@inheritDoc}
+   */
+  public function set(string $name, $value) : Model {
+    if (! $this->exists($name, false)) {
       throw new ModelException(
         ModelException::NO_SUCH_WRITABLE_PROPERTY,
         ['name' => $name, 'model' => static::class]
@@ -143,25 +170,6 @@ abstract class Model implements Modelable {
 
     $name = static::PROPERTY_ALIASES[$name] ?? $name;
     $this->sync([$name => $value]);
-
-    return $this;
-  }
-
-  /**
-   * {@inheritDoc}
-   * @see https://php.net/ArrayAccess.offsetUnset
-   * @return Model $this
-   */
-  public function offsetUnset($name) {
-    if (! $this->offsetExists($name, false)) {
-      throw new ModelException(
-        ModelException::NO_SUCH_WRITABLE_PROPERTY,
-        ['name' => $name, 'model' => static::class]
-      );
-    }
-
-    $name = static::PROPERTY_ALIASES[$name] ?? $name;
-    $this->_values[$name] = null;
 
     return $this;
   }
@@ -188,7 +196,7 @@ abstract class Model implements Modelable {
 
       foreach ($data as $key => $value) {
         $key = static::PROPERTY_ALIASES[$key] ?? $key;
-        if ($this->offsetExists($key)) {
+        if ($this->exists($key)) {
           $setter = str_replace('_', '', "set{$key}");
           if (method_exists($this, $setter)) {
             $this->$setter($value);
@@ -232,7 +240,27 @@ abstract class Model implements Modelable {
   }
 
   /**
+   * {@inheritDoc}
+   */
+  public function unset(string $name) : Model {
+    if (! $this->exists($name, false)) {
+      throw new ModelException(
+        ModelException::NO_SUCH_WRITABLE_PROPERTY,
+        ['name' => $name, 'model' => static::class]
+      );
+    }
+
+    $name = static::PROPERTY_ALIASES[$name] ?? $name;
+    $this->_values[$name] = null;
+
+    return $this;
+  }
+
+  /**
+   * Builds a Collection of Models given an array of ids or values.
    *
+   * @param string $fqcn Fully qualified classname of model to build
+   * @param int[]|array[] $value Values to build models from
    */
   protected function _buildPropertyCollection(
     string $fqcn,

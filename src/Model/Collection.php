@@ -51,7 +51,7 @@ class Collection implements Collector {
       );
     }
 
-    $this->_models[$model->offsetGet('id')] = $model;
+    $this->_models[$model->get('id')] = $model;
 
     return $this;
   }
@@ -158,7 +158,7 @@ class Collection implements Collector {
   public function remove($model_or_id) : Model {
     $id = $model_or_id;
     if ($model_or_id instanceof $this->_of) {
-      $id = $model_or_id->offsetGet('id');
+      $id = $model_or_id->get('id');
     }
     if (! is_int($id) || ! isset($this->_models[$id])) {
       throw new ModelException(
@@ -187,8 +187,8 @@ class Collection implements Collector {
       $this->_models,
       function ($a, $b) use ($desc) {
         return ($desc) ?
-          $b->offsetGet($property) <=> $a->offsetGet($property) :
-          $a->offsetGet($property) <=> $b->offsetGet($property);
+          $b->get($property) <=> $a->get($property) :
+          $a->get($property) <=> $b->get($property);
       }
     );
 

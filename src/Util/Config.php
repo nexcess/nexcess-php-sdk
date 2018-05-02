@@ -43,6 +43,9 @@ use Nexcess\Sdk\ {
  */
 class Config {
 
+  /** @var array Map of option override values for debug mode. */
+  const DEBUG_OVERRIDES = ['request' => ['log' => true]];
+
   /** @var array Map of default options. */
   const DEFAULT_OPTIONS = [];
 
@@ -97,7 +100,23 @@ class Config {
    * @return mixed Option value on success; null otherwise
    */
   public function get(string $name) {
-    return Util::dig($this->_options, $name) ?? $this->getDefault($name);
+    return $this->getDebugOverride($name) ??
+      Util::dig($this->_options, $name) ??
+      $this->getDefault($name);
+  }
+
+  /**
+   * Gets an override option if debug mode is enabled.
+   *
+   * @param string $name Name of option to get
+   * @return mixed Option value on success; null otherwise
+   */
+  public function getDebugOverride(string $name) {
+    if (empty($this->_options['debug'])) {
+      return null;
+    }
+
+    return Util::dig(static::DEBUG_OVERRIDES, $name);
   }
 
   /**

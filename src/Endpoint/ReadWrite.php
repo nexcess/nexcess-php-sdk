@@ -48,7 +48,7 @@ abstract class ReadWrite extends Read implements ReadWritable {
       $model_or_id;
     $this->_checkModelType($model);
 
-    $id = $model->offsetGet('id');
+    $id = $model->get('id');
     if (! is_int($id)) {
       throw new ApiException(
         ApiException::MISSING_ID,
@@ -68,7 +68,7 @@ abstract class ReadWrite extends Read implements ReadWritable {
   public function update(Model $model, array $data = []) : ReadWritable {
     $this->_checkModelType($model);
 
-    $id = $model->offsetGet('id');
+    $id = $model->get('id');
     if (! $id) {
       throw new ApiException(
         ApiException::MISSING_ID,
@@ -77,7 +77,7 @@ abstract class ReadWrite extends Read implements ReadWritable {
     }
 
     foreach ($data as $key => $value) {
-      $model->offsetSet($key, $value);
+      $model->set($key, $value);
     }
 
     $update = empty($this->_stored[$id]) ?
@@ -158,10 +158,10 @@ abstract class ReadWrite extends Read implements ReadWritable {
   protected function _waitUntilDelete(Model $model) : callable {
     return function ($endpoint) use ($model) {
       try {
-        $endpoint->retrieve($model->offsetGet('id'));
+        $endpoint->retrieve($model->get('id'));
       } catch (ApiException $e) {
         if ($e->getCode() === ApiException::NOT_FOUND) {
-          $model->offsetUnset('id');
+          $model->unset('id');
           return true;
         }
 

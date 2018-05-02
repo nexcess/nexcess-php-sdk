@@ -38,7 +38,7 @@ class CloudAccount extends Service {
   public function setPhpVersion(Model $model, string $version) : CloudAccount {
     $this->_request(
       'POST',
-      self::ENDPOINT . "/{$model->offsetGet('id')}",
+      self::ENDPOINT . "/{$model->getId()}",
       ['json' => ['_action' => 'set-php-version', 'php_version' => $version]]
     );
 
@@ -58,8 +58,8 @@ class CloudAccount extends Service {
     string $version
   ) : callable {
     return function ($endpoint) use ($model, $version) {
-      if ($endpoint->retrieve($model)->offsetGet('php_version') === $version) {
-        $model->offsetSet($version);
+      if ($endpoint->retrieve($model)->get('php_version') === $version) {
+        $model->set('version', $version);
         return true;
       }
     };

@@ -41,6 +41,25 @@ interface Modelable extends ArrayAccess, JsonSerializable {
   public function equals(Modelable $other) : bool;
 
   /**
+   * Checks whether a property exists on this model,
+   * optionally excluding properties which are "readonly."
+   *
+   * @param string $name Name of the property to check
+   * @param bool $include_readonly Include "read-only" properties from check?
+   * @return bool True if property exists; false otherwise
+   */
+  public function exists(string $name, bool $include_readonly = true) : bool;
+
+  /**
+   * Gets a property value.
+   *
+   * @param string $name Name of the property to get
+   * @return mixed The property value on success
+   * @throws ModelException If the named property does not exist
+   */
+  public function get(string $name);
+
+  /**
    * Gets the model id.
    *
    * @return int
@@ -55,6 +74,16 @@ interface Modelable extends ArrayAccess, JsonSerializable {
   public function isReal() : bool;
 
   /**
+   * Sets a value on a property.
+   *
+   * @param string $name Name of the property to set
+   * @param mixed $value The value to set
+   * @return Model $this
+   * @throws ModelException If the named property does not exist or is readonly
+   */
+  public function set(string $name, $value) : Model;
+
+  /**
    * Gets model state as an array.
    *
    * This method is intended for use by Endpoints,
@@ -64,4 +93,13 @@ interface Modelable extends ArrayAccess, JsonSerializable {
    * @return array
    */
   public function toArray(bool $collapse = false) : array;
+
+  /**
+   * Unsets a property.
+   *
+   * @param string $name Name of the property to unset
+   * @return Model $this
+   * @throws ModelException If the named property does not exist or is readonly
+   */
+  public function unset(string $name) : Model;
 }
