@@ -88,14 +88,15 @@ class Client {
     $this->_config = $config;
 
     // set up preferred language, if configured
-    $language = $config->get('language');
-    if ($language) {
-      Language::init(
-        $language['language'] ?? Language::DEFAULT_LANGUAGE,
-        ...($language['paths'] ?? [])
-      );
+    $language = $this->_config->get('language');
+    if (! empty($language['language'])) {
+      Language::getInstance()->setLanguage($language['language']);
+    }
+    if (! empty($language['paths'])) {
+      Language::getInstance()->addPaths(...$language['paths']);
     }
 
+    // set up guzzle client
     $this->_client = $this->_newGuzzleClient();
   }
 

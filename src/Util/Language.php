@@ -78,11 +78,18 @@ class Language {
     string $language = self::DEFAULT_LANGUAGE,
     string ...$paths
   ) {
+    if (self::$_instance) {
+      return;
+    }
+
     self::$_instance = new self($language, ...$paths);
   }
 
   /** @var string Current language. */
   protected $_language = '';
+
+  /** @var string[] List of translation file paths. */
+  protected $_paths = [__DIR__ . '/lang'];
 
   /** @var array Map of translations in current language. */
   protected $_translations = [];
@@ -92,27 +99,28 @@ class Language {
    * @param string[] $paths List of filepaths to find language files on
    */
   public function __construct(string $language, string ...$paths) {
-    $this->_language = $language;
+    $this->setLanguage($language);
 
-    array_unshift($paths, __DIR__ . '/lang');
-    foreach ($paths as $path) {
-      $this->addFile("{$path}/{$this->_language}.json");
+    if (! empty($paths)) {
+      $this->addPaths(...$paths);
     }
   }
 
   /**
-   * Parses a json file and adds language stings to available translations.
+   * Adds filesystem path(s) to look for .json translation files.
    *
-   * json files should contain an object with key:translation pairs.
-   * Newer translations replace older ones.
+   * Paths must not include a trailing slash.
    *
-   * @param string $filepath Path to language json file to parse
+   * Each path is expected to be a directory containing .json file(s),
+   * named with their BCP-47 code, with dashes replaced by underscores.
+   * @example "en_US.json"
+   * @see https://tools.ietf.org/html/bcp47
+   *
+   * @param string[] $paths Filepaths to add
    * @return Language $this
-   * @throws SdkException If file cannot be read, or parsing fails
    */
-  public function addFile(string $filepath) : Language {
-    $translations = Util::readJsonFile($filepath);
-    $this->_translations = $translations + $this->_translations;
+  public function addPaths(string ...$paths) : Language {
+    array_push($this->_paths, ...$paths);
 
     return $this;
   }
@@ -130,9 +138,48 @@ class Language {
    * Gets a translation.
    *
    * @param string $key Identifier for the desired translation
-   * @return string Translation on success; unchanged key otherwise
+   * @return string Translation on success; untranslated key otherwise
    */
   public function getTranslation(string $key) : string {
-    return $this->_translations[$key] ?? $key;
+    if (empty($this->_translations)) {
+      $this->_loadTranslations();
+    }
+
+    return Util::dig($this->_translations, $key) ?? $key;
+  }
+
+  /**
+   * Sets the language to get translations in.
+   *
+   * Note, this does NOT check whether any translations
+   * are actually available in the given language.
+   *
+   * @param string $language Desired language
+   * @return Language $this
+   */
+  public function setLanguage(string $language) : Language {
+    if ($language !== $this->_language) {
+      $this->_translations = [];
+      $this->_language = $language;
+    }
+
+    return $this;
+  }
+
+  /**
+   * Loads translations from .json files on configured file paths.
+   */
+  protected function _loadTranslations() {
+    foreach ($this->_paths as $path) {
+      $file = "{$path}/{$this->_language}.json";
+      if (! is_readable($file)) {
+        continue;
+      }
+
+      $this->_translations = Util::extendRecursive(
+        $this->_translations,
+        Util::readJsonFile($file)
+      );
+    }
   }
 }
