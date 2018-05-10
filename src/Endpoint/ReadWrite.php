@@ -23,6 +23,9 @@ use Nexcess\Sdk\ {
  */
 abstract class ReadWrite extends Read implements ReadWritable {
 
+  /** @var string|null API endpoint url for create action (if different). */
+  const ENDPOINT_CREATE = null;
+
   /** @var callable Queued callback for wait(). */
   protected $_wait_until;
 
@@ -30,13 +33,15 @@ abstract class ReadWrite extends Read implements ReadWritable {
    * {@inheritDoc}
    */
   public function create(array $data) : Model {
-    $model = static::MODEL;
+    $model = $this->_client
+      ->request(
+        'POST',
+        static::ENDPOINT_CREATE ?? static::ENDPOINT,
+        ['json' => $data]
+      );
 
-    return (new $model())->sync(
-      $this->_client
-        ->request('POST', static::ENDPOINT, ['json' => $data])
-        ->toArray()
-    );
+    $this->_wait($this->_waitUntilCreate($model));
+    return $model;
   }
 
   /**
@@ -48,7 +53,7 @@ abstract class ReadWrite extends Read implements ReadWritable {
       $model_or_id;
     $this->_checkModelType($model);
 
-    $id = $model->get('id');
+    $id = $model->getId();
     if (! is_int($id)) {
       throw new ApiException(
         ApiException::MISSING_ID,
@@ -88,15 +93,15 @@ abstract class ReadWrite extends Read implements ReadWritable {
         function ($value, $stored) { return ($value === $stored) ? 0 : 1; }
       );
 
-    if (! empty($update)) {
-      return $this->_sync(
+    $this->_wait(null);
+
+    return (! empty($update)) ?
+      $this :
+      $this->_sync(
         $this->_client
           ->request('PATCH', static::ENDPOINT . "/{$id}/edit", $update)
           ->toArray()
       );
-    }
-
-    return $this;
   }
 
   /**
@@ -150,6 +155,30 @@ abstract class ReadWrite extends Read implements ReadWritable {
   }
 
   /**
+   * Checks for a CREATE to finsih and then syncs the associated Model.
+   *
+   * By default, assumes creation is already complete.
+   * Override this method to provide custom checks if needed.
+   *
+   * @param Model $model
+   * @return callable @see wait() $until
+   */
+  protected function _waitUntilCreate(Model $model) : callable {
+    return function ($endpoint) use ($model) {
+      try {
+        $model->sync($endpoint->retrieve($model->getId())->toArray());
+        return true;
+      } catch (ApiException $e) {
+        if ($e->getCode() === ApiException::NOT_FOUND) {
+          throw new ApiException(ApiException::CREATE_FAILED);
+        }
+
+        throw $e;
+      }
+    };
+  }
+
+  /**
    * Checks for a DELETE to finish and then syncs the associated Model.
    *
    * @param Model $model
@@ -158,7 +187,7 @@ abstract class ReadWrite extends Read implements ReadWritable {
   protected function _waitUntilDelete(Model $model) : callable {
     return function ($endpoint) use ($model) {
       try {
-        $endpoint->retrieve($model->get('id'));
+        $endpoint->retrieve($model->getId());
       } catch (ApiException $e) {
         if ($e->getCode() === ApiException::NOT_FOUND) {
           $model->unset('id');
@@ -173,9 +202,14 @@ abstract class ReadWrite extends Read implements ReadWritable {
   /**
    * Queues or invokes a wait callback based on config options.
    *
-   * @param callable $until
+   * @param callable|null $until
    */
-  protected function _wait(callable $until) {
+  protected function _wait(callable $until = null) {
+    if ($until === null) {
+      $this->_wait_until = null;
+      return;
+    }
+
     if ($this->_config->get('wait.always')) {
       $this->wait($until);
       return;

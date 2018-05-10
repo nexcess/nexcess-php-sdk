@@ -41,6 +41,9 @@ abstract class Read implements Endpoint {
   /** @var array Default filter values for list(). */
   const BASE_LIST_FILTER = [];
 
+  /** @var string API endpoint. */
+  const ENDPOINT = '';
+
   /** @var string Fully qualified classname of the Model for this endpoint. */
   const MODEL = '';
 
@@ -90,7 +93,7 @@ abstract class Read implements Endpoint {
    */
   public function isInSync(Model $model, bool $hard = false) : bool {
     $data = $model->toArray();
-    $id = $model->get('id');
+    $id = $model->getId();
     if ($id === null || empty($this->_retrieved[$id])) {
       return false;
     }
@@ -119,7 +122,9 @@ abstract class Read implements Endpoint {
       $collection->add($item);
     }
 
-    return $collection;
+    // this might end up being redundant,
+    // but is needed since not all endpoints support filters on all properties.
+    return $filter ? $collection->filter($filter) : $collection;
   }
 
   /**
@@ -133,7 +138,7 @@ abstract class Read implements Endpoint {
    * {@inheritDoc}
    */
   public function sync(Model $model, bool $hard = false) : Model {
-    $id = $model->get('id');
+    $id = $model->getId();
     return $model->sync(
       ($hard || empty($this->_retrieved[$id])) ?
         $this->_retrieve($id) :

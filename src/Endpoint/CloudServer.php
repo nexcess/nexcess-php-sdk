@@ -36,7 +36,7 @@ class CloudServer extends Service {
   public function reboot(Model $cloud_server) : CloudServer {
     $response = $this->_client->request(
       'POST',
-      self::ENDPOINT . "/{$cloud_server_id}",
+      self::ENDPOINT . "/{$cloud_server->getId()}",
       ['json' => ['_action' => 'reboot']]
     );
 
@@ -44,7 +44,7 @@ class CloudServer extends Service {
   }
 
   /**
-   * Resizes an existing clous server.
+   * Resizes an existing cloud server.
    *
    * @param Model $cloud_server Cloud Server model
    * @param int $package_id Desired package id
@@ -54,7 +54,7 @@ class CloudServer extends Service {
   public function resize(Model $cloud_server, int $package_id) : CloudServer {
     $response = $this->_client->request(
       'POST',
-      self::ENDPOINT . "/{$cloud_server_id}",
+      self::ENDPOINT . "/{$cloud_server->getId()}",
       ['json' => ['_action' => 'resize', 'package_id' => $package_id]]
     );
 
@@ -71,7 +71,7 @@ class CloudServer extends Service {
   public function start(Model $cloud_server) : CloudServer {
     $response = $this->_client->request(
       'POST',
-      self::ENDPOINT . "/{$cloud_server_id}",
+      self::ENDPOINT . "/{$cloud_server->getId()}",
       ['json' => ['_action' => 'start']]
     );
 
@@ -88,7 +88,7 @@ class CloudServer extends Service {
   public function stop(Model $cloud_server) : CloudServer {
     $response = $this->_client->request(
       'POST',
-      self::ENDPOINT . "/{$cloud_server_id}",
+      self::ENDPOINT . "/{$cloud_server->getId()}",
       ['json' => ['_action' => 'stop']]
     );
 
@@ -105,7 +105,7 @@ class CloudServer extends Service {
   public function viewConsoleLog(Model $cloud_server) : CloudServer {
     $response = $this->_client->request(
       'GET',
-      self::ENDPOINT . "/{$cloud_server_id}/console-log"
+      self::ENDPOINT . "/{$cloud_server->getId()}/console-log"
     );
 
     return $this;

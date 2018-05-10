@@ -11,8 +11,6 @@ namespace Nexcess\Sdk\Exception;
 
 use Nexcess\Sdk\Exception\Exception;
 
-use Nexcess\Sdk\Util\I18n;
-
 class ApiException extends Exception {
 
   /** @var int Networking/connectivity issue. */

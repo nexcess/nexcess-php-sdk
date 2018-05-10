@@ -11,8 +11,8 @@ namespace Nexcess\Sdk\Model;
 
 use Nexcess\Sdk\ {
   Exception\ModelException,
+  Model\Cloud,
   Model\Collector as Collection,
-  Model\Location,
   Model\Service,
   Util\Util
 };
@@ -22,18 +22,19 @@ use Nexcess\Sdk\ {
  */
 class CloudServer extends Service {
 
+  /** {@inheritDoc} */
   const PROPERTY_ALIASES = [
-    'cloud' => 'location',
     'id' => 'service_id'
   ];
 
+  /** {@inheritDoc} */
   const PROPERTY_COLLAPSED = [
-    'location' => 'cloud_id',
+    'cloud' => 'cloud_id',
     'package' => 'package_id'
   ];
 
   /** {@inheritDoc} */
-  const PROPERTY_MODELS = ['location' => Location::class];
+  const PROPERTY_MODELS = ['cloud' => Cloud::class];
 
   /** {@inheritDoc} */
   const PROPERTY_NAMES = ['service_id'];

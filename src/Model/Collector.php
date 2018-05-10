@@ -124,7 +124,8 @@ interface Collector extends Countable, Iterator, JsonSerializable {
   /**
    * Gets the collection as an array.
    *
+   * @param bool $recurse Convert models to arrays also?
    * @return array
    */
-  public function toArray() : array;
+  public function toArray(bool $recurse = false) : array;
 }

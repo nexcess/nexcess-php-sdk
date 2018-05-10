@@ -22,6 +22,9 @@ use Nexcess\Sdk\ {
 class CloudAccount extends Service {
 
   /** {@inheritDoc} */
+  const ENDPOINT_CREATE = 'cloud-account';
+
+  /** {@inheritDoc} */
   const SERVICE_TYPE = 'virt-guest-cloud';
 
   /** {@inheritDoc} */

@@ -94,10 +94,26 @@ class Collection implements Collector {
    * {@inheritDoc}
    */
   public function filter($filter) : Collector {
-    throw new SdkException(
-      SdkException::NOT_IMPLEMENTED,
-      ['class' => __CLASS__, 'method' => __FUNCTION__]
-    );
+    if (! is_callable($filter)) {
+      if (is_array($filter)) {
+        $filter = function ($model) use ($filter) {
+          foreach ($filter as $property => $value) {
+            if ($model->get($property) !== $value) {
+              return false;
+            }
+          }
+
+          return true;
+        };
+      } else {
+        throw new SdkException(
+          SdkException::INVALID_FILTER,
+          ['method' => __METHOD__, 'type' => Util::type($filter)]
+        );
+      }
+    }
+
+    return new static($this->_of, array_filter($this->_models, $filter));
   }
 
   /**
@@ -198,8 +214,15 @@ class Collection implements Collector {
   /**
    * {@inheritDoc}
    */
-  public function toArray() : array {
-    return $this->_models;
+  public function toArray(bool $recurse = false) : array {
+    return $recurse ?
+      array_map(
+        function ($model) {
+          return $model->toArray();
+        },
+        $this->_models
+      ) :
+      $this->_models;
   }
 
   /**

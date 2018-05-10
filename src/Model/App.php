@@ -12,25 +12,21 @@ namespace Nexcess\Sdk\Model;
 use Nexcess\Sdk\Model\Model;
 
 /**
- * Represents a location (e.g., where physical servers are).
+ * Represents a cloud (e.g., servers that do cloud stuff).
  */
-class Location extends Model {
+class App extends Model {
 
   /** {@inheritDoc} */
-  const PROPERTY_ALIASES = [
-    'id' => 'location_id',
-    'identity' => 'location_code'
-  ];
+  const PROPERTY_ALIASES = ['id' => 'app_id'];
 
   /** {@inheritDoc} */
-  const PROPERTY_NAMES = ['location_id'];
+  const PROPERTY_NAMES = ['app_id'];
 
   /** {@inheritDoc} */
   const READONLY_NAMES = [
-    'country',
-    'location',
-    'location_code',
-    'status',
-    'type'
+    'name',
+    'version',
+    'type',
+    'status'
   ];
 }
