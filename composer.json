@@ -9,7 +9,7 @@
   "require": {
     "php": "^7.1",
     "guzzlehttp/guzzle": "^6.0",
-    "php-enspired/exceptable": "~1.2"
+    "php-enspired/exceptable": "^1.2.1"
   },
   "autoload": {
     "psr-4": { "Nexcess\\Sdk\\": "src/" }

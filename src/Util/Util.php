@@ -9,10 +9,34 @@ declare(strict_types  = 1);
 
 namespace Nexcess\Sdk\Util;
 
+use Nexcess\Sdk\Exception\SdkException;
+
 /**
  * Assorted utility functions.
  */
 class Util {
+
+  /** @var int Validate as boolean. */
+  const FILTER_BOOL = FILTER_VALIDATE_BOOLEAN;
+
+  /** @var int Validate as float. */
+  const FILTER_FLOAT = FILTER_VALIDATE_FLOAT;
+
+  /** @var int Validate as integer. */
+  const FILTER_INT = FILTER_VALIDATE_INT;
+
+  /** @var int Default options for jsonDecode(). */
+  const JSON_DECODE_DEFAULT_OPTS = JSON_BIGINT_AS_STRING;
+
+  /** @var int Default options for jsonEncode(). */
+  const JSON_ENCODE_DEFAULT_OPTS = JSON_BIGINT_AS_STRING |
+    JSON_PRESERVE_ZERO_FRACTION |
+    JSON_UNESCAPED_SLASHES |
+    JSON_UNESCAPED_UNICODE;
+
+  /** @var int Pretty-printing options for jsonEncode(). */
+  const JSON_ENCODE_PRETTY = self::JSON_ENCODE_DEFAULT_OPTS |
+    JSON_PRETTY_PRINT;
 
   /**
    * Looks up a value at given path in an array (if it exists).
@@ -62,6 +86,68 @@ class Util {
   }
 
   /**
+   * Wraps filter_var() with preferred flags.
+   *
+   * @param mixed $value The value to filter
+   * @param int $filter The filter to use
+   * @return mixed|null The filtered value on success; null otherwise
+   */
+  public static function filter($value, int $filter) {
+    $flags = 0;
+    if ($filter !== self::FILTER_BOOL) {
+      $flags |= FILTER_NULL_ON_FAILURE;
+    }
+
+    return filter_var($value, $filter, $flags);
+  }
+
+  /**
+   * Wraps json_decode() with error handling and preferred options.
+   *
+   * @param string $json To be decoded
+   * @param int $opts Bitmask of decoding options
+   * @return array Data on success
+   * @throws SdkException On failure
+   */
+  public static function jsonDecode(
+    string $json,
+    int $opts = self::JSON_DECODE_DEFAULT_OPTS
+  ) : array {
+    $data = json_decode($json, true, 512, $opts);
+    if (json_last_error() === JSON_ERROR_NONE) {
+      return $data;
+    }
+
+    throw new SdkException(
+      SdkException::JSON_DECODE_FAILED,
+      ['message' => json_last_error_msg()]
+    );
+  }
+
+  /**
+   * Wraps json_encode() with error handling and preferred options.
+   *
+   * @param mixed $data To be encoded
+   * @param int $opts Bitmask of encoding options
+   * @return string Json on success
+   * @throws SdkException On failure
+   */
+  public static function jsonEncode(
+    $data,
+    int $opts = self::JSON_ENCODE_DEFAULT_OPTS
+  ) : string {
+    $json = json_encode($data, $opts);
+    if (json_last_error() === JSON_ERROR_NONE) {
+      return $json;
+    }
+
+    throw new SdkException(
+      SdkException::JSON_ENCODE_FAILURE,
+      ['message' => json_last_error_msg()]
+    );
+  }
+
+  /**
    * Reads and decodes a .json file.
    *
    * @param string $filepath Path to json file to read
@@ -76,18 +162,11 @@ class Util {
       );
     }
 
-    $data = json_decode(file_get_contents($filepath), true);
-    if (json_last_error() !== JSON_ERROR_NONE) {
-      throw new SdkException(
-        SdkException::JSON_DECODE_FAILURE,
-        ['error' => json_last_error_msg()]
-      );
-    }
-
+    $data = self::jsonDecode(file_get_contents($filepath));
     if (! is_array($data)) {
       throw new SdkException(
         SdkException::INVALID_JSON_DATA,
-        ['invalid' => $data]
+        ['file' => $filepath]
       );
     }
 

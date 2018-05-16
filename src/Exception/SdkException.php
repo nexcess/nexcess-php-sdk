@@ -58,6 +58,15 @@ class SdkException extends Exception {
   /** @var int Invalid filter callback. */
   const INVALID_FILTER = 15;
 
+  /** @var int Error encoding json. */
+  const JSON_ENCODE_FAILURE = 17;
+
+  /** @var int Json files are expected to contain objects/arrays. */
+  const INVALID_JSON_DATA = 18;
+
+  /** @var int A key was translated as a non-string value. */
+  const INVALID_TRANSLATION = 19;
+
   /** {@inheritDoc} */
   const INFO = [
     self::NOT_IMPLEMENTED => ['message' => 'not_implemented'],
@@ -75,6 +84,9 @@ class SdkException extends Exception {
     self::WAIT_TIMEOUT_EXCEEDED => ['message' => 'wait_timeout_exceeded'],
     self::INVALID_CONFIG_OPTION => ['message' => 'invalid_config_option'],
     self::INVALID_RESPONSE => ['message' => 'invalid_response'],
-    self::INVALID_FILTER => ['message' => 'invalid_filter']
+    self::INVALID_FILTER => ['message' => 'invalid_filter'],
+    self::JSON_ENCODE_FAILURE => ['message' => 'json_encode_failure'],
+    self::INVALID_JSON_DATA => ['message' => 'invalid_json_data'],
+    self::INVALID_TRANSLATION => ['message' => 'invalid_translation']
   ];
 }

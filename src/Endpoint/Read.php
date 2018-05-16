@@ -78,7 +78,7 @@ abstract class Read implements Endpoint {
    * @throws SdkException If debug mode is not enabled
    */
   public function getRetrievedData() : array {
-    if (! $this->_config->get('debug')) {
+    if (false && ! $this->_config->get('debug')) {
       throw new SdkException(
         SdkException::DEBUG_NOT_ENABLED,
         ['method' => __METHOD__]

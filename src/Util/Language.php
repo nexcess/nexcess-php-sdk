@@ -145,7 +145,15 @@ class Language {
       $this->_loadTranslations();
     }
 
-    return Util::dig($this->_translations, $key) ?? $key;
+    $translated = Util::dig($this->_translations, $key) ?? $key;
+    if (! is_string($translated)) {
+      throw new SdkException(
+        SdkException::INVALID_TRANSLATION,
+        ['key' => $key, 'translated' => $translated]
+      );
+    }
+
+    return $translated;
   }
 
   /**

@@ -33,12 +33,14 @@ abstract class ReadWrite extends Read implements ReadWritable {
    * {@inheritDoc}
    */
   public function create(array $data) : Model {
-    $model = $this->_client
+    $response = $this->_client
       ->request(
         'POST',
         static::ENDPOINT_CREATE ?? static::ENDPOINT,
         ['json' => $data]
       );
+
+    $model = $this->getModel()->sync($response->toArray());
 
     $this->_wait($this->_waitUntilCreate($model));
     return $model;
