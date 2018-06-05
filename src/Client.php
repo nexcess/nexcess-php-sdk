@@ -24,12 +24,12 @@ use GuzzleHttp\ {
 use function GuzzleHttp\default_user_agent as guzzle_user_agent;
 
 use Nexcess\Sdk\ {
-  Endpoint\Readable as Endpoint,
-  Endpoint\ReadWritable,
-  Endpoint\Response,
-  Exception\ApiException,
-  Exception\SdkException,
-  Model\Modelable as Model,
+  ApiException,
+  Resource\Modelable as Model,
+  Resource\Readable as Endpoint,
+  Resource\Writable as WritableEndpoint,
+  Resource\Response,
+  SdkException,
   Util\Config,
   Util\Language,
   Util\Util
@@ -58,16 +58,10 @@ use Nexcess\Sdk\ {
 class Client {
 
   /** @var string Api version. */
-  const API_VERSION = '0';
+  public const API_VERSION = '0';
 
   /** @var string Sdk version. */
-  const SDK_VERSION = '0.1-alpha';
-
-  /** @var string SDK root namespace. */
-  const SDK_NAMESPACE = __NAMESPACE__;
-
-  /** @var string SDK root directory. */
-  const SDK_ROOT = __DIR__ . '/..';
+  public const SDK_VERSION = '0.1-alpha';
 
   /** @var Config Client configuration object. */
   protected $_config;
@@ -78,6 +72,9 @@ class Client {
   /** @var Endpoint[] Cache of Endpoint instances. */
   protected $_endpoints = [];
 
+  /** @var Language Language object. */
+  protected $_language;
+
   /** @var array API request log. */
   protected $_request_log = [];
 
@@ -86,18 +83,8 @@ class Client {
    */
   public function __construct(Config $config) {
     $this->_config = $config;
-
-    // set up preferred language, if configured
-    $language = $this->_config->get('language');
-    if (! empty($language['language'])) {
-      Language::getInstance()->setLanguage($language['language']);
-    }
-    if (! empty($language['paths'])) {
-      Language::getInstance()->addPaths(...$language['paths']);
-    }
-
-    // set up guzzle client
     $this->_client = $this->_newGuzzleClient();
+    $this->_setLanguageHandler();
   }
 
   /**
@@ -139,7 +126,7 @@ class Client {
     }
 
     if (is_array($arg)) {
-      if (! $endpoint instanceof ReadWritable) {
+      if (! $endpoint instanceof WritableEndpoint) {
         throw new ApiException(
           ApiException::ENDPOINT_NOT_WRITABLE,
           ['endpoint' => $name]
@@ -150,7 +137,7 @@ class Client {
     }
 
     if ($arg instanceof Model) {
-      if (! $endpoint instanceof ReadWritable) {
+      if (! $endpoint instanceof WritableEndpoint) {
         throw new ApiException(
           ApiException::ENDPOINT_NOT_WRITABLE,
           ['endpoint' => $name]
@@ -205,6 +192,21 @@ class Client {
   }
 
   /**
+   * Gets a log of API requests performed by this client.
+   *
+   * @return array[] Info about API request, categorized by endpoint
+   * @throws If request logging is disabled
+   */
+  public function getRequestLog() : array {
+    $config = $this->_config;
+    if (! $config->get('request.log')) {
+      throw new SdkException(SdkException::REQUEST_LOG_NOT_ENABLED);
+    }
+
+    return $this->_request_log;
+  }
+
+  /**
    * Perform an API request.
    *
    * This is intended for use by Endpoints,
@@ -216,7 +218,7 @@ class Client {
    * @param string $method The http method to use
    * @param string $endpoint The API endpoint to request
    * @param array $params Http client parameters
-   * @return Response
+   * @return array Response data
    * @throws ApiException On http error (4xx, 5xx, network issues, etc.)
    * @throws SdkException On any other error
    */
@@ -224,14 +226,18 @@ class Client {
     string $method,
     string $endpoint,
     array $params = []
-  ) : Response {
+  ) : array {
     try {
       $params['headers'] =
         ($params['headers'] ?? []) + $this->_getDefaultHeaders();
 
-      return new Response(
-        $this->_client->request($method, $endpoint, $params)
-      );
+      $guzzle_response = $this->_client->request($method, $endpoint, $params);
+      $content_type = $guzzle_response->getHeader('Content-type');
+      $body = (string) $guzzle_response->getBody();
+
+      return (reset($content_type) === 'application/json') ?
+        json_decode($body, true) :
+        ['response' => $body];
     } catch (ConnectException $e) {
       throw new ApiException(ApiException::CANNOT_CONNECT, $e);
     } catch (ClientException $e) {
@@ -275,7 +281,7 @@ class Client {
   public function selfUpdate() : array {
     throw new SdkException(
       SdkException::NOT_IMPLEMENTED,
-      ['class' => __CLASS__, 'method' => __FUNCTION__]
+      ['method' => __METHOD__]
     );
   }
 
@@ -287,23 +293,8 @@ class Client {
   public function shouldUpdate() : bool {
     throw new SdkException(
       SdkException::NOT_IMPLEMENTED,
-      ['class' => __CLASS__, 'method' => __FUNCTION__]
+      ['method' => __METHOD__]
     );
-  }
-
-  /**
-   * Gets a log of API requests performed by this client.
-   *
-   * @return array[] Info about API request, categorized by endpoint
-   * @throws If request logging is disabled
-   */
-  public function getRequestLog() : array {
-    $config = $this->_config;
-    if (! $config->get('request.log')) {
-      throw new SdkException(SdkException::REQUEST_LOG_NOT_ENABLED);
-    }
-
-    return $this->_request_log;
   }
 
   /**
@@ -337,13 +328,13 @@ class Client {
   protected function _newEndpoint(string $name) : Endpoint {
     $fqcn = is_a($name, Endpoint::class, true) ?
       $name :
-      Endpoint::NAMESPACE . "\\{$name}";
+      __NAMESPACE__ . "\\Resource\\{$name}\\Endpoint";
 
     if (is_a($fqcn, Endpoint::class, true)) {
       return new $fqcn($this, $this->_config);
     }
 
-    throw new SdkException(SdkException::NO_SUCH_ENDPOINT, ['name' => $name]);
+    throw new ApiException(ApiException::NO_SUCH_ENDPOINT, ['name' => $name]);
   }
 
   /**
@@ -366,5 +357,19 @@ class Client {
     ];
 
     return new Guzzle(Util::extendRecursive($options, $defaults));
+  }
+
+  /**
+   * Sets up preferred language options, if configured.
+   */
+  protected function _setLanguageHandler() {
+    $this->_language = Language::getInstance();
+    $language = $this->_config->get('language');
+    if (! empty($language['language'])) {
+      $this->_language->setLanguage($language['language']);
+    }
+    if (! empty($language['paths'])) {
+      $this->_language->addPaths(...$language['paths']);
+    }
   }
 }

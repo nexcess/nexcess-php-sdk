@@ -19,13 +19,10 @@
     "phan/phan": "0.8.11",
     "nocworx/phpcs": "^1.4"
   },
-  "autoload-dev": {
-    "psr-4": { "Nexcess\\Sdk\\Tests\\": "tests/" }
-  },
   "scripts": {
     "tests:unit": "vendor/bin/phpunit",
     "tests:phan": "vendor/bin/phan",
-    "tests:phpcs": "vendor/bin/phpcs --standard=NocWorx src tests"
+    "tests:phpcs": "vendor/bin/phpcs --standard=NocWorx src"
   },
   "repositories": [
     { "type": "vcs", "url": "https://github.com/nocworx/phpcs" }

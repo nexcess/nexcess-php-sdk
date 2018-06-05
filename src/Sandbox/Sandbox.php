@@ -50,10 +50,10 @@ use Psr\Http\Message\RequestInterface as Request;
 class Sandbox {
 
   /** @var string Fake API token (valid). */
-  const SANDBOX_TOKEN_VALID = 'sandbox-token-valid';
+  public const SANDBOX_TOKEN_VALID = 'sandbox-token-valid';
 
   /** @var string Fake API token (invalid). */
-  const SANDBOX_TOKEN_INVALID = 'sandbox-token-invalid';
+  public const SANDBOX_TOKEN_INVALID = 'sandbox-token-invalid';
 
   /** @var Config Base configuration. */
   protected $_config;

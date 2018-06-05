@@ -43,14 +43,23 @@ use Nexcess\Sdk\ {
  */
 class Config {
 
+  /** @var string Company identifier for Nexcess. */
+  public const COMPANY_NEXCESS = 'nexcess';
+
+  /** @var string Company identifier for Thermo. */
+  public const COMPANY_THERMO = 'thermo';
+
+  /** @var string One of the COMPANY_* constants. */
+  public const COMPANY = self::COMPANY_NEXCESS;
+
   /** @var array Map of option override values for debug mode. */
-  const DEBUG_OVERRIDES = ['request' => ['log' => true]];
+  protected const _DEBUG_OVERRIDES = ['request' => ['log' => true]];
 
   /** @var array Map of default options. */
-  const DEFAULT_OPTIONS = [];
+  protected const _DEFAULT_OPTIONS = [];
 
   /** @var array Map of rules for option validation. */
-  const RULES = [
+  protected const _RULES = [
     'api_token' => 'string',
     'base_uri' => 'string',
     'debug' => 'boolean',
@@ -70,6 +79,9 @@ class Config {
   /** @var array Config options. */
   private $_options = [];
 
+  /**
+   * @param array $options Map of config options to set
+   */
   public function __construct(array $options = []) {
     $this->_options = $options;
     $this->_checkOptions();
@@ -116,7 +128,7 @@ class Config {
       return null;
     }
 
-    return Util::dig(static::DEBUG_OVERRIDES, $name);
+    return Util::dig(static::_DEBUG_OVERRIDES, $name);
   }
 
   /**
@@ -126,7 +138,7 @@ class Config {
    * @return mixed Option value on success; null otherwise
    */
   public function getDefault(string $name) {
-    return Util::dig(static::DEFAULT_OPTIONS, $name);
+    return Util::dig(static::_DEFAULT_OPTIONS, $name);
   }
 
   /**
@@ -163,7 +175,7 @@ class Config {
    * @see Config::_checkOption
    */
   protected function _checkOptions() {
-    foreach (static::RULES as $option => $rule) {
+    foreach (static::_RULES as $option => $rule) {
       $this->_checkOption($option, $this->get($option), $rule);
     }
   }
@@ -178,7 +190,7 @@ class Config {
    * @throws SdkException If the rule is not met
    */
   protected function _checkOption(string $key, $value, $rule = null) {
-    $rule = $rule ?? static::RULES[$option] ?? null;
+    $rule = $rule ?? static::_RULES[$option] ?? null;
     if ($value === null || $rule === null) {
       return;
     }

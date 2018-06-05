@@ -15,5 +15,8 @@ namespace Nexcess\Sdk\Util;
 class ThermoConfig extends Config {
 
   /** {@inheritDoc} */
-  const DEFAULT_OPTIONS = ['base_uri' => 'https://core.thermo.io/'];
+  public const COMPANY = self::COMPANY_THERMO;
+
+  /** {@inheritDoc} */
+  protected const _DEFAULT_OPTIONS = ['base_uri' => 'https://core.thermo.io/'];
 }

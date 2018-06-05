@@ -3,14 +3,17 @@
   bootstrap="./vendor/autoload.php"
   colors="true">
   <testsuites>
-    <testsuite>
-      <directory>./tests/Sandbox</directory>
+    <testsuite name="resources">
+      <directory>./src/Resource/Tests</directory>
     </testsuite>
-    <testsuite>
-      <directory>./tests/Sdk</directory>
+    <testsuite name="sandbox">
+      <directory>./src/Sandbox/Tests</directory>
     </testsuite>
-    <testsuite>
-      <directory>./tests/Util</directory>
+    <testsuite name="sdk">
+      <directory>./src/Tests</directory>
+    </testsuite>
+    <testsuite name="util">
+      <directory>./src/Util/Tests</directory>
     </testsuite>
   </testsuites>
   <filter>

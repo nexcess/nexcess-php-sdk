@@ -1,0 +1,290 @@
+[
+  {
+    "service_id": 76488,
+    "client_id": 39992,
+    "package_id": 700,
+    "parent_id": 0,
+    "discount_id": 0,
+    "turnup_date": 1526041520,
+    "last_bill_date": 1526041517,
+    "next_bill_date": 1528689600,
+    "term": 1,
+    "pricing_type": "monthly",
+    "status": "enabled",
+    "state": "stable",
+    "override_price": 50,
+    "override_percent": 0,
+    "override_addons": "no",
+    "override_bandwidth": 0,
+    "bandwidth_overage_fee": 0,
+    "bandwidth_profile_id": 2,
+    "start_date": 1526041520,
+    "type": "virt-guest-cloud",
+    "auto_renew": "yes",
+    "description": "nc.xsmall-test",
+    "cancellable_override_expire_date": 0,
+    "cloud_id": 3,
+    "nickname": "",
+    "id": 76488,
+    "identity": "nexcess-cli.example.com",
+    "is_real": true,
+    "meta": {
+      "scope": "service"
+    },
+    "host": "nexcess-cli.example.com",
+    "cloud_account": {
+      "id": 968,
+      "identity": "",
+      "is_real": true,
+      "meta": {
+        "scope": "virt-guest-cloudaccount"
+      },
+      "status": "used",
+      "ip": "209.126.30.56",
+      "ipv4": "209.126.30.56",
+      "domain": "nexcess-cli.example.com",
+      "is_dev_account": false,
+      "temp_domain": "8e9cb02a88.nxcli.net",
+      "parent": [],
+      "cloudhost_hostname": "cloudhost-61809.us-midwest-1.nxcli.net",
+      "unix_username": "a02ad515",
+      "app": {
+        "id": 13,
+        "identity": "Flexible ",
+        "is_real": true,
+        "meta": {
+          "scope": "app-app"
+        },
+        "type": "generic",
+        "status": "active",
+        "name": "Flexible",
+        "version": ""
+      },
+      "environment": {
+        "software": {
+          "php": {
+            "version": "7.1",
+            "path": "\/opt\/remi\/php71",
+            "cli": "\/opt\/remi\/php71\/root\/usr\/bin\/php"
+          },
+          "redis": {
+            "host": "",
+            "port": "",
+            "socket": "\/var\/run\/redis-multi-a02ad515.redis\/redis.sock",
+            "version": "3.2"
+          }
+        },
+        "options": {
+          "nxcache_nocache": false,
+          "nxcache_varnish": false,
+          "nxcache_varnish_static": false,
+          "nxcache_varnish_ttl": 120,
+          "autoscale_enabled": true
+        }
+      }
+    },
+    "isolation_zone": {
+      "id": 1,
+      "identity": "Southfield, MI",
+      "is_real": true,
+      "meta": {
+        "scope": "isolation-zone"
+      }
+    },
+    "location": {
+      "id": 3,
+      "identity": "us-midwest-1",
+      "is_real": true,
+      "meta": {
+        "scope": "virt-cloud"
+      },
+      "type": "openstack",
+      "status": "active",
+      "location": "Southfield, MI",
+      "location_code": "us-midwest-1",
+      "country": "US"
+    },
+    "order": {
+      "id": 55115,
+      "identity": "(55115) Adrian Testa-avila",
+      "is_real": true,
+      "meta": {
+        "scope": "order"
+      },
+      "type": "virt-guest-cloud",
+      "status": "completed",
+      "months": 1
+    },
+    "ref_count": 0,
+    "billing_term": {
+      "type": "monthly",
+      "months": 1,
+      "years": 0,
+      "description": "Monthly",
+      "amount": 50
+    },
+    "is_rebootable": false,
+    "contract_id": 0,
+    "is_cancellable": true,
+    "has_stored_password": false,
+    "can_change_root_password": false,
+    "package": {
+      "id": 700,
+      "identity": "nc.xsmall-test",
+      "is_real": true,
+      "meta": {
+        "scope": "package"
+      },
+      "type": "virt-guest-cloud",
+      "status": "web-active",
+      "virt_dedicated_guest": 0
+    },
+    "datashare": {
+      "id": 989,
+      "identity": "",
+      "is_real": true,
+      "meta": {
+        "scope": "datashare"
+      },
+      "type": "ssh-password",
+      "uuid": "20b83001-d8f5-45fd-91e9-2161b42f001e",
+      "share_date": 1526041579,
+      "expiration_date": 1526387179,
+      "uses": 0,
+      "max_uses": 15,
+      "owner": "service",
+      "owner_id": 76488,
+      "owner_object": {
+        "id": 76488,
+        "identity": "nexcess-cli.example.com",
+        "is_real": true,
+        "meta": {
+          "scope": "service"
+        },
+        "type": "virt-guest-cloud",
+        "status": "enabled",
+        "description": "nc.xsmall-test",
+        "nickname": "",
+        "host": "nexcess-cli.example.com",
+        "cloud_account": {
+          "id": 968,
+          "identity": "",
+          "is_real": true,
+          "meta": {
+            "scope": "virt-guest-cloudaccount"
+          },
+          "status": "used",
+          "ip": "209.126.30.56",
+          "ipv4": "209.126.30.56",
+          "domain": "nexcess-cli.example.com",
+          "is_dev_account": false,
+          "temp_domain": "8e9cb02a88.nxcli.net",
+          "parent": [],
+          "cloudhost_hostname": "cloudhost-61809.us-midwest-1.nxcli.net",
+          "unix_username": "a02ad515",
+          "app": {
+            "id": 13,
+            "identity": "Flexible ",
+            "is_real": true,
+            "meta": {
+              "scope": "app-app"
+            },
+            "type": "generic",
+            "status": "active",
+            "name": "Flexible",
+            "version": ""
+          },
+          "environment": {
+            "software": {
+              "php": {
+                "version": "7.1",
+                "path": "\/opt\/remi\/php71",
+                "cli": "\/opt\/remi\/php71\/root\/usr\/bin\/php"
+              },
+              "redis": {
+                "host": "",
+                "port": "",
+                "socket": "\/var\/run\/redis-multi-a02ad515.redis\/redis.sock",
+                "version": "3.2"
+              }
+            },
+            "options": {
+              "nxcache_nocache": false,
+              "nxcache_varnish": false,
+              "nxcache_varnish_static": false,
+              "nxcache_varnish_ttl": 120,
+              "autoscale_enabled": true
+            }
+          }
+        },
+        "isolation_zone": {
+          "id": 1,
+          "identity": "Southfield, MI",
+          "is_real": true,
+          "meta": {
+            "scope": "isolation-zone"
+          }
+        },
+        "location": {
+          "id": 3,
+          "identity": "us-midwest-1",
+          "is_real": true,
+          "meta": {
+            "scope": "virt-cloud"
+          },
+          "type": "openstack",
+          "status": "active",
+          "location": "Southfield, MI",
+          "location_code": "us-midwest-1",
+          "country": "US"
+        },
+        "order": {
+          "id": 55115,
+          "identity": "(55115) Adrian Testa-avila",
+          "is_real": true,
+          "meta": {
+            "scope": "order"
+          },
+          "type": "virt-guest-cloud",
+          "status": "completed",
+          "months": 1
+        },
+        "ref_count": 0
+      },
+      "expired": false,
+      "link_to": "user",
+      "link_to_id": 66103,
+      "link_to_object": {
+        "id": 66103,
+        "identity": "aavila@nexcess.net",
+        "is_real": true,
+        "meta": {
+          "scope": "user"
+        }
+      }
+    },
+    "settings": {
+      "extranet.disable-networking.enabled": false
+    },
+    "has_paypal_subscription": false,
+    "paypal_subscribe_link": "https:\/\/www.paypal.com\/cgi-bin\/webscr?p3=1&t3=M&a3=50&src=1&sra=1&item_name=Service%3A+%2376488&item_number=S-76488&trial_amount=0&custom=client%3D39992%26co%3D4&no_note=1&currency_code=USD&lc=US&business=invoices%40nexcess.net&rm=0&return=https%3A%2F%2Fportal.nexcess.net%2Finvoice&return-cancel=https%3A%2F%2Fportal.nexcess.net%2Finvoice&notify_url=https%3A%2F%2Forder.nexcess.net%2Fpaypal%2Fipn&cmd=_xclick-subscriptions&p1=31&t1=D&a1=0",
+    "bandwidth": {
+      "used": {
+        "total": 0,
+        "billable": 0
+      },
+      "projected": {
+        "total": 0,
+        "billable": 0
+      },
+      "previous": {
+        "total": 0,
+        "billable": 0
+      },
+      "given": "100",
+      "type": "GB"
+    },
+    "environment_type": "production",
+    "has_console": false
+}
+]

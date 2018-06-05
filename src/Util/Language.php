@@ -22,15 +22,15 @@ use Nexcess\Sdk\ {
 class Language {
 
   /** @var string English, United States. */
-  const EN_US = 'en_US';
+  public const EN_US = 'en_US';
 
   /** @var string[] List of supported languages, indexed by locale. */
-  const SUPPORTED_LANGUAGES = [
+  public const SUPPORTED_LANGUAGES = [
     self::EN_US => 'English (United States)'
   ];
 
   /** @var string Default language to translate if none specified. */
-  const DEFAULT_LANGUAGE = self::EN_US;
+  protected const _DEFAULT_LANGUAGE = self::EN_US;
 
   /** @var Language Default instance. */
   protected static $_instance;
@@ -75,7 +75,7 @@ class Language {
    * @throws SdkException If loading a language file fails
    */
   public static function init(
-    string $language = self::DEFAULT_LANGUAGE,
+    string $language = self::_DEFAULT_LANGUAGE,
     string ...$paths
   ) {
     if (self::$_instance) {
@@ -121,6 +121,7 @@ class Language {
    */
   public function addPaths(string ...$paths) : Language {
     array_push($this->_paths, ...$paths);
+    $this->_loadTranslations($paths);
 
     return $this;
   }
@@ -141,10 +142,6 @@ class Language {
    * @return string Translation on success; untranslated key otherwise
    */
   public function getTranslation(string $key) : string {
-    if (empty($this->_translations)) {
-      $this->_loadTranslations();
-    }
-
     $translated = Util::dig($this->_translations, $key) ?? $key;
     if (! is_string($translated)) {
       throw new SdkException(
@@ -167,8 +164,10 @@ class Language {
    */
   public function setLanguage(string $language) : Language {
     if ($language !== $this->_language) {
-      $this->_translations = [];
       $this->_language = $language;
+
+      $this->_translations = [];
+      $this->_loadTranslations();
     }
 
     return $this;
@@ -176,9 +175,13 @@ class Language {
 
   /**
    * Loads translations from .json files on configured file paths.
+   *
+   * @param string[]|null $paths Filesystem paths to look for language files on
    */
-  protected function _loadTranslations() {
-    foreach ($this->_paths as $path) {
+  protected function _loadTranslations(array $paths = null) {
+    $paths = $paths ?? $this->_paths;
+
+    foreach ($paths as $path) {
       $file = "{$path}/{$this->_language}.json";
       if (! is_readable($file)) {
         continue;

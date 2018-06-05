@@ -15,5 +15,6 @@ namespace Nexcess\Sdk\Util;
 class NexcessConfig extends Config {
 
   /** {@inheritDoc} */
-  const DEFAULT_OPTIONS = ['base_uri' => 'https://portal.nexcess.net/'];
+  protected const _DEFAULT_OPTIONS =
+    ['base_uri' => 'https://portal.nexcess.net/'];
 }
