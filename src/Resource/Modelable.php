@@ -59,9 +59,9 @@ interface Modelable extends ArrayAccess, JsonSerializable {
   /**
    * Gets the model id.
    *
-   * @return int
+   * @return int|null
    */
-  public function getId() : int;
+  public function getId() : ?int;
 
   /**
    * Does this model represent an item which exists on the API?
@@ -86,7 +86,7 @@ interface Modelable extends ArrayAccess, JsonSerializable {
    * @param bool $recurse Recurse on nested Models/Collections?
    * @return array
    */
-  public function toArray(bool $recurse = false) : array;
+  public function toArray(bool $recurse = true) : array;
 
   /**
    * Reduces a property:value map to the set of writable properties,

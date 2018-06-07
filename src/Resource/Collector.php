@@ -103,6 +103,13 @@ interface Collector extends Countable, Iterator, JsonSerializable {
   public function map(callable $function) : Collector;
 
   /**
+   * Gets the fully qualified classname of the model this collector collects.
+   *
+   * @return string
+   */
+  public function of() : string;
+
+  /**
    * Removes a model from the collection.
    *
    * @param Model|int $model_or_id The Model or Model id to remove
@@ -114,12 +121,12 @@ interface Collector extends Countable, Iterator, JsonSerializable {
   /**
    * Sorts the collection by property value, optionally in descending order.
    *
-   * @param string $property Name of property to sort by
+   * @param string $prop Name of property to sort by (sorts by id if omitted)
    * @param bool $desc Sort in descending order?
    * @return Collection $this
    * @throws ModelException If property does not exist
    */
-  public function sort(string $property, bool $desc = false) : Collector;
+  public function sort(string $prop = null, bool $desc = false) : Collector;
 
   /**
    * Gets the collection as an array.
@@ -127,5 +134,5 @@ interface Collector extends Countable, Iterator, JsonSerializable {
    * @param bool $recurse Convert models to arrays also?
    * @return array
    */
-  public function toArray(bool $recurse = false) : array;
+  public function toArray(bool $recurse = true) : array;
 }

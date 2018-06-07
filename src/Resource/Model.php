@@ -109,7 +109,7 @@ abstract class Model implements Modelable {
   /**
    * {@inheritDoc}
    */
-  public function getId() : int {
+  public function getId() : ?int {
     return $this->get('id');
   }
 
@@ -117,7 +117,7 @@ abstract class Model implements Modelable {
    * {@inheritDoc}
    */
   public function isReal() : bool {
-    return $this->get('id') !== null;
+    return $this->getId() > 0;
   }
 
   /**
@@ -125,7 +125,7 @@ abstract class Model implements Modelable {
    * @see https://php.net/JsonSerializable.jsonSerialize
    */
   public function jsonSerialize() {
-    return $this->toArray();
+    return $this->toArray(true);
   }
 
   /**
@@ -239,9 +239,13 @@ abstract class Model implements Modelable {
   /**
    * {@inheritDoc}
    */
-  public function toArray(bool $recurse = false) : array {
+  public function toArray(bool $recurse = true) : array {
+    $properties = array_merge(
+      static::_PROPERTY_NAMES,
+      static::_READONLY_NAMES
+    );
     $array = [];
-    foreach (array_keys($this->_values) as $property) {
+    foreach ($properties as $property) {
       $value = $this->get($property);
       if ($value instanceof Modelable || $value instanceof Collector) {
         $value = $value->toArray($recurse);

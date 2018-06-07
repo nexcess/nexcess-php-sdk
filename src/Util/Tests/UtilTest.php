@@ -23,8 +23,11 @@ use Nexcess\Sdk\ {
  */
 class UtilTest extends TestCase {
 
+  /** {@inheritDoc} */
+  protected const _RESOURCE_PATH = __DIR__ . '/resources';
+
   /** @var string Filepath to abc.json test file. */
-  public const TESTFILE_ABC_JSON = self::TEST_RESOURCE_PATH . '/abc.json';
+  protected const _TEST_JSON_FILE = self::_RESOURCE_PATH . '/test.json';
 
   /**
    * @covers Util::dig
@@ -123,7 +126,7 @@ class UtilTest extends TestCase {
   public function testReadJsonFile() {
     $this->assertEquals(
       ['a' => 'A', 'b' => 'B', 'c' => 'C'],
-      Util::readJsonFile(self::TESTFILE_ABC_JSON)
+      Util::readJsonFile(self::_TEST_JSON_FILE)
     );
   }
 

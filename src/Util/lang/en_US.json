@@ -16,9 +16,6 @@
     "wrong_model_for_uri": "{endpoint} expects an instance of {model}; cannot use {type}"
   },
   "resource": {
-    "apitoken": {
-      "token_not_viewable": "Api tokens can be viewed only when created; if you have lost your token, you must create a new one."
-    },
     "invalid_filter": "{class}::{method} expects $filter to be callable or array; {type} provided",
     "model_not_found": "No model {model}:{id} found",
     "no_such_model": "No model {model} exists",

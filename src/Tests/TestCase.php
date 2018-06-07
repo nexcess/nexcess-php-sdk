@@ -15,7 +15,9 @@ use PHPUnit\Framework\TestCase as PHPUnitTestCase;
 
 use Nexcess\Sdk\ {
   Sandbox\Sandbox,
-  Util\Config
+  Tests\TestException,
+  Util\Config,
+  Util\Util
 };
 
 /**
@@ -24,7 +26,10 @@ use Nexcess\Sdk\ {
 abstract class TestCase extends PHPUnitTestCase {
 
   /** @var string Filesystem path to test resources directory. */
-  public const TEST_RESOURCE_PATH = __DIR__ . '/resources';
+  protected const _RESOURCE_PATH = '';
+
+  /** @var string Fully qualified classname of the class under test. */
+  protected const _SUBJECT_FQCN = '';
 
   /**
    * Sets phpunit's expectExcpetion*() methods from an example.
@@ -38,6 +43,47 @@ abstract class TestCase extends PHPUnitTestCase {
     if (! empty($code)) {
       $this->expectExceptionCode($code);
     }
+  }
+
+  /**
+   * Gets a test resource.
+   *
+   * Supports plain text, json, and php resources
+   * (php files MUST return a value, and MUST NOT produce output).
+   *
+   * @param string $name Filename of resource to get
+   * @param bool $parse Parse contents?
+   * @return mixed Contents of resource on success
+   * @throws TestException On failure
+   */
+  protected function _getResource(string $name, bool $parse = true) {
+    $resource = static::_RESOURCE_PATH . "/{$name}";
+    if (! is_readable($resource)) {
+      throw new TestException(
+        TestException::UNREADABLE_RESOURCE,
+        ['name' => $name, 'path' => static::_RESOURCE_PATH]
+      );
+    }
+
+    $type = explode('.', $name);
+    $type = end($type);
+
+    if ($type === 'txt' || ! $parse) {
+      return file_get_contents($resource);
+    }
+
+    if ($type === 'json') {
+      return Util::jsonDecode(file_get_contents($resource));
+    }
+
+    if ($type === 'php') {
+      return require $resource;
+    }
+
+    throw new TestException(
+      TestException::UNSUPPORTED_RESOURCE_TYPE,
+      ['name' => $name, 'type' => $type]
+    );
   }
 
   /**
@@ -55,5 +101,16 @@ abstract class TestCase extends PHPUnitTestCase {
   ) : Sandbox {
     $config = $config ?? new Config([]);
     return new Sandbox($config, $request_handler, $exception_handler);
+  }
+
+  /**
+   * Gets an instance of the class under test.
+   *
+   * @param mixed ...$constructor_args Arguments for subject's constructor
+   * @return object
+   */
+  protected function _getSubject(...$constructor_args) {
+    $fqcn = static::_SUBJECT_FQCN;
+    return new $fqcn(...$constructor_args);
   }
 }

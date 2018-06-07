@@ -119,7 +119,7 @@ class Util {
     }
 
     throw new UtilException(
-      UtilException::JSON_DECODE_FAILED,
+      UtilException::JSON_DECODE_FAILURE,
       ['message' => json_last_error_msg()]
     );
   }

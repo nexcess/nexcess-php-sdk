@@ -138,7 +138,7 @@ class Collection implements Collector {
    * @see https://php.net/JsonSerializable.jsonSerialize
    */
   public function jsonSerialize() {
-    return $this->toArray();
+    return $this->toArray(true);
   }
 
   /**
@@ -147,6 +147,16 @@ class Collection implements Collector {
    */
   public function key() {
     return key($this->_models);
+  }
+
+  /**
+   * {@inheritDoc}
+   */
+  public function map(callable $function) : Collector {
+    throw new SdkException(
+      SdkException::NOT_IMPLEMENTED,
+      ['method' => __METHOD__]
+    );
   }
 
   /**
@@ -159,11 +169,8 @@ class Collection implements Collector {
   /**
    * {@inheritDoc}
    */
-  public function map(callable $function) : Collector {
-    throw new SdkException(
-      SdkException::NOT_IMPLEMENTED,
-      ['method' => __METHOD__]
-    );
+  public function of() : string {
+    return $this->_of;
   }
 
   /**
@@ -196,13 +203,15 @@ class Collection implements Collector {
   /**
    * {@inheritDoc}
    */
-  public function sort(string $property, bool $desc = false) : Collector {
+  public function sort(string $prop = null, bool $desc = false) : Collector {
+    $prop = $prop ?? 'id';
+
     uasort(
       $this->_models,
-      function ($a, $b) use ($desc) {
+      function ($a, $b) use ($prop, $desc) {
         return ($desc) ?
-          $b->get($property) <=> $a->get($property) :
-          $a->get($property) <=> $b->get($property);
+          $b->get($prop) <=> $a->get($prop) :
+          $a->get($prop) <=> $b->get($prop);
       }
     );
 
@@ -212,7 +221,7 @@ class Collection implements Collector {
   /**
    * {@inheritDoc}
    */
-  public function toArray(bool $recurse = false) : array {
+  public function toArray(bool $recurse = true) : array {
     return $recurse ?
       array_map(
         function ($model) use ($recurse) {
