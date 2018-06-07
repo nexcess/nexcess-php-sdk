@@ -44,7 +44,7 @@
 			"redis": {
 				"host": "",
 				"port": "",
-				"socket": "\/var\/run\/redis-multi-ab6bce01.redis\/redis.sock",
+				"socket": "\/var\/run\/redis-multi-example.redis\/redis.sock",
 				"version": "3.2"
 			}
 		},

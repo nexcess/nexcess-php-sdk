@@ -82,7 +82,7 @@ abstract class TestCase extends PHPUnitTestCase {
 
     throw new TestException(
       TestException::UNSUPPORTED_RESOURCE_TYPE,
-      ['name' => $name, 'type' => $type]
+      ['name' => $name, 'type' => $type, 'types' => 'txt|json|php']
     );
   }
 

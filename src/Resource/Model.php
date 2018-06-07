@@ -71,6 +71,21 @@ abstract class Model implements Modelable {
 
   /**
    * {@inheritDoc}
+   * @see https://php.net/__set_state
+   *
+   * @internal
+   * This method is meant for internal development/testing use only,
+   * and should not be used otherwise.
+   * Use of this method CAN result in a BROKEN object instance!
+   */
+  public static function __set_state($data) {
+    $model = new static();
+    $model->_values = $data['_values'] ?? [];
+    return $model;
+  }
+
+  /**
+   * {@inheritDoc}
    */
   public function equals(Modelable $other) : bool {
     return ($other instanceof $this) &&
@@ -247,7 +262,10 @@ abstract class Model implements Modelable {
     $array = [];
     foreach ($properties as $property) {
       $value = $this->get($property);
-      if ($value instanceof Modelable || $value instanceof Collector) {
+      if (
+        $recurse &&
+        ($value instanceof Modelable || $value instanceof Collector)
+      ) {
         $value = $value->toArray($recurse);
       }
       $array[$property] = $value;

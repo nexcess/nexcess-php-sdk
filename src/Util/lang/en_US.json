@@ -38,10 +38,14 @@
   },
   "sdk": {
     "callback_error": "Uncaught error while invoking callback: {__rootMessage__}",
-    "debug_not_enabled": "Debug mode is not enabled; cannot use {method}",
+    "debug_not_enabled": "{method} is enabled only in debug mode",
     "missing_api_token": "Missing API Token",
     "not_implemented": "{method} is not yet implmented",
     "request_log_not_enabled": "Request logging is not enabled; set 'request.log' or 'debug' options to enable",
+    "tests": {
+      "unreadable_resource": "Resource '{name}' does not map to a readable file: {path}/{name}",
+      "unsupported_resource_type": "Resource '{name}' has unsupported type '{type}'; must be one of {types}"
+    },
     "unknown_error": "Unknown error: {__rootMessage__}"
   },
   "util": {

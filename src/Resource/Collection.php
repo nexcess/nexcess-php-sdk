@@ -42,6 +42,21 @@ class Collection implements Collector {
 
   /**
    * {@inheritDoc}
+   * @see https://php.net/__set_state
+   *
+   * @internal
+   * This method is meant for internal development/testing use only,
+   * and should not be used otherwise.
+   * Use of this method CAN result in a BROKEN object instance!
+   */
+  public static function __set_state($data) {
+    $collection = new static($data['_of']);
+    $collection->_models = $data['_models'] ?? [];
+    return $collection;
+  }
+
+  /**
+   * {@inheritDoc}
    */
   public function add(Model $model) : Collector {
     if (! $model instanceof $this->_of) {

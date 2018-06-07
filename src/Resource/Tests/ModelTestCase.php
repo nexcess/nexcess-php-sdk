@@ -206,8 +206,10 @@ abstract class ModelTestCase extends TestCase {
     $expected,
     $set = null
   ) {
-    if ($expected instanceof Throwable) {
-      $this->setExpectedException($expected);
+    if (! $model->exists($name, true)) {
+      $this->setExpectedException(
+        new ResourceException(ResourceException::NO_SUCH_PROPERTY)
+      );
     }
 
     $this->assertEquals($expected, $model->get($name));
@@ -217,8 +219,7 @@ abstract class ModelTestCase extends TestCase {
       'ArrayAccess must return expected value'
     );
 
-    $exists = $model->exists($name, false);
-    if (! $exists) {
+    if (! $model->exists($name, false)) {
       $this->setExpectedException(
         new ResourceException(ResourceException::NO_SUCH_WRITABLE_PROPERTY)
       );
@@ -246,9 +247,15 @@ abstract class ModelTestCase extends TestCase {
 
     $model = $this->_getSubject()->sync($set);
 
-    $testcases = [];
+    // assuming these won't exist on any real model
+    $testcases = [
+      [$model, 'foo', null, null],
+      [$model, 'bar', null, null]
+    ];
     foreach ($expect as $name => $value) {
-      $set = ($set[$name] !== $value) ? $set[$name] : null;
+      $set = (isset($set[$name]) && $set[$name] !== $value) ?
+        $set[$name] :
+        null;
       $testcases[] = [$model, $name, $value, $set];
     }
 
@@ -270,7 +277,7 @@ abstract class ModelTestCase extends TestCase {
   public function testSync(array $from, array $expected) {
     $this->assertEquals(
       $expected,
-      $this->_getSubject()->sync($from)->toArray()
+      $this->_getSubject()->sync($from)->toArray(false)
     );
   }
 

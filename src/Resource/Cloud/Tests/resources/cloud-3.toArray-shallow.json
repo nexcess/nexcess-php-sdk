@@ -1,0 +1,9 @@
+{
+    "cloud_id": 3,
+    "country": "US",
+    "identity": "us-midwest-1",
+    "location": "Southfield, MI",
+    "location_code": "us-midwest-1",
+    "status": "active",
+    "type": "openstack"
+}

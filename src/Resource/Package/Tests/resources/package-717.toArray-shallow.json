@@ -1,0 +1,21 @@
+{
+  "package_id": 717,
+  "auto_renew": "yes",
+  "bandwidth": 1000,
+  "cpu_used": 0,
+  "description": "",
+  "environment_type": "production",
+  "identity": "nc.xsmall",
+  "hdd_count": 0,
+  "ip_num": 2,
+  "monthly_fee": 49,
+  "name": "nc.xsmall",
+  "overage_fee": 0.5,
+  "setup_fee": 0,
+  "type": "virt-guest-cloud",
+  "user_autoscale_concurrency": 50,
+  "user_concurrency": 25,
+  "virt_cpu": 0,
+  "virt_disk": 50,
+  "virt_ram": 0
+}

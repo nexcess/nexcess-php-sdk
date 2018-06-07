@@ -13,7 +13,7 @@ use Nexcess\Sdk\ {
   Resource\Cloud\Cloud,
   Resource\Location\Location,
   Resource\Package\Package,
-  Resource\Service,
+  Resource\Service
 };
 
 /**

@@ -6,6 +6,33 @@
     <testsuite name="resources">
       <directory>./src/Resource</directory>
     </testsuite>
+    <testsuite name="resource-apitoken">
+      <directory>./src/Resource/ApiToken/Tests</directory>
+    </testsuite>
+    <testsuite name="resource-app">
+      <directory>./src/Resource/App/Tests</directory>
+    </testsuite>
+    <testsuite name="resource-cloud">
+      <directory>./src/Resource/Cloud/Tests</directory>
+    </testsuite>
+    <testsuite name="resource-cloudaccount">
+      <directory>./src/Resource/CloudAccount/Tests</directory>
+    </testsuite>
+    <testsuite name="resource-cloudserver">
+      <directory>./src/Resource/CloudServer/Tests</directory>
+    </testsuite>
+    <testsuite name="resource-invoice">
+      <directory>./src/Resource/Invoice/Tests</directory>
+    </testsuite>
+    <testsuite name="resource-order">
+      <directory>./src/Resource/Order/Tests</directory>
+    </testsuite>
+    <testsuite name="resource-package">
+      <directory>./src/Resource/Package/Tests</directory>
+    </testsuite>
+    <testsuite name="resource-virtguestcloud">
+      <directory>./src/Resource/VirtGuestCloud/Tests</directory>
+    </testsuite>
     <testsuite name="sandbox">
       <directory>./src/Sandbox/Tests</directory>
     </testsuite>
