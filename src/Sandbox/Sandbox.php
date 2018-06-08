@@ -65,7 +65,7 @@ class Sandbox {
   protected $_handler;
 
   /** @var array[] Queued responses, sorted by method+endpoint. */
-  protected $_response_queue = [];
+  protected $_response_queue = ['*' => []];
 
   /**
    * @param Config $config SDK configuration object
@@ -159,9 +159,10 @@ class Sandbox {
   }
 
   /**
-   * Appends a response to the response queue.
+   * Appends a response to the queue,
+   * optionally restricted to a matching request.
    *
-   * @param string $response_key "METHOD /path" identifier for this response
+   * @param string $response_key "METHOD /path" or "*" for this response
    * @param GuzzleResponse|callable|Throwable Response to queue
    * @return Sandbox $this
    */
@@ -220,8 +221,9 @@ class Sandbox {
    *  Matching response if any; null otherwise
    */
   protected function _getResponseFor(string $request_key) {
-    return (! empty($this->_response_queue[$request_key])) ?
-      array_shift($this->_response_queue[$request_key]) :
-      null;
+    return array_shift(
+      $this->_response_queue[$request_key] ??
+      $this->_response_queue['*']
+    );
   }
 }

@@ -22,11 +22,15 @@ class TestException extends Exception {
   /** @var int Resource type is not supported. */
   const UNSUPPORTED_RESOURCE_TYPE = 2;
 
+  /** @var int Use the sandbox to get an endpoint subject instance. */
+  const USE_SANDBOX_INSTEAD = 3;
+
   /** {@inheritDoc} */
   const INFO = [
     self::UNREADABLE_RESOURCE =>
       ['message' => 'sdk.tests.unreadable_resource'],
     self::UNSUPPORTED_RESOURCE_TYPE =>
-      ['message' => 'sdk.tests.unsupported_resource_type']
+      ['message' => 'sdk.tests.unsupported_resource_type'],
+    self::USE_SANDBOX_INSTEAD => ['message' => 'sdk.tests.use_sandbox_instead']
   ];
 }

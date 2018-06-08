@@ -22,6 +22,15 @@ use Nexcess\Sdk\ {
  */
 abstract class WritableEndpoint extends Endpoint implements Writable {
 
+  /** @var bool Is this endpoint creatable? */
+  public const CAN_CREATE = true;
+
+  /** @var bool Is this endpoint deletable? */
+  public const CAN_DELETE = true;
+
+  /** @var bool Is this endpoint updatable? */
+  public const CAN_UPDATE = true;
+
   /** @var int Key for wait() $opts interval. */
   public const OPT_WAIT_INTERVAL = 0;
 
@@ -44,6 +53,13 @@ abstract class WritableEndpoint extends Endpoint implements Writable {
    * {@inheritDoc}
    */
   public function create(array $data) : Model {
+    if (! static::CAN_CREATE) {
+      throw new ApiException(
+        ApiException::CANNOT_CREATE,
+        ['endpoint' => basename(static::_MODEL_FQCN)]
+      );
+    }
+
     $model = $this->getModel()->sync(
       $this->_client->request(
         'POST',
@@ -60,6 +76,13 @@ abstract class WritableEndpoint extends Endpoint implements Writable {
    * {@inheritDoc}
    */
   public function delete($model_or_id) : Writable {
+    if (! static::CAN_DELETE) {
+      throw new ApiException(
+        ApiException::CANNOT_DELETE,
+        ['endpoint' => basename(static::_MODEL_FQCN)]
+      );
+    }
+
     $model = is_int($model_or_id) ?
       $this->getModel($model_or_id) :
       $model_or_id;
@@ -83,6 +106,13 @@ abstract class WritableEndpoint extends Endpoint implements Writable {
    * {@inheritDoc}
    */
   public function update(Model $model, array $data = []) : Writable {
+    if (! static::CAN_UPDATE) {
+      throw new ApiException(
+        ApiException::CANNOT_UPDATE,
+        ['endpoint' => basename(static::_MODEL_FQCN)]
+      );
+    }
+
     $this->_checkModelType($model);
 
     $id = $model->getId();

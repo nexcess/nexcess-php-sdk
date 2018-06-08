@@ -106,6 +106,21 @@ class Collection implements Collector {
   /**
    * {@inheritDoc}
    */
+  public function equals(Collector $other) {
+    if ($other->of() !== $this->of()) {
+      return false;
+    }
+
+    $ids = $this->getIds();
+    $otherids = $other->getIds();
+    sort($ids);
+    sort($otherids);
+    return ($ids === $otherids);
+  }
+
+  /**
+   * {@inheritDoc}
+   */
   public function filter($filter) : Collector {
     if (! is_callable($filter)) {
       if (is_array($filter)) {

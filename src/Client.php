@@ -174,6 +174,15 @@ class Client {
   }
 
   /**
+   * Gets the client config object.
+   *
+   * @return Config
+   */
+  public function getConfig() : Config {
+    return $this->_config;
+  }
+
+  /**
    * Gets an API endpoint.
    *
    * For convenience, endpoints can also be accessed as Client properties.

@@ -46,7 +46,7 @@ abstract class Endpoint implements Readable {
   /** @var string API endpoint. */
   protected const _URI = '';
 
-  /** @var Guzzle The Guzzle http client. */
+  /** @var Guzzle The Sdk Client. */
   protected $_client;
 
   /** @var Config Client configuration object. */
@@ -55,6 +55,10 @@ abstract class Endpoint implements Readable {
   /** @var array Map of last fetched property:value pairs. */
   protected $_retrieved = [];
 
+  /**
+   * @param Client $client Api Client instance
+   * @param Config $config Api Config object
+   */
   public function __construct(Client $client, Config $config) {
     $this->_client = $client;
     $this->_config = $config;
@@ -66,25 +70,6 @@ abstract class Endpoint implements Readable {
   public function getModel(int $id = null) : Model {
     $fqcn = static::_MODEL_FQCN;
     return new $fqcn($id);
-  }
-
-  /**
-   * Gets cached data retrieved from API.
-   *
-   * Note, this method can only be used when the "debug" options is set.
-   *
-   * @return array Map of last fetched property:value pairs
-   * @throws SdkException If debug mode is not enabled
-   */
-  public function getRetrievedData() : array {
-    if (! $this->_config->get('debug')) {
-      throw new SdkException(
-        SdkException::DEBUG_NOT_ENABLED,
-        ['method' => __METHOD__]
-      );
-    }
-
-    return $this->_retrieved;
   }
 
   /**

@@ -55,6 +55,9 @@ class ApiException extends Exception {
   /** @var int Bad API response to list query. */
   const GOT_MALFORMED_LIST = 14;
 
+  /** @var int Attempt to create on a non-creatable endpoint. */
+  const NOT_CREATABLE = 15;
+
   /** {@inheritDoc} */
   const INFO = [
     self::CANNOT_CONNECT => ['message' => 'api.cannot_connect'],

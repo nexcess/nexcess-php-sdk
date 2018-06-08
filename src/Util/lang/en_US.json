@@ -44,7 +44,8 @@
     "request_log_not_enabled": "Request logging is not enabled; set 'request.log' or 'debug' options to enable",
     "tests": {
       "unreadable_resource": "Resource '{name}' does not map to a readable file: {path}/{name}",
-      "unsupported_resource_type": "Resource '{name}' has unsupported type '{type}'; must be one of {types}"
+      "unsupported_resource_type": "Resource '{name}' has unsupported type '{type}'; must be one of {types}",
+      "use_sandbox_instead": "Don't use _getSubject() to get endpoints; use the sandbox instead"
     },
     "unknown_error": "Unknown error: {__rootMessage__}"
   },

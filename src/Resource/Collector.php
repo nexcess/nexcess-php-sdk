@@ -52,6 +52,15 @@ interface Collector extends Countable, Iterator, JsonSerializable {
   public function each(callable $function) : array;
 
   /**
+   * Checks whether another collection is the same as this one.
+   *
+   * @param Collector $other The collection to compare to
+   * @return bool True if collections are of the same type,
+   *  and contain the same items
+   */
+  public function equals(Collector $other) : bool;
+
+  /**
    * Filters items and builds a new collection.
    *
    * Criteria can be a property:value map or a callback function.
