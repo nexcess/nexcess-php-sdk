@@ -221,9 +221,14 @@ class Sandbox {
    *  Matching response if any; null otherwise
    */
   protected function _getResponseFor(string $request_key) {
-    return array_shift(
-      $this->_response_queue[$request_key] ??
-      $this->_response_queue['*']
-    );
+    if (isset($this->_response_queue[$request_key])) {
+      return array_shift($this->_response_queue[$request_key]);
+    }
+
+    if (isset($this->_response_queue['*'])) {
+      return array_shift($this->_response_queue['*']);
+    }
+
+    return null;
   }
 }

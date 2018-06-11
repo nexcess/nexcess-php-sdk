@@ -36,7 +36,7 @@ class Endpoint extends WritableEndpoint {
   public function cancel(CloudAccount $model, array $survey) : Endpoint {
     return $this->_client
       ->getEndpoint(ServiceEndpoint::class)
-      ->cancel($model, $survey);
+      ->cancel($model->get('service'), $survey);
   }
 
   /**
@@ -51,11 +51,9 @@ class Endpoint extends WritableEndpoint {
     CloudAccount $model,
     string $version
   ) : Endpoint {
-    $this->_request(
-      'POST',
-      self::URI . "/{$model->getId()}",
-      ['json' => ['_action' => 'set-php-version', 'php_version' => $version]]
-    );
+    $this->_client
+      ->getEndpoint(ServiceEndpoint::class)
+      ->setPhpVersion($model->get('service'), $version);
 
     $this->_wait(function ($endpoint) use ($model, $version) {
       if (

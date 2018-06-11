@@ -58,6 +58,30 @@ abstract class ServiceEndpoint extends WritableEndpoint {
   }
 
   /**
+   * Gets the questions for the cancellation survey for a service.
+   *
+   * @param Service $model Service model to cancel
+   * @return array List of cancellation survey questions + metadata
+   */
+  public function getCancellationSurvey() : array {
+    throw new SdkException(
+      SdkException::NOT_IMPLEMENTED,
+      ['method' => __METHOD__]
+    );
+
+    $this->_checkModelType($model);
+
+    if ($model->get('is_cancellable') !== true) {
+      throw new ServiceException(
+        ServiceException::NOT_CANCELLABLE,
+        ['service' => static::_SERVICE_TYPE, 'id' => $model->getId()]
+      );
+    }
+
+    return $this->_client->getEndpoint();
+  }
+
+  /**
    * Requests a service cancellation.
    *
    * @param Service $model Service model to cancel
