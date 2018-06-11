@@ -34,7 +34,6 @@ class Endpoint extends WritableEndpoint {
    * @return Endpoint $this
    */
   public function cancel(CloudAccount $model, array $survey) : Endpoint {
-    $service = $model->get('service');
     return $this->_client
       ->getEndpoint(ServiceEndpoint::class)
       ->cancel($model, $survey);

@@ -106,7 +106,7 @@ class Collection implements Collector {
   /**
    * {@inheritDoc}
    */
-  public function equals(Collector $other) {
+  public function equals(Collector $other) : bool {
     if ($other->of() !== $this->of()) {
       return false;
     }
