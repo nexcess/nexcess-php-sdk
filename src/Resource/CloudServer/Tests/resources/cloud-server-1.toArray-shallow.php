@@ -6,7 +6,7 @@ use Nexcess\Sdk\ {
 };
 
 return [
-  'service_id' => 1,
+  'id' => 1,
   'bandwidth' => [
     'used' => [
       'total' => 0,
@@ -35,7 +35,7 @@ return [
   'host' => 'nexcess-cli.example.com',
   'identity' => 'nexcess-cli.example.com - 203.0.113.1',
   'last_bill_date' => 0,
-  'location' => Cloud::__set_state([
+  'cloud' => Cloud::__set_state([
     '_values' => [
       'cloud_id' => 3,
       'identity' => 'us-midwest-1',

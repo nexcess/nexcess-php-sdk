@@ -10,33 +10,33 @@ use Nexcess\Sdk\ {
 };
 
 return [
-  'service_id' => 1,
+  'id' => 1,
   'auto_renew' => 'yes',
   'bandwidth' => [
-    'used' => [
-      'total' => 0,
-      'billable' => 0
-    ],
-    'projected' => [
-      'total' => 0,
-      'billable' => 0
-    ],
+    'given' => '100',
+    'overage_fee' => 0,
+    'override' => 0,
     'previous' => [
       'total' => 0,
       'billable' => 0
     ],
-    'given' => '100',
-    'type' => 'GB',
-    'overage_fee' => 0,
     'profile_id' => 2,
-    'override' => 0
+    'projected' => [
+      'total' => 0,
+      'billable' => 0
+    ],
+    'type' => 'GB',
+    'used' => [
+      'total' => 0,
+      'billable' => 0
+    ]
   ],
   'billing_term' => [
-    'type' => 'monthly',
-    'months' => 1,
-    'years' => 0,
+    'amount' => 50,
     'description' => 'Monthly',
-    'amount' => 50
+    'months' => 1,
+    'type' => 'monthly',
+    'years' => 0
   ],
   'cancellable_override_expire_date' => 0,
   'can_change_root_password' => false,
@@ -67,9 +67,9 @@ return [
       'environment' => [
         'software' => [
           'php' => [
-            'version' => '7.1',
+            'cli' => '/opt/remi/php71/root/usr/bin/php',
             'path' => '/opt/remi/php71',
-            'cli' => '/opt/remi/php71/root/usr/bin/php'
+            'version' => '7.1'
           ],
           'redis' => [
             'host' => '',
@@ -79,11 +79,11 @@ return [
           ]
         ],
         'options' => [
+          'autoscale_enabled' => true,
           'nxcache_nocache' => false,
           'nxcache_varnish' => false,
           'nxcache_varnish_static' => false,
-          'nxcache_varnish_ttl' => 120,
-          'autoscale_enabled' => true
+          'nxcache_varnish_ttl' => 120
         ]
       ]
     ]
@@ -101,7 +101,7 @@ return [
   'is_cancellable' => true,
   'is_rebootable' => false,
   'last_bill_date' => 1528689600,
-  'location' => Cloud::__set_state([
+  'cloud' => Cloud::__set_state([
     '_values' => [
       'cloud_id' => 3,
       'identity' => 'us-midwest-1',

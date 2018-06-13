@@ -60,6 +60,9 @@ class Client {
   /** @var string Api version. */
   public const API_VERSION = '0';
 
+  /** @var string SDK root directory. */
+  public const DIR = __DIR__;
+
   /** @var string Sdk version. */
   public const SDK_VERSION = '0.1-alpha';
 

@@ -252,14 +252,22 @@ class Collection implements Collector {
    * {@inheritDoc}
    */
   public function toArray(bool $recurse = true) : array {
+    $models = $this->_models;
+    uasort(
+      $models,
+      function ($a, $b) {
+        return $a->getId() <=> $b->getId();
+      }
+    );
+
     return $recurse ?
       array_map(
         function ($model) use ($recurse) {
           return $model->toArray($recurse);
         },
-        $this->_models
+        $models
       ) :
-      $this->_models;
+      $models;
   }
 
   /**

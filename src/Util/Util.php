@@ -148,6 +148,22 @@ class Util {
   }
 
   /**
+   * Recursively sorts an array by key.
+   * @see https://php.net/ksort
+   *
+   * @param array $subject The array to sort
+   * @return void Operates on subject by reference
+   */
+  public static function kSortRecursive(array &$subject) : void {
+    ksort($subject);
+    foreach ($subject as &$item) {
+      if (is_array($item)) {
+        self::kSortRecursive($item);
+      }
+    }
+  }
+
+  /**
    * Reads and decodes a .json file.
    *
    * @param string $filepath Path to json file to read

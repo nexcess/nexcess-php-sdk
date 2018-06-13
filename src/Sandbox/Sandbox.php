@@ -45,7 +45,7 @@ use Psr\Http\Message\RequestInterface as Request;
  * API requests made here are handled internally.
  * No HTTP requests will be made to the "live" API.
  *
- * Responses can be preconstructed and queued, or routed from a datasource.
+ * Responses can be preconstructed and queued, routed from a datasource, etc..
  */
 class Sandbox {
 
@@ -82,8 +82,12 @@ class Sandbox {
     $this->_config->set('sandboxed', true);
     $this->_config->set('api-token', self::SANDBOX_TOKEN_VALID);
 
-    $this->_handler = $request_handler;
-    $this->_exception_handler = $exception_handler;
+    if ($request_handler) {
+      $this->setRequestHandler($request_handler);
+    }
+    if ($exception_handler) {
+      $this->setExceptionHandler($exception_handler);
+    }
   }
 
   /**
@@ -203,13 +207,35 @@ class Sandbox {
   }
 
   /**
+   * Sets exception handler for the sandbox.
+   *
+   * @param callable $handler
+   * @return Sandbox $this
+   */
+  public function setExceptionHandler(callable $handler) : Sandbox {
+    $this->_exception_handler = $handler;
+    return $this;
+  }
+
+  /**
+   * Sets request handler for the sandbox.
+   *
+   * @param callable $handler
+   * @return Sandbox $this
+   */
+  public function setRequestHandler(callable $handler) : Sandbox {
+    $this->_handler = $handler;
+    return $this;
+  }
+
+  /**
    * Echos a summary of the given exception to stdout.
    *
    * @param Throwable $e The exception to dump
    */
   protected function _dumpException(Throwable $e) {
     echo "{$e->getMessage()}\n",
-      "{$e->getFile()}:{$e->getLine()}\n",
+      "  {$e->getFile()}:{$e->getLine()}\n",
       "{$e->getTraceAsString()}\n\n";
   }
 

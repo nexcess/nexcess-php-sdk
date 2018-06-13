@@ -255,13 +255,33 @@ abstract class Model implements Modelable {
    * {@inheritDoc}
    */
   public function toArray(bool $recurse = true) : array {
-    $properties = array_merge(
-      static::_PROPERTY_NAMES,
-      static::_READONLY_NAMES
+    $properties = array_diff(
+      array_merge(
+        static::_PROPERTY_NAMES,
+        static::_READONLY_NAMES,
+        array_keys(static::_PROPERTY_ALIASES)
+      ),
+      static::_PROPERTY_ALIASES
     );
+    usort(
+      $properties,
+      function ($a, $b) {
+        if ($a === 'id') {
+          return -1;
+        }
+        if ($b === 'id') {
+          return 1;
+        }
+        return $a <=> $b;
+      }
+    );
+
     $array = [];
     foreach ($properties as $property) {
       $value = $this->get($property);
+      if (is_array($value)) {
+        Util::kSortRecursive($value);
+      }
       if (
         $recurse &&
         ($value instanceof Modelable || $value instanceof Collector)
@@ -279,7 +299,7 @@ abstract class Model implements Modelable {
   public function toCollapsedArray(array $values = null) : array {
     $collapsed = array_fill_keys(self::_PROPERTY_NAMES, null);
 
-    foreach (($values ?? $this->_values) as $property => $value) {
+    foreach ($values ?? $this->_values as $property => $value) {
       $property = static::_PROPERTY_ALIASES[$property] ?? $property;
 
       if (is_scalar($value) && in_array($property, static::_PROPERTY_NAMES)) {
@@ -313,6 +333,7 @@ abstract class Model implements Modelable {
       );
     }
 
+    ksort($collapsed);
     return $collapsed;
   }
 

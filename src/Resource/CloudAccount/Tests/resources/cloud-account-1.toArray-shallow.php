@@ -11,7 +11,7 @@ use Nexcess\Sdk\ {
 };
 
 return [
-  'account_id' => 1,
+  'id' => 1,
   'app' => App::__set_state([
     '_values' => [
       'app_id' => 13,
@@ -46,7 +46,7 @@ return [
       'autoscale_enabled' => true,
     ],
   ],
-  'environment.software' => [
+  'software' => [
     'php' => [
       'version' => '7.1',
       'path' => '/opt/remi/php71',
@@ -143,7 +143,7 @@ return [
       ]),
     ],
   ]),
-  'service.location' => Cloud::__set_state([
+  'location' => Cloud::__set_state([
     '_values' => [
       'cloud_id' => 3,
       'identity' => 'us-midwest-1',
@@ -154,7 +154,6 @@ return [
       'country' => 'US',
     ],
   ]),
-  'service.status' => 'enabled',
   'status' => 'enabled',
   'temp_domain' => 'example.nxcli.net',
   'unix_username' => 'abcd1234'

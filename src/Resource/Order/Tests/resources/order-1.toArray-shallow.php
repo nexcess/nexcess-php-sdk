@@ -12,7 +12,7 @@ use Nexcess\Sdk\ {
 };
 
 return [
-  'order_id' => 1,
+  'id' => 1,
   'client_id' => 1,
   'cloud_id' => 3,
   'identity' => '#1 nc.xsmall-test',

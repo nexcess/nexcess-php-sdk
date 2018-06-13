@@ -2,5 +2,5 @@
   "identity": "Example API Token",
   "name": "Example API Token",
   "token": "ABCD",
-  "token_id": 1
+  "id": 1
 }
