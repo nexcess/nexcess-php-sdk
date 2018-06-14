@@ -96,35 +96,50 @@ class ResourceHandler {
       );
       foreach ($iterator as $file => $info) {
         $basename = basename($file);
-        // prefer full match
-        if (strpos($basename, $key_full) === 0) {
+        // prefer exact match
+        if (strpos($basename, "{$key_full}.json") === 0) {
           break 2;
         }
         // save partial matches for fallback
+        if (strpos($basename, $key_full) === 0) {
+          $partials['full'][] = $file;
+        }
+        // save partial partial matches for fallback
         if (strpos($basename, $key_path) === 0) {
-          $partials[] = $file;
+          $partials['path'][] = $file;
         }
         // clear
         $file = null;
       }
     }
 
-    if (isset($file)) {
-      return new GuzzleResponse(
-        200,
-        ['Content-type' => 'application/json'],
-        file_get_contents($file)
-      );
+    $file = $file ?? $partials['full'][0] ?? $partials['path'][0] ?? null;
+    if ($file === null) {
+      return null;
     }
 
-    if (! empty($partials)) {
-      return new GuzzleResponse(
-        200,
-        ['Content-type' => 'application/json'],
-        file_get_contents(reset($partials))
-      );
-    }
+    return new GuzzleResponse(
+      200,
+      ['Content-type' => 'application/json'],
+      file_get_contents($file)
+    );
 
-    return null;
+    //if (isset($file)) {
+    //  return new GuzzleResponse(
+    //    200,
+    //    ['Content-type' => 'application/json'],
+    //    file_get_contents($file)
+    //  );
+    //}
+    //
+    //if (! empty($partials)) {
+    //  return new GuzzleResponse(
+    //    200,
+    //    ['Content-type' => 'application/json'],
+    //    file_get_contents(reset($partials))
+    //  );
+    //}
+    //
+    //return null;
   }
 }

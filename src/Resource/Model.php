@@ -118,7 +118,14 @@ abstract class Model implements Modelable {
       return $this->$getter();
     }
 
-    return Util::dig($this->_values, $name) ?? null;
+    $value = Util::dig($this->_values, $name) ?? null;
+
+    if (is_int($value) && $value > 0 && strpos($name, 'date') !== false) {
+      $value = (new DateTime("@{$value}"))
+        ->format(static::_DEFAULT_DATE_FORMAT);
+    }
+
+    return $value;
   }
 
   /**

@@ -47,7 +47,7 @@ return [
     ],
   ]),
   'network' => null,
-  'next_bill_date' => 1504584000,
+  'next_bill_date' => '09/05/2017 04:00:00 +00:00',
   'os' => [
     'id' => 32,
     'identity' => 'ubuntu 17.04 (x86_64)',
@@ -68,7 +68,7 @@ return [
     ],
   ]),
   'power_status' => 'on',
-  'start_date' => 1501938135,
+  'start_date' => '08/05/2017 13:02:15 +00:00',
   'state' => 'stable',
   'status' => 'enabled',
 ];

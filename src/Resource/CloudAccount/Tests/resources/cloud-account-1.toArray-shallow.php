@@ -22,7 +22,7 @@ return [
       'version' => '',
     ]
   ]),
-  'deploy_date' => 1526046176,
+  'deploy_date' => '05/11/2018 13:42:56 +00:00',
   'domain' => 'nexcess-cli.example.com',
   'environment' => [
     'software' => [

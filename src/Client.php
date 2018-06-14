@@ -248,7 +248,7 @@ class Client {
       $body = (string) $guzzle_response->getBody();
 
       return (reset($content_type) === 'application/json') ?
-        json_decode($body, true) :
+        Util::jsonDecode($body) :
         ['response' => $body];
     } catch (ConnectException $e) {
       throw new ApiException(ApiException::CANNOT_CONNECT, $e);
