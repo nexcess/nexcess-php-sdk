@@ -2,11 +2,13 @@
   "api": {
     "bad_request": "API request failed: {__rootMessage__}",
     "cannot_connect": "Failed to connect to API host: {__rootMessage__}",
+    "create_failed": "The Create action failed",
     "endpoint_not_writable": "Cannot write to read-only endpoint {endpoint}",
     "forbidden": "{method} /{endpoint} is forbidden (your api token/auth has insufficient permissions)",
     "got_malformed_list": "Unexpected API response from 'GET /{uri}'\n  (expected array of arrays; check your request parameters?)",
     "missing_id": "Cannot read {model}: no ID provided",
     "no_such_endpoint": "No endpoint '{name}' exists",
+    "not_creatable": "The Create action is not allowed on this endpoint",
     "not_found": "{method} /{endpoint} not found",
     "request_failed": "API request failed: {__rootMessage__}",
     "server_error": "API host failed to handle request: {__rootMessage__}",

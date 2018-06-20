@@ -13,6 +13,7 @@ use Nexcess\Sdk\ {
   Exception\ApiException,
   Resource\CloudAccount\CloudAccount,
   Resource\VirtGuestCloud\Endpoint as ServiceEndpoint,
+  Resource\Modelable as Model,
   Resource\WritableEndpoint
 };
 
@@ -37,6 +38,22 @@ class Endpoint extends WritableEndpoint {
     return $this->_client
       ->getEndpoint(ServiceEndpoint::class)
       ->cancel($model->get('service'), $survey);
+  }
+
+  /**
+   * {@inheritDoc}
+   */
+  public function create(array $data) : Model {
+    $model = $this->getModel()->sync(
+      $this->_client->request(
+        'POST',
+        static::_URI_CREATE ?? static::_URI,
+        ['json' => $data]
+      )['cloud_account']
+    );
+
+    $this->_wait($this->_waitUntilCreate($model));
+    return $model;
   }
 
   /**

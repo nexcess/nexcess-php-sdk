@@ -115,7 +115,11 @@ class ResourceHandler {
 
     $file = $file ?? $partials['full'][0] ?? $partials['path'][0] ?? null;
     if ($file === null) {
-      return null;
+      return new RequestException(
+        '404 Not Found',
+        $request,
+        new GuzzleResponse(404, [], 'Not Found')
+      );
     }
 
     return new GuzzleResponse(
@@ -123,23 +127,5 @@ class ResourceHandler {
       ['Content-type' => 'application/json'],
       file_get_contents($file)
     );
-
-    //if (isset($file)) {
-    //  return new GuzzleResponse(
-    //    200,
-    //    ['Content-type' => 'application/json'],
-    //    file_get_contents($file)
-    //  );
-    //}
-    //
-    //if (! empty($partials)) {
-    //  return new GuzzleResponse(
-    //    200,
-    //    ['Content-type' => 'application/json'],
-    //    file_get_contents(reset($partials))
-    //  );
-    //}
-    //
-    //return null;
   }
 }

@@ -58,6 +58,9 @@ class ApiException extends Exception {
   /** @var int Attempt to create on a non-creatable endpoint. */
   const NOT_CREATABLE = 15;
 
+  /** @var int Create request failed. */
+  const CREATE_FAILED = 16;
+
   /** {@inheritDoc} */
   const INFO = [
     self::CANNOT_CONNECT => ['message' => 'api.cannot_connect'],
@@ -73,6 +76,8 @@ class ApiException extends Exception {
     self::ENDPOINT_NOT_WRITABLE => ['message' => 'api.endpoint_not_writable'],
     self::WRONG_CALL_ARG => ['message' => 'api.wrong_call_arg'],
     self::NO_SUCH_ENDPOINT => ['message' => 'api.no_such_endpoint'],
-    self::GOT_MALFORMED_LIST => ['message' => 'api.got_malformed_list']
+    self::GOT_MALFORMED_LIST => ['message' => 'api.got_malformed_list'],
+    self::NOT_CREATABLE => ['message' => 'api.not_creatable'],
+    self::CREATE_FAILED => ['message' => 'api.create_failed']
   ];
 }
