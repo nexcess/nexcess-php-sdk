@@ -1,0 +1,124 @@
+[{
+	"company_id": 4,
+	"id": 1140228,
+	"identity": "YBZP-6532",
+	"client_id": 39992,
+	"mask": "YBZP-6532",
+	"subject": "NocWorx Dev (test; ignore)",
+	"recent_post": {
+		"id": 5409211,
+		"identity": "Adrian Testa-avila - 11\/29\/2017 09:42:08",
+		"is_real": true,
+		"meta": {
+			"scope": "ticket-post"
+		},
+		"body": "This is a test ticket. I will close it soon. Please ignore.\n\nAny questions, please contact me on hipchat",
+		"name": "Adrian Testa-avila",
+		"date": 1511966528,
+		"reply_by": "client"
+	},
+	"last_reply_by": "client",
+	"last_replier_name": "Adrian Testa-avila",
+	"num_posts": 1,
+	"num_posts_staff": 0,
+	"update_date": 1511966576,
+	"staff_update_date": 0,
+	"rating": 2,
+	"department": {
+		"id": 1,
+		"identity": "Support",
+		"color": "B7B6F6"
+	},
+	"priority": {
+		"id": 2,
+		"identity": "Normal",
+		"color": "6bbcf5"
+	},
+	"status": {
+		"id": 2,
+		"identity": "Closed",
+		"color": "ed174f"
+	},
+	"service": {
+		"id": 66689,
+		"identity": "lacroix.enspi.red - 209.126.31.139",
+		"is_real": true,
+		"meta": {
+			"scope": "service"
+		},
+		"type": "virt-guest",
+		"status": "enabled",
+		"description": "nex1.tiny",
+		"nickname": "",
+		"main_ip": {
+			"id": "209.126.31.139",
+			"identity": "209.126.31.139",
+			"is_real": true,
+			"meta": {
+				"scope": "ip-block"
+			},
+			"type": "ipv4",
+			"status": "used",
+			"real_id": 67071
+		},
+		"host": "lacroix.enspi.red",
+		"state": "stable"
+	},
+	"is_closed": true,
+	"is_closeable": true
+}, {
+	"company_id": 4,
+	"id": 1110502,
+	"identity": "IYRS-9272",
+	"client_id": 39992,
+	"mask": "IYRS-9272",
+	"subject": "NocWorx Cloud Server Reboot (test)",
+	"recent_post": {
+		"id": 5235209,
+		"identity": "Adrian Testa-avila - 09\/07\/2017 09:59:48",
+		"is_real": true,
+		"meta": {
+			"scope": "ticket-post"
+		},
+		"body": "nevermind; got what I needed.  Thanks again!\n\n**please close**",
+		"name": "Adrian Testa-avila",
+		"date": 1504792788,
+		"reply_by": "client"
+	},
+	"last_reply_by": "client",
+	"last_replier_name": "Adrian Testa-avila",
+	"num_posts": 2,
+	"num_posts_staff": 0,
+	"update_date": 1504792835,
+	"staff_update_date": 0,
+	"rating": 2,
+	"department": {
+		"id": 1,
+		"identity": "Support",
+		"color": "B7B6F6"
+	},
+	"priority": {
+		"id": 2,
+		"identity": "Normal",
+		"color": "6bbcf5"
+	},
+	"status": {
+		"id": 2,
+		"identity": "Closed",
+		"color": "ed174f"
+	},
+	"service": {
+		"id": 0,
+		"identity": "",
+		"is_real": false,
+		"meta": {
+			"scope": "service"
+		},
+		"type": "generic",
+		"status": "enabled",
+		"description": "",
+		"nickname": ""
+	},
+	"is_closed": true,
+	"is_closeable": true
+}]

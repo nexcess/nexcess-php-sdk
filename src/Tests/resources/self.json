@@ -1,0 +1,158 @@
+{
+	"name": "Adrian Testa-avila",
+	"start_date": 1489171508,
+	"payment_type": "other",
+	"status": "active",
+	"pin": "170199",
+	"purchase_order_number": "",
+	"id": 39992,
+	"identity": "Adrian Testa-avila",
+	"is_real": true,
+	"company": {
+		"id": 4,
+		"identity": "Nexcess",
+		"is_real": true,
+		"meta": {
+			"scope": "company"
+		},
+		"label": "nexcess"
+	},
+	"has_rdnsable_ips": true,
+	"has_rdns_records": true,
+	"has_address": true,
+	"has_creditcards": true,
+	"requires_creditcard": false,
+	"has_agent": true,
+	"can_create_order": false,
+	"package_limits": {
+		"680": {
+			"limit": 2,
+			"available": 1
+		},
+		"681": {
+			"limit": 2,
+			"available": 1
+		},
+		"682": {
+			"limit": 2,
+			"available": 2
+		},
+		"684": {
+			"limit": 2,
+			"available": 2
+		},
+		"685": {
+			"limit": 2,
+			"available": 2
+		},
+		"686": {
+			"limit": 2,
+			"available": 2
+		},
+		"702": {
+			"limit": 2,
+			"available": 2
+		},
+		"703": {
+			"limit": 2,
+			"available": 2
+		},
+		"704": {
+			"limit": 2,
+			"available": 2
+		},
+		"705": {
+			"limit": 2,
+			"available": 2
+		},
+		"706": {
+			"limit": 2,
+			"available": 2
+		},
+		"707": {
+			"limit": 2,
+			"available": 2
+		},
+		"708": {
+			"limit": 2,
+			"available": 2
+		},
+		"709": {
+			"limit": 2,
+			"available": 2
+		},
+		"700": {
+			"limit": 2,
+			"available": 2
+		},
+		"701": {
+			"limit": 2,
+			"available": 2
+		},
+		"717": {
+			"limit": 2,
+			"available": 2
+		},
+		"718": {
+			"limit": 2,
+			"available": 2
+		},
+		"719": {
+			"limit": 2,
+			"available": 2
+		},
+		"720": {
+			"limit": 2,
+			"available": 2
+		},
+		"721": {
+			"limit": 2,
+			"available": 2
+		},
+		"722": {
+			"limit": 2,
+			"available": 2
+		}
+	},
+	"overdue": 0,
+	"due": 0,
+	"service_count": 2,
+	"virt_count": 2,
+	"recent_announcement": {
+		"title": "Configure/Replace PDUs",
+		"body": "Start Time: 19 May 2018 12:00 AM EDT (-0400)\nEstimated End Time: 19 May 2018 3:00 AM EDT (-0400)\n\nLocation: us-midwest-1 (Southfield, MI)\n\nServices Affected: All client services residing in MEL 1B003.08\n\nClients Affected: All clients with equipment residing in MEL 1B003.08\n\nDescription: Nexcess.net engineers will be configuring rack PDUs in select racks to ensure proper communication and enable full functionality within the client portal. No data loss is expected as a result of this maintenance. We have taken the proper precautions to minimize the possibility of any service disruptions but have reserved this window out of an abundance of caution.\n\nRegression Plan: While no downtime is expected, if an issue occurs with a PDU it will be promptly replaced.",
+		"post_date": 1525861881,
+		"status": "active",
+		"id": 2344,
+		"identity": ""
+	},
+	"ticket_count": 2,
+	"active_ticket_count": 0,
+	"addresses": {
+		"billing": {
+			"address_id": 75447,
+			"first_name": "Adrian",
+			"last_name": "Testa-Avila",
+			"company": "NocWorx",
+			"email": "aavila@nexcess.net",
+			"address1": "4440 Manning Rd.",
+			"address2": "",
+			"city": "Indianapolis",
+			"state": "IN",
+			"zip": "46228",
+			"country": "US",
+			"phone": "9519013753",
+			"fax": "",
+			"cell": "",
+			"is_residence": 1,
+			"type": "default",
+			"id": 75447,
+			"identity": "Adrian Testa-Avila",
+			"is_real": true
+		}
+	},
+	"unpaid_invoice_count": 0,
+	"total_invoice_count": 6,
+	"cc_num": "************1111",
+	"credits": 0
+}

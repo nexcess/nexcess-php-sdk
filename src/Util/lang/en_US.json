@@ -1,0 +1,63 @@
+{
+  "api": {
+    "bad_request": "API request failed: {__rootMessage__}",
+    "cannot_connect": "Failed to connect to API host: {__rootMessage__}",
+    "create_failed": "The Create action failed",
+    "endpoint_not_writable": "Cannot write to read-only endpoint {endpoint}",
+    "forbidden": "{method} /{endpoint} is forbidden (your api token/auth has insufficient permissions)",
+    "got_malformed_list": "Unexpected API response from 'GET /{uri}'\n  (expected array of arrays; check your request parameters?)",
+    "missing_id": "Cannot read {model}: no ID provided",
+    "no_such_endpoint": "No endpoint '{name}' exists",
+    "not_creatable": "The Create action is not allowed on this endpoint",
+    "not_found": "{method} /{endpoint} not found",
+    "request_failed": "API request failed: {__rootMessage__}",
+    "server_error": "API host failed to handle request: {__rootMessage__}",
+    "unauthorized": "{method} /{endpoint} is not authorized (check that correct api token/auth is configured)",
+    "unprocessable_entity": "{method} /{endpoint} could not be processed; check response for error messages",
+    "wrong_call_arg": "{class}::__call() invoked with incorrect argument(s): expected {expected}; {type} provided",
+    "wrong_model_for_uri": "{endpoint} expects an instance of {model}; cannot use {type}"
+  },
+  "resource": {
+    "invalid_filter": "{class}::{method} expects $filter to be callable or array; {type} provided",
+    "model_not_found": "No model {model}:{id} found",
+    "no_such_model": "No model {model} exists",
+    "no_such_property": "No property '{name}' exists on {model}",
+    "no_such_service_model": "No Service model exists for type: {type}",
+    "no_such_writable_property": "No writable property '{name}' exists on {model}",
+    "order": {
+      "invalid_service_data": "Invalid Service data: expected Service instance or array with 'id' and 'type'; {data} was provided"
+    },
+    "package": {
+      "package_type_required": "A package type must be provided for list queries"
+    },
+    "readonly_model": "Cannot create or modify read-only model '{model}'",
+    "sync_failed": "Failed to sync {model}:{id} with API response: {__rootMessage__}",
+    "wait_timeout_exceeded": "Wait timeout exceeded (waited {timeout} seconds)",
+    "wrong_model_for_collection": "Cannot add {model} to collection of '{collection}' models"
+  },
+  "sandbox": {
+    "invalid_response": "Response must be a Guzzle\\PSR-7\\Response, Throwable, or a callable which returns one of the same; {type} provided"
+  },
+  "sdk": {
+    "callback_error": "Uncaught error while invoking callback: {__rootMessage__}",
+    "debug_not_enabled": "{method} is enabled only in debug mode",
+    "missing_api_token": "Missing API Token",
+    "not_implemented": "{method} is not yet implmented",
+    "request_log_not_enabled": "Request logging is not enabled; set 'request.log' or 'debug' options to enable",
+    "tests": {
+      "unreadable_resource": "Resource '{name}' does not map to a readable file: {path}/{name}",
+      "unsupported_resource_type": "Resource '{name}' has unsupported type '{type}'; must be one of {types}",
+      "use_sandbox_instead": "Don't use _getSubject() to get endpoints; use the sandbox instead"
+    },
+    "unknown_error": "Unknown error: {__rootMessage__}"
+  },
+  "util": {
+    "file_not_readable": "File '{file}' is not readable",
+    "invalid_config_option": "Invalid configuration: {option} must be {rule}; '{value}' provided",
+    "invalid_json_data": "Failed to read Json file '{file}'; does not contain an array/object",
+    "invalid_language_map": "Language map must contain key:translation pairs; found: {invalid}",
+    "invalid_translation": "Language translations must be strings; '{key}' translates as '{translated}'",
+    "json_decode_failure": "failed to decode json: {message}",
+    "json_encode_failure": "failed to encode json: {message}"
+  }
+}

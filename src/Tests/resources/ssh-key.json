@@ -1,0 +1,18 @@
+[
+  {
+    "key_id": 312,
+    "client_id": 39992,
+    "user_id": 66103,
+    "name": "lacroix",
+    "key": "ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABAQC\/wbRM54\/cv9M7ZCgzbODQUWduDCZZh0sCG2\/19OlfvlE1DlDkvOLl5WELaGrAv3FuoiIE7XXMFWM8qm0ZrwlulxSnVKXrqi8sBFUtOzIR88+7KDrfdTeqQ5NVkfgyGkE9dpljK3\/KDJ\/Kb\/S42cx10Sl3\/LiDIt0RzcH0ngLj1uKAzZhAxOfEGz8N79TRtPRqJoCnFIkj0OsKqCzoyx40JPbAWv1kXy1Mnq4oWV\/Fkc4kwHWw\/CxJiN93qECzO9ltfR2\/SHanOKNvpi2T8\/6SoXBhnAcxhFJJKR6jTzxztPMUJFtq4RDMs8v8b35kwgMGQB9nuGKHrE5Hk+6aSA7Z adrian@ryzen.rkm-skm",
+    "fingerprint": "97:f7:85:cb:6d:c6:57:7d:1e:c2:bc:fa:a3:1d:1c:0d  (RSA)",
+    "key_size": 2048,
+    "creation_date": 1499571153,
+    "id": 312,
+    "identity": "lacroix - 97:f7:85:cb:6d:c6:57:7d:1e:c2:bc:fa:a3:1d:1c:0d  (RSA)",
+    "is_real": true,
+    "meta": {
+      "scope": "user-ssh-key"
+    }
+  }
+]

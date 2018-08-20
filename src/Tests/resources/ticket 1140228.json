@@ -1,0 +1,168 @@
+{
+	"ticket_id": 1140228,
+	"subject": "NocWorx Dev (test; ignore)",
+	"client_id": 39992,
+	"contact_id": 0,
+	"status_id": 2,
+	"priority_id": 2,
+	"contact_name": "Adrian Testa-avila",
+	"contact_email": "aavila@nexcess.net",
+	"ticket_date": 1511966527,
+	"update_date": 1511966576,
+	"staff_update_date": 0,
+	"client_update_date": 1511966529,
+	"department_id": 1,
+	"escalation_id": 0,
+	"mask": "YBZP-6532",
+	"user_name": "",
+	"opened_by": "client",
+	"last_reply_by": "client",
+	"service_id": 66689,
+	"client_verified": "yes",
+	"summary": "ID: YBZP-6532\nSubject: NocWorx Dev (test; ignore)\nDepartment: Support\nStatus: Closed\nPriority: Normal\nCreated: 11\/29\/2017 09:42:07\nOpened By: (client)\nPosts: 1\nLast Update: 11\/29\/2017 09:42:56\nLast Post By: Adrian Testa-avila",
+	"department_name": "Support",
+	"department_color": "B7B6F6",
+	"priority_name": "Normal",
+	"priority_color": "6bbcf5",
+	"status_name": "Closed",
+	"status_color": "ed174f",
+	"escalation_name": "",
+	"escalation_color": "",
+	"num_posts": 1,
+	"num_posts_staff": 0,
+	"last_replier_name": "Adrian Testa-avila",
+	"rating": 2,
+	"parent_ticket_id": 0,
+	"client_wait_date": 1511966528,
+	"company_id": 4,
+	"assignee_id": 0,
+	"assign_date": 0,
+	"id": 1140228,
+	"identity": "YBZP-6532",
+	"is_real": true,
+	"meta": {
+		"scope": "ticket"
+	},
+	"department": {
+		"id": 1,
+		"identity": "Support",
+		"is_real": true,
+		"meta": {
+			"scope": "ticket-department"
+		},
+		"color": "B7B6F6",
+		"is_client_closeable": true
+	},
+	"priority": {
+		"id": 2,
+		"identity": "Normal",
+		"is_real": true,
+		"meta": {
+			"scope": "ticket-priority"
+		},
+		"color": "6bbcf5"
+	},
+	"status": {
+		"id": 2,
+		"identity": "Closed",
+		"is_real": true,
+		"meta": {
+			"scope": "ticket-status"
+		},
+		"color": "ed174f"
+	},
+	"company": {
+		"id": 4,
+		"identity": "Nexcess",
+		"is_real": true,
+		"meta": {
+			"scope": "company"
+		},
+		"label": "nexcess"
+	},
+	"recipients": [{
+		"id": 1028350,
+		"identity": "aavila@nexcess.net",
+		"is_real": true,
+		"meta": {
+			"scope": "ticket-secondary-recipient"
+		}
+	}],
+	"client": {
+		"id": 39992,
+		"identity": "Adrian Testa-avila",
+		"is_real": true,
+		"meta": {
+			"scope": "client"
+		},
+		"status": "active",
+		"company": {
+			"id": 4,
+			"identity": "Nexcess",
+			"is_real": true,
+			"meta": {
+				"scope": "company"
+			},
+			"label": "nexcess"
+		},
+		"has_rdnsable_ips": true,
+		"has_rdns_records": true,
+		"has_address": true,
+		"has_creditcards": true,
+		"requires_creditcard": false,
+		"has_agent": true
+	},
+	"is_closed": true,
+	"is_closeable": true,
+	"service": {
+		"id": 66689,
+		"identity": "lacroix.enspi.red - 209.126.31.139",
+		"is_real": true,
+		"meta": {
+			"scope": "service"
+		},
+		"type": "virt-guest",
+		"status": "enabled",
+		"description": "nex1.tiny",
+		"nickname": "",
+		"main_ip": {
+			"id": "209.126.31.139",
+			"identity": "209.126.31.139",
+			"is_real": true,
+			"meta": {
+				"scope": "ip-block"
+			},
+			"type": "ipv4",
+			"status": "used",
+			"real_id": 67071
+		},
+		"host": "lacroix.enspi.red",
+		"state": "stable",
+		"allocations": [{
+			"id": 51905,
+			"identity": "jarvis01-kvm06.us-midwest-1.nexcess.net",
+			"is_real": true,
+			"meta": {
+				"scope": "allocation"
+			},
+			"type": "virt-guest",
+			"status": "used",
+			"uuid": "ce055869-c74c-41c2-940a-ad8eb7fc2a5d",
+			"main_ip": {
+				"id": "209.126.31.139",
+				"identity": "209.126.31.139",
+				"is_real": true,
+				"meta": {
+					"scope": "ip-block"
+				},
+				"type": "ipv4",
+				"status": "used",
+				"real_id": 67071
+			},
+			"location": "jarvis01-kvm06.us-midwest-1.nexcess.net",
+			"hostname": "lacroix.enspi.red",
+			"is_rebootable": true
+		}]
+	},
+	"hostname": "lacroix.enspi.red"
+}
