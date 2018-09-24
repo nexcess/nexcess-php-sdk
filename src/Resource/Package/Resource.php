@@ -14,7 +14,7 @@ use Nexcess\Sdk\Resource\Model;
 /**
  * Represents a service package.
  */
-class Package extends Model {
+class Resource extends Model {
 
   /** {@inheritDoc} */
   protected const _PROPERTY_ALIASES = ['id' => 'package_id'];

@@ -10,14 +10,14 @@ declare(strict_types  = 1);
 namespace Nexcess\Sdk\Tests\Resource\CloudAccount;
 
 use Nexcess\Sdk\ {
-  Resource\CloudAccount\CloudAccount,
+  Resource\CloudAccount\Resource,
   Tests\Resource\ModelTestCase
 };
 
 /**
  * Unit test for cloud accounts (virtual hosting).
  */
-class CloudAccountTest extends ModelTestCase {
+class ResourceTest extends ModelTestCase {
 
   /** {@inheritDoc} */
   protected const _RESOURCE_PATH = __DIR__ . '/resources';
@@ -33,5 +33,5 @@ class CloudAccountTest extends ModelTestCase {
     'cloud-account-1.toCollapsedArray.json';
 
   /** {@inheritDoc} */
-  protected const _SUBJECT_FQCN = CloudAccount::class;
+  protected const _SUBJECT_FQCN = Resource::class;
 }

@@ -7,31 +7,31 @@
 
 declare(strict_types  = 1);
 
-namespace Nexcess\Sdk\Tests\Resource\Invoice;
+namespace Nexcess\Sdk\Tests\Resource\VirtGuestCloud;
 
 use Nexcess\Sdk\ {
-  Resource\Invoice\Invoice,
+  Resource\VirtGuestCloud\Resource,
   Tests\Resource\ModelTestCase
 };
 
 /**
- * Unit test for cloud accounts (virtual hosting).
+ * Unit test for cloud account services.
  */
-class InvoiceTest extends ModelTestCase {
+class ResourceTest extends ModelTestCase {
 
   /** {@inheritDoc} */
   protected const _RESOURCE_PATH = __DIR__ . '/resources';
 
   /** {@inheritDoc} */
-  protected const _RESOURCE_FROMARRAY = 'invoice-1.fromArray.json';
+  protected const _RESOURCE_FROMARRAY = 'service-1.fromArray.json';
 
   /** {@inheritDoc} */
-  protected const _RESOURCE_TOARRAY = 'invoice-1.toArray-shallow.json';
+  protected const _RESOURCE_TOARRAY = 'service-1.toArray-shallow.php';
 
   /** {@inheritDoc} */
   protected const _RESOURCE_TOCOLLAPSEDARRAY =
-    'invoice-1.toCollapsedArray.json';
+    'service-1.toCollapsedArray.json';
 
   /** {@inheritDoc} */
-  protected const _SUBJECT_FQCN = Invoice::class;
+  protected const _SUBJECT_FQCN = Resource::class;
 }

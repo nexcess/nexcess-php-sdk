@@ -7,25 +7,27 @@
 
 declare(strict_types  = 1);
 
-namespace Nexcess\Sdk\Resource\User;
+namespace Nexcess\Sdk\Resource\App;
 
 use Nexcess\Sdk\Resource\Model;
 
 /**
- * Represents a portal User.
+ * Represents an App Environment for a cloud account.
  */
-class User extends Model {
+class Resource extends Model {
 
   /** {@inheritDoc} */
-  protected const _PROPERTY_ALIASES = ['id' => 'user_id'];
+  protected const _PROPERTY_ALIASES = ['id' => 'app_id'];
 
   /** {@inheritDoc} */
-  protected const _PROPERTY_NAMES = [
-    'user_id'
-  ];
+  protected const _PROPERTY_NAMES = ['app_id'];
 
   /** {@inheritDoc} */
   protected const _READONLY_NAMES = [
-    // @todo
+    'identity',
+    'name',
+    'version',
+    'type',
+    'status'
   ];
 }

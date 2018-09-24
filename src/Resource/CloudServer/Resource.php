@@ -10,16 +10,16 @@ declare(strict_types  = 1);
 namespace Nexcess\Sdk\Resource\CloudServer;
 
 use Nexcess\Sdk\ {
-  Resource\Cloud\Cloud,
-  Resource\Location\Location,
-  Resource\Package\Package,
+  Resource\Cloud\Resource as Cloud,
+  Resource\Location\Resource as Location,
+  Resource\Package\Resource as Package,
   Resource\Service
 };
 
 /**
  * Cloud Server (virtual machine).
  */
-class CloudServer extends Service {
+class Resource extends Service {
 
   /** {@inheritDoc} */
   protected const _PROPERTY_ALIASES = [

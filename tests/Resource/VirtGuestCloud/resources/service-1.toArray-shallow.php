@@ -1,12 +1,12 @@
 <?php
 
 use Nexcess\Sdk\ {
-  Resource\App\App,
-  Resource\Cloud\Cloud,
-  Resource\CloudAccount\CloudAccount,
+  Resource\App\Resource as App,
+  Resource\Cloud\Resource as Cloud,
+  Resource\CloudAccount\Resource as CloudAccount,
   Resource\Collection,
-  Resource\Order\Order,
-  Resource\Package\Package
+  Resource\Order\Resource AS Order,
+  Resource\Package\Resource as Package
 };
 
 return [
@@ -42,7 +42,7 @@ return [
   'can_change_root_password' => false,
   'child_cloud_accounts' => Collection::__set_state([
     '_models' => [],
-    '_of' => 'Nexcess\\Sdk\\Resource\\CloudAccount\\CloudAccount'
+    '_of' => CloudAccount::class
   ]),
   'client_id' => 1,
   'cloud_account' => CloudAccount::__set_state([
@@ -52,6 +52,7 @@ return [
       'ip' => '203.0.113.1',
       'domain' => 'nexcess-cli.example.com',
       'is_dev_account' => false,
+      'state' => 'stable',
       'temp_domain' => 'example.nxcli.net',
       'unix_username' => 'abcd1234',
       'app' => App::__set_state([

@@ -10,7 +10,7 @@ declare(strict_types  = 1);
 namespace Nexcess\Sdk\Resource\CloudServer;
 
 use Nexcess\Sdk\ {
-  Resource\CloudServer\CloudServer,
+  Resource\CloudServer\Resource,
   Resource\ServiceEndpoint
 };
 
@@ -23,19 +23,19 @@ class Endpoint extends ServiceEndpoint {
   protected const _SERVICE_TYPE = 'virt-guest';
 
   /** {@inheritDoc} */
-  protected const _MODEL_FQCN = CloudServer::class;
+  protected const _MODEL_FQCN = Resource::class;
 
   /**
    * Reboots an existing cloud server.
    *
-   * @param CloudServer $cloud_server Cloud Server model
+   * @param Resource $resource Cloud Server model
    * @return Endpoint $this
    * @throws ApiException If request fails
    */
-  public function reboot(CloudServer $cloud_server) : Endpoint {
+  public function reboot(Resource $resource) : Endpoint {
     $this->_client->request(
       'POST',
-      self::_URI . "/{$cloud_server->getId()}",
+      self::_URI . "/{$resource->getId()}",
       ['json' => ['_action' => 'reboot']]
     );
 
@@ -45,18 +45,18 @@ class Endpoint extends ServiceEndpoint {
   /**
    * Resizes an existing cloud server.
    *
-   * @param CloudServer $cloud_server Cloud Server model
+   * @param Resource $resource Cloud Server model
    * @param int $package_id Desired package id
    * @return Endpoint $this
    * @throws ApiException If request fails
    */
   public function resize(
-    CloudServer $cloud_server,
+    Resource $resource,
     int $package_id
   ) : Endpoint {
     $this->_client->request(
       'POST',
-      self::_URI . "/{$cloud_server->getId()}",
+      self::_URI . "/{$resource->getId()}",
       ['json' => ['_action' => 'resize', 'package_id' => $package_id]]
     );
 
@@ -66,14 +66,14 @@ class Endpoint extends ServiceEndpoint {
   /**
    * Starts an existing cloud server.
    *
-   * @param CloudServer $cloud_server Cloud Server model
+   * @param Resource $resource Cloud Server model
    * @return Endpoint $this
    * @throws ApiException If request fails
    */
-  public function start(CloudServer $cloud_server) : Endpoint {
+  public function start(Resource $resource) : Endpoint {
     $this->_client->request(
       'POST',
-      self::_URI . "/{$cloud_server->getId()}",
+      self::_URI . "/{$resource->getId()}",
       ['json' => ['_action' => 'start']]
     );
 
@@ -83,14 +83,14 @@ class Endpoint extends ServiceEndpoint {
   /**
    * Stops an existing cloud server.
    *
-   * @param CloudServer $cloud_server Cloud Server model
+   * @param Resource $resource Cloud Server model
    * @return Endpoint $this
    * @throws ApiException If request fails
    */
-  public function stop(CloudServer $cloud_server) : Endpoint {
+  public function stop(Resource $resource) : Endpoint {
     $this->_client->request(
       'POST',
-      self::_URI . "/{$cloud_server->getId()}",
+      self::_URI . "/{$resource->getId()}",
       ['json' => ['_action' => 'stop']]
     );
 
@@ -100,14 +100,14 @@ class Endpoint extends ServiceEndpoint {
   /**
    * Views an existing cloud server's console log.
    *
-   * @param CloudServer $cloud_server Cloud Server model
+   * @param Resource $resource Cloud Server model
    * @return Endpoint $this
    * @throws ApiException If request fails
    */
-  public function viewConsoleLog(CloudServer $cloud_server) : Endpoint {
+  public function viewConsoleLog(Resource $resource) : Endpoint {
     $this->_client->request(
       'GET',
-      self::_URI . "/{$cloud_server->getId()}/console-log"
+      self::_URI . "/{$resource->getId()}/console-log"
     );
 
     return $this;

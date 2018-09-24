@@ -2,6 +2,7 @@
 	"account_id": 1,
 	"host_id": 1,
 	"domain": "nexcess-cli.example.com",
+  "state": "stable",
 	"status": "used",
 	"deploy_date": 1526046176,
 	"deploy_complete_date": 1526046240,

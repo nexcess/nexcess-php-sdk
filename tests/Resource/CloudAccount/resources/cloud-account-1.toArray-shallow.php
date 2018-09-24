@@ -1,12 +1,12 @@
 <?php
 
 use Nexcess\Sdk\ {
-  Resource\App\App,
-  Resource\Cloud\Cloud,
-  Resource\CloudAccount\CloudAccount,
+  Resource\App\Resource as App,
+  Resource\Cloud\Resource as Cloud,
+  Resource\CloudAccount\Resource as CloudAccount,
   Resource\Collection,
-  Resource\Order\Order,
-  Resource\VirtGuestCloud\VirtGuestCloud,
+  Resource\Order\Resource AS Order,
+  Resource\VirtGuestCloud\Resource as VirtGuestCloud,
   Util\Util
 };
 
@@ -154,6 +154,7 @@ return [
       'country' => 'US',
     ],
   ]),
+  'state' => 'stable',
   'status' => 'enabled',
   'temp_domain' => 'example.nxcli.net',
   'unix_username' => 'abcd1234'

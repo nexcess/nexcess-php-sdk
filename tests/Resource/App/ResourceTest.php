@@ -10,14 +10,14 @@ declare(strict_types  = 1);
 namespace Nexcess\Sdk\Tests\Resource\App;
 
 use Nexcess\Sdk\ {
-  Resource\App\App,
+  Resource\App\Resource,
   Tests\Resource\ModelTestCase
 };
 
 /**
  * Unit test for app environments.
  */
-class AppTest extends ModelTestCase {
+class ResourceTest extends ModelTestCase {
 
   /** {@inheritDoc} */
   protected const _RESOURCE_PATH = __DIR__ . '/resources';
@@ -32,5 +32,5 @@ class AppTest extends ModelTestCase {
   protected const _RESOURCE_TOCOLLAPSEDARRAY = 'app-13.toCollapsedArray.json';
 
   /** {@inheritDoc} */
-  protected const _SUBJECT_FQCN = App::class;
+  protected const _SUBJECT_FQCN = Resource::class;
 }

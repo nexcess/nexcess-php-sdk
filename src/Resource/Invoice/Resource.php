@@ -7,27 +7,29 @@
 
 declare(strict_types  = 1);
 
-namespace Nexcess\Sdk\Resource\App;
+namespace Nexcess\Sdk\Resource\Invoice;
 
 use Nexcess\Sdk\Resource\Model;
 
 /**
- * Represents an App Environment for a cloud account.
+ * Represents an Invoice.
  */
-class App extends Model {
+class Resource extends Model {
 
   /** {@inheritDoc} */
-  protected const _PROPERTY_ALIASES = ['id' => 'app_id'];
+  protected const _PROPERTY_ALIASES = ['id' => 'invoice_id'];
 
   /** {@inheritDoc} */
-  protected const _PROPERTY_NAMES = ['app_id'];
+  protected const _PROPERTY_NAMES = ['invoice_id'];
 
   /** {@inheritDoc} */
   protected const _READONLY_NAMES = [
+    'description',
+    'full_id',
     'identity',
-    'name',
-    'version',
-    'type',
-    'status'
+    'invoice_id',
+    'status',
+    'total',
+    'type'
   ];
 }

@@ -10,16 +10,16 @@ declare(strict_types  = 1);
 namespace Nexcess\Sdk\Resource\CloudAccount;
 
 use Nexcess\Sdk\ {
-  Resource\App\App,
+  Resource\App\Resource as App,
   Resource\Model,
-  Resource\VirtGuestCloud\VirtGuestCloud as Service,
+  Resource\VirtGuestCloud\Resource as Service,
   Util\Util
 };
 
 /**
  * Cloud Account (virtual hosting).
  */
-class CloudAccount extends Model {
+class Resource extends Model {
 
   /** {@inheritDoc} */
   protected const _PROPERTY_ALIASES = [
@@ -61,6 +61,7 @@ class CloudAccount extends Model {
     'service',
     'service.location',
     'service.status',
+    'state',
     'status',
     'temp_domain',
     'unix_username'

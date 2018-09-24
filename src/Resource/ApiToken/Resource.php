@@ -14,7 +14,7 @@ use Nexcess\Sdk\Resource\Model;
 /**
  * API Token.
  */
-class ApiToken extends Model {
+class Resource extends Model {
 
   /** {@inheritDoc} */
   protected const _PROPERTY_ALIASES = ['id' => 'token_id'];

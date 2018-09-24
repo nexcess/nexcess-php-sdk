@@ -10,7 +10,7 @@ declare(strict_types  = 1);
 namespace Nexcess\Sdk\Tests\Resource\ApiToken;
 
 use Nexcess\Sdk\ {
-  Resource\ApiToken\ApiToken,
+  Resource\ApiToken\Resource,
   Resource\ApiToken\ApiTokenException,
   Sandbox\Sandbox,
   Tests\Resource\ModelTestCase,
@@ -20,7 +20,7 @@ use Nexcess\Sdk\ {
 /**
  * Unit test for api token.
  */
-class ApiTokenTest extends ModelTestCase {
+class ResourceTest extends ModelTestCase {
 
   /** {@inheritDoc} */
   protected const _RESOURCE_PATH = __DIR__ . '/resources';
@@ -36,5 +36,5 @@ class ApiTokenTest extends ModelTestCase {
     'api-token-1.toCollapsedArray.json';
 
   /** {@inheritDoc} */
-  protected const _SUBJECT_FQCN = ApiToken::class;
+  protected const _SUBJECT_FQCN = Resource::class;
 }

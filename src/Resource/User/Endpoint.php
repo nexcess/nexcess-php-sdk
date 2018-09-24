@@ -12,7 +12,7 @@ namespace Nexcess\Sdk\Resource\User;
 
 use Nexcess\Sdk\ {
   Resource\WritableEndpoint,
-  Resource\User\User
+  Resource\User\Resource
 };
 
 /**
@@ -24,5 +24,5 @@ class Endpoint extends WritableEndpoint {
   protected const _URI = 'user';
 
   /** {@inheritDoc} */
-  protected const _MODEL_FQCN = User::class;
+  protected const _MODEL_FQCN = Resource::class;
 }

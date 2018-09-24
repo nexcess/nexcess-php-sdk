@@ -10,18 +10,18 @@ declare(strict_types  = 1);
 namespace Nexcess\Sdk\Resource\VirtGuestCloud;
 
 use Nexcess\Sdk\ {
-  Resource\Cloud\Cloud,
-  Resource\CloudAccount\CloudAccount,
+  Resource\Cloud\Resource as Cloud,
+  Resource\CloudAccount\Resource as CloudAccount,
   Resource\Modelable,
-  Resource\Package\Package,
-  Resource\Order\Order,
+  Resource\Package\Resource as Package,
+  Resource\Order\Resource as Order,
   Resource\Service
 };
 
 /**
  * Cloud Account (virtual hosting) service object.
  */
-class VirtGuestCloud extends Service {
+class Resource extends Service {
 
   /** {@inheritDoc} */
   protected const _PROPERTY_ALIASES = ['cloud' => 'location'] +

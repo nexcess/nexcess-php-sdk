@@ -11,7 +11,7 @@ namespace Nexcess\Sdk\Resource\CloudAccount;
 
 use Nexcess\Sdk\ {
   Exception\ApiException,
-  Resource\CloudAccount\CloudAccount,
+  Resource\CloudAccount\Resource,
   Resource\VirtGuestCloud\Endpoint as ServiceEndpoint,
   Resource\Modelable as Model,
   Resource\WritableEndpoint
@@ -26,25 +26,26 @@ class Endpoint extends WritableEndpoint {
   protected const _URI = 'cloud-account';
 
   /** {@inheritDoc} */
-  protected const _MODEL_FQCN = CloudAccount::class;
+  protected const _MODEL_FQCN = Resource::class;
 
   /**
    * Requests cancellation of the associated service.
    *
+   * @param Resource $resource Cloud Server resource
    * @param array $survey Cancellation survey
    * @return Endpoint $this
    */
-  public function cancel(CloudAccount $model, array $survey) : Endpoint {
+  public function cancel(Resource $resource, array $survey) : Endpoint {
     return $this->_client
       ->getEndpoint(ServiceEndpoint::class)
-      ->cancel($model->get('service'), $survey);
+      ->cancel($resource->get('service'), $survey);
   }
 
   /**
    * {@inheritDoc}
    */
   public function create(array $data) : Model {
-    $model = $this->getModel()->sync(
+    $resource = $this->getModel()->sync(
       $this->_client->request(
         'POST',
         static::_URI_CREATE ?? static::_URI,
@@ -52,34 +53,35 @@ class Endpoint extends WritableEndpoint {
       )['cloud_account']
     );
 
-    $this->_wait($this->_waitUntilCreate($model));
-    return $model;
+    $this->_wait($this->_waitUntilCreate($resource));
+    return $resource;
   }
 
   /**
    * Switches PHP versions active on an existing cloud server.
    *
-   * @param Model $model Cloud server instance
+   * @param Resource $resource Cloud server resource
    * @param string $version Desired PHP version
    * @return Endpoint $this
    * @throws ApiException If request fails
    */
   public function setPhpVersion(
-    CloudAccount $model,
+    Resource $resource,
     string $version
   ) : Endpoint {
     $this->_client
       ->getEndpoint(ServiceEndpoint::class)
-      ->setPhpVersion($model->get('service'), $version);
+      ->setPhpVersion($resource->get('service'), $version);
 
-    $this->_wait(function ($endpoint) use ($model, $version) {
+    $this->_wait(function ($endpoint) use ($resource, $version) {
       if (
-        $endpoint->retrieve($model->getId())->get('php_version') === $version
+        $endpoint->retrieve($resource->getId())->get('php_version') === $version
       ) {
-        $endpoint->sync($model);
+        $endpoint->sync($resource);
         return true;
       }
     });
+
     return $this;
   }
 }
