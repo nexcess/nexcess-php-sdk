@@ -7,11 +7,11 @@
 
 declare(strict_types  = 1);
 
-namespace Nexcess\Sdk\Resource\Cloud\Tests;
+namespace Nexcess\Sdk\Tests\Resource\Cloud;
 
 use Nexcess\Sdk\ {
   Resource\Cloud\Cloud,
-  Resource\Tests\ModelTestCase
+  Tests\Resource\ModelTestCase
 };
 
 /**

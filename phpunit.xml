@@ -4,43 +4,43 @@
   colors="true">
   <testsuites>
     <testsuite name="resources">
-      <directory>./src/Resource</directory>
+      <directory>./tests/Resource</directory>
     </testsuite>
     <testsuite name="resource-apitoken">
-      <directory>./src/Resource/ApiToken/Tests</directory>
+      <directory>./tests/Resource/ApiToken</directory>
     </testsuite>
     <testsuite name="resource-app">
-      <directory>./src/Resource/App/Tests</directory>
+      <directory>./tests/Resource/App</directory>
     </testsuite>
     <testsuite name="resource-cloud">
-      <directory>./src/Resource/Cloud/Tests</directory>
+      <directory>./tests/Resource/Cloud</directory>
     </testsuite>
     <testsuite name="resource-cloudaccount">
-      <directory>./src/Resource/CloudAccount/Tests</directory>
+      <directory>./tests/Resource/CloudAccount</directory>
     </testsuite>
     <testsuite name="resource-cloudserver">
-      <directory>./src/Resource/CloudServer/Tests</directory>
+      <directory>./tests/Resource/CloudServer</directory>
     </testsuite>
     <testsuite name="resource-invoice">
-      <directory>./src/Resource/Invoice/Tests</directory>
+      <directory>./tests/Resource/Invoice</directory>
     </testsuite>
     <testsuite name="resource-order">
-      <directory>./src/Resource/Order/Tests</directory>
+      <directory>./tests/Resource/Order</directory>
     </testsuite>
     <testsuite name="resource-package">
-      <directory>./src/Resource/Package/Tests</directory>
+      <directory>./tests/Resource/Package</directory>
     </testsuite>
     <testsuite name="resource-virtguestcloud">
-      <directory>./src/Resource/VirtGuestCloud/Tests</directory>
+      <directory>./tests/Resource/VirtGuestCloud</directory>
     </testsuite>
     <testsuite name="sandbox">
-      <directory>./src/Sandbox/Tests</directory>
+      <directory>./tests/Sandbox</directory>
     </testsuite>
     <testsuite name="sdk">
-      <directory>./src/Tests</directory>
+      <file>./tests/ClientTest.php</file>
     </testsuite>
     <testsuite name="util">
-      <directory>./src/Util/Tests</directory>
+      <directory>./tests/Util</directory>
     </testsuite>
   </testsuites>
   <filter>

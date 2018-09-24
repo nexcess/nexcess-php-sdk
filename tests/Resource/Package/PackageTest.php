@@ -7,31 +7,31 @@
 
 declare(strict_types  = 1);
 
-namespace Nexcess\Sdk\Resource\CloudServer\Tests;
+namespace Nexcess\Sdk\Tests\Resource\Package;
 
 use Nexcess\Sdk\ {
-  Resource\CloudServer\CloudServer,
-  Resource\Tests\ModelTestCase
+  Resource\Package\Package,
+  Tests\Resource\ModelTestCase
 };
 
 /**
  * Unit test for cloud accounts (virtual hosting).
  */
-class CloudServerTest extends ModelTestCase {
+class PackageTest extends ModelTestCase {
 
   /** {@inheritDoc} */
   protected const _RESOURCE_PATH = __DIR__ . '/resources';
 
   /** {@inheritDoc} */
-  protected const _RESOURCE_FROMARRAY = 'cloud-server-1.fromArray.json';
+  protected const _RESOURCE_FROMARRAY = 'package-717.fromArray.json';
 
   /** {@inheritDoc} */
-  protected const _RESOURCE_TOARRAY = 'cloud-server-1.toArray-shallow.php';
+  protected const _RESOURCE_TOARRAY = 'package-717.toArray-shallow.json';
 
   /** {@inheritDoc} */
   protected const _RESOURCE_TOCOLLAPSEDARRAY =
-    'cloud-server-1.toCollapsedArray.json';
+    'package-717.toCollapsedArray.json';
 
   /** {@inheritDoc} */
-  protected const _SUBJECT_FQCN = CloudServer::class;
+  protected const _SUBJECT_FQCN = Package::class;
 }

@@ -7,31 +7,31 @@
 
 declare(strict_types  = 1);
 
-namespace Nexcess\Sdk\Resource\CloudAccount\Tests;
+namespace Nexcess\Sdk\Tests\Resource\Invoice;
 
 use Nexcess\Sdk\ {
-  Resource\CloudAccount\CloudAccount,
-  Resource\Tests\ModelTestCase
+  Resource\Invoice\Invoice,
+  Tests\Resource\ModelTestCase
 };
 
 /**
  * Unit test for cloud accounts (virtual hosting).
  */
-class CloudAccountTest extends ModelTestCase {
+class InvoiceTest extends ModelTestCase {
 
   /** {@inheritDoc} */
   protected const _RESOURCE_PATH = __DIR__ . '/resources';
 
   /** {@inheritDoc} */
-  protected const _RESOURCE_FROMARRAY = 'cloud-account-1.fromArray.json';
+  protected const _RESOURCE_FROMARRAY = 'invoice-1.fromArray.json';
 
   /** {@inheritDoc} */
-  protected const _RESOURCE_TOARRAY = 'cloud-account-1.toArray-shallow.php';
+  protected const _RESOURCE_TOARRAY = 'invoice-1.toArray-shallow.json';
 
   /** {@inheritDoc} */
   protected const _RESOURCE_TOCOLLAPSEDARRAY =
-    'cloud-account-1.toCollapsedArray.json';
+    'invoice-1.toCollapsedArray.json';
 
   /** {@inheritDoc} */
-  protected const _SUBJECT_FQCN = CloudAccount::class;
+  protected const _SUBJECT_FQCN = Invoice::class;
 }

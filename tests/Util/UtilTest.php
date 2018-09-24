@@ -7,7 +7,7 @@
 
 declare(strict_types  = 1);
 
-namespace Nexcess\Sdk\Util\Tests;
+namespace Nexcess\Sdk\Tests\Util;
 
 use ArrayObject,
   StdClass;

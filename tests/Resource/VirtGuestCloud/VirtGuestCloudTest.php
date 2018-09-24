@@ -7,11 +7,11 @@
 
 declare(strict_types  = 1);
 
-namespace Nexcess\Sdk\Resource\VirtGuestCloud\Tests;
+namespace Nexcess\Sdk\Tests\Resource\VirtGuestCloud;
 
 use Nexcess\Sdk\ {
   Resource\VirtGuestCloud\VirtGuestCloud,
-  Resource\Tests\ModelTestCase
+  Tests\Resource\ModelTestCase
 };
 
 /**

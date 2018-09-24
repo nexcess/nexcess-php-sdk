@@ -7,14 +7,13 @@
 
 declare(strict_types  = 1);
 
-namespace Nexcess\Sdk\Resource\ApiToken\Tests;
-
-use Nexcess\Sdk\Resource\Tests\ModelTestCase;
+namespace Nexcess\Sdk\Tests\Resource\ApiToken;
 
 use Nexcess\Sdk\ {
   Resource\ApiToken\ApiToken,
   Resource\ApiToken\ApiTokenException,
   Sandbox\Sandbox,
+  Tests\Resource\ModelTestCase,
   Util\Config
 };
 

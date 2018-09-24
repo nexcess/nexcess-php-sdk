@@ -8,7 +8,7 @@
 
 declare(strict_types  = 1);
 
-namespace Nexcess\Sdk\Sandbox\Tests;
+namespace Nexcess\Sdk\Tests\Sandbox;
 
 use GuzzleHttp\ {
   Exception\ServerException,

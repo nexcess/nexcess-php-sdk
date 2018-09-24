@@ -7,7 +7,7 @@
 
 declare(strict_types  = 1);
 
-namespace Nexcess\Sdk\Resource\Tests;
+namespace Nexcess\Sdk\Tests\Resource;
 
 use Throwable;
 
