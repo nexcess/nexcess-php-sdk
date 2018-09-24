@@ -11,7 +11,7 @@ namespace Nexcess\Sdk\Resource\Invoice;
 
 use Nexcess\Sdk\ {
   Resource\Endpoint as ReadableEndpoint,
-  Resource\Invoice\Invoice
+  Resource\Invoice\Resource
 };
 
 /**
@@ -20,7 +20,7 @@ use Nexcess\Sdk\ {
 class Endpoint extends ReadableEndpoint {
 
   /** {@inheritDoc} */
-  protected const _MODEL_FQCN = Invoice::class;
+  protected const _MODEL_FQCN = Resource::class;
 
   /** {@inheritDoc} */
   protected const _URI = 'invoice';

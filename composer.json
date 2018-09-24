@@ -12,7 +12,10 @@
     "php-enspired/exceptable": "^1.2.1"
   },
   "autoload": {
-    "psr-4": { "Nexcess\\Sdk\\": "src/" }
+    "psr-4": {
+      "Nexcess\\Sdk\\": "src/",
+      "Nexcess\\Sdk\\Tests\\": "tests/"
+    }
   },
   "require-dev": {
     "phpunit/phpunit": "^7.0",

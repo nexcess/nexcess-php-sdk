@@ -11,7 +11,7 @@ namespace Nexcess\Sdk\Resource\Package;
 
 use Nexcess\Sdk\ {
   Resource\Endpoint as ReadableEndpoint,
-  Resource\Package\Package,
+  Resource\Package\Resource,
   Resource\Package\PackageException
 };
 
@@ -24,7 +24,7 @@ class Endpoint extends ReadableEndpoint {
   protected const _URI = 'package';
 
   /** {@inheritDoc} */
-  protected const _MODEL_FQCN = Package::class;
+  protected const _MODEL_FQCN = Resource::class;
 
   /**
    * {@inheritDoc}
@@ -36,6 +36,7 @@ class Endpoint extends ReadableEndpoint {
     if (empty($filter['type'])) {
       throw new PackageException(PackageException::PACKAGE_TYPE_REQUIRED);
     }
+
     return parent::_buildListQuery(
       $filter + ['environment_type' => 'production']
     );

@@ -10,7 +10,7 @@ declare(strict_types  = 1);
 namespace Nexcess\Sdk\Resource\ApiToken;
 
 use Nexcess\Sdk\ {
-  Resource\ApiToken\ApiToken,
+  Resource\ApiToken\Resource,
   Resource\WritableEndpoint
 };
 
@@ -23,5 +23,5 @@ class Endpoint extends WritableEndpoint {
   protected const _URI = 'api-token';
 
   /** {@inheritDoc} */
-  protected const _MODEL_FQCN = ApiToken::class;
+  protected const _MODEL_FQCN = Resource::class;
 }
