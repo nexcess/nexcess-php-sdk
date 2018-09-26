@@ -138,7 +138,7 @@ abstract class Endpoint implements Readable {
    * @throws ApiException If the model is of the wrong class
    */
   protected function _checkModelType(Model $model) {
-    $fqcn = static::MODEL;
+    $fqcn = static::_MODEL_FQCN;
     if (! $model instanceof $fqcn) {
       throw new ApiException(
         ApiException::WRONG_MODEL_FOR_URI,
