@@ -38,9 +38,17 @@ abstract class EndpointTestCase extends TestCase {
    */
   public function testGetModel() {
     $this->_getSandbox()->play(function ($api, $sandbox) {
-      $actual = $api->getEndpoint(static::_SUBJECT_FQCN)->getModel(1);
+      $endpoint = $api->getEndpoint(static::_SUBJECT_FQCN);
+      $actual = $endpoint->getModel(1);
+
       $this->assertInstanceOf(static::_SUBJECT_MODEL_FQCN, $actual);
       $this->assertEquals(1, $actual->getId(), 'Must set given model id');
+
+      $this->assertEquals(
+        $this->_getNonpublicProperty($actual, '_endpoint'),
+        $endpoint,
+        'Must assign endpoint to new model'
+      );
     });
   }
 

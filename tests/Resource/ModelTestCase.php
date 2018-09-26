@@ -13,6 +13,7 @@ use Throwable;
 
 use Nexcess\Sdk\ {
   Resource\Collection,
+  Resource\Endpoint,
   Resource\Model,
   Resource\ResourceException,
   Sandbox\Sandbox,
@@ -268,6 +269,23 @@ abstract class ModelTestCase extends TestCase {
   public function testIsReal() {
     $this->assertTrue($this->_getSubject(1)->isReal());
     $this->assertFalse($this->_getSubject(0)->isReal());
+  }
+
+  /**
+   * @covers Model::setApiEndpoint
+   */
+  public function testSetApiEndpoint() {
+    $endpoint = new class extends Endpoint {
+      public function __construct() {}
+    };
+    $model = $this->_getSubject(1);
+    $model->setApiEndpoint($endpoint);
+
+    $this->assertEquals(
+      $this->_getNonpublicProperty($model, '_endpoint'),
+      $endpoint,
+      'Must assign given endpoint to model'
+    );
   }
 
   /**
