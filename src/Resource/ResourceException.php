@@ -43,6 +43,9 @@ class ResourceException extends Exception {
   /** @var int Invalid filter callback. */
   const INVALID_FILTER = 9;
 
+  /** @var int Attempt to use an api method when no endpoint is available. */
+  const NO_ENDPOINT_AVAILABLE = 10;
+
   /** {@inheritDoc} */
   const INFO = [
     self::NO_SUCH_PROPERTY => ['message' => 'resource.no_such_property'],
@@ -56,6 +59,8 @@ class ResourceException extends Exception {
       ['message' => 'resource.wrong_model_for_collection'],
     self::WAIT_TIMEOUT_EXCEEDED =>
       ['message' => 'resource.wait_timeout_exceeded'],
-    self::INVALID_FILTER => ['message' => 'resource.invalid_filter']
+    self::INVALID_FILTER => ['message' => 'resource.invalid_filter'],
+    self::NO_ENDPOINT_AVAILABLE =>
+      ['message' => 'resource.no_endpoint_available']
   ];
 }

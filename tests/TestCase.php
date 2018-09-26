@@ -9,10 +9,9 @@ declare(strict_types  = 1);
 
 namespace Nexcess\Sdk\Tests;
 
-use Throwable;
-
+use ReflectionObject,
+  Throwable;
 use PHPUnit\Framework\TestCase as PHPUnitTestCase;
-
 use Nexcess\Sdk\ {
   Sandbox\Sandbox,
   Tests\TestException,
@@ -43,6 +42,24 @@ abstract class TestCase extends PHPUnitTestCase {
     if (! empty($code)) {
       $this->expectExceptionCode($code);
     }
+  }
+
+  /**
+   * Gets the value of a nonpublic property of an object under test.
+   *
+   * @param object $object The object to inspect
+   * @param string $property The property to access
+   * @return mixed|null The property's value if exists; null otherwise
+   */
+  protected function _getNonpublicProperty($object, string $property) {
+    $ro = new ReflectionObject($object);
+    if (! $ro->hasProperty($property)) {
+      return null;
+    }
+
+    $rp = $ro->getProperty($property);
+    $rp->setAccessible(true);
+    return $rp->getValue($object);
   }
 
   /**

@@ -43,8 +43,26 @@ abstract class Model implements Modelable {
   /** @var string[] List of readonly property names. */
   protected const _READONLY_NAMES = [];
 
+  /** @var Endpoint The Endpoint associated with this Model. */
+  protected $_endpoint;
+
   /** @var array Map of instance property:value pairs. */
   protected $_values = [];
+
+  /**
+   * {@inheritDoc}
+   * @see https://php.net/__set_state
+   *
+   * @internal
+   * This method is meant for internal development/testing use only,
+   * and should not be used otherwise.
+   * Use of this method CAN result in a BROKEN object instance!
+   */
+  public static function __set_state($data) {
+    $model = new static();
+    $model->_values = $data['_values'] ?? [];
+    return $model;
+  }
 
   /**
    * {@inheritDoc}
@@ -60,28 +78,22 @@ abstract class Model implements Modelable {
   }
 
   /**
+   * Prefer using the SDK Client and Endpoints (e.g., $client->Foo->retrieve())
+   * over instantiating models directly in your code.
+   *
    * @param int|null $id Model id
+   * @param Endpoint $endpoint API Endpoint to use
    */
-  public function __construct(int $id = null) {
+  public function __construct(int $id = null, Endpoint $endpoint = null) {
     $this->sync([], true);
+
     if ($id) {
       $this->set('id', $id);
     }
-  }
 
-  /**
-   * {@inheritDoc}
-   * @see https://php.net/__set_state
-   *
-   * @internal
-   * This method is meant for internal development/testing use only,
-   * and should not be used otherwise.
-   * Use of this method CAN result in a BROKEN object instance!
-   */
-  public static function __set_state($data) {
-    $model = new static();
-    $model->_values = $data['_values'] ?? [];
-    return $model;
+    if ($endpoint) {
+      $this->setApiEndpoint($endpoint);
+    }
   }
 
   /**
@@ -195,6 +207,24 @@ abstract class Model implements Modelable {
 
     $name = static::_PROPERTY_ALIASES[$name] ?? $name;
     $this->sync([$name => $value]);
+
+    return $this;
+  }
+
+  /**
+   * Attaches an Endpoint to this Model for performing API actions.
+   *
+   * Note, this method is intended primarily for internal use.
+   * You will not need to (and should not) attach an Endpoint manually
+   * when accessing models via the SDK Client (using retrieve(), etc.).
+   *
+   * Attaching a wrong endpoint here WILL CAUSE PROBLEMS down the line!
+   *
+   * @param Endpoint $endpoint The endpoint to attach
+   * @return Model $this
+   */
+  public function setApiEndpoint(Endpoint $endpoint) : Model {
+    $this->_endpoint = $endpoint;
 
     return $this;
   }
@@ -400,5 +430,18 @@ abstract class Model implements Modelable {
       ResourceException::UNMODELABLE,
       ['model' => $fqcn, 'type' => Util::type($value), 'data' => $value]
     );
+  }
+
+  /**
+   * Gets the API Endpoint associated with this Model.
+   *
+   * @return Endpoint The Endpoint associated with this Model
+   */
+  protected function _getEndpoint() : Endpoint {
+    if (empty($this->_endpoint)) {
+      throw new ResourceException(ResourceException::NO_ENDPOINT_AVAILABLE);
+    }
+
+    return $this->_endpoint;
   }
 }

@@ -20,6 +20,7 @@
   "resource": {
     "invalid_filter": "{class}::{method} expects $filter to be callable or array; {type} provided",
     "model_not_found": "No model {model}:{id} found",
+    "no_endpoint_available": "No Endpoint is available to make API calls; use Model::setApiEndpoint() or create your Models via SDK Client",
     "no_such_model": "No model {model} exists",
     "no_such_property": "No property '{name}' exists on {model}",
     "no_such_service_model": "No Service model exists for type: {type}",
