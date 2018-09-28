@@ -191,7 +191,7 @@ class Client {
    * For convenience, endpoints can also be accessed as Client properties.
    * @see Client::__get
    *
-   * @param string $name Endpoint classname (short name or fully qualified)
+   * @param string $name Endpoint classname (base name or fully qualified)
    * @return Endpoint
    * @throws SdkException If the endpoint is unknown
    */
@@ -201,6 +201,37 @@ class Client {
     }
 
     return $this->_endpoints[$name];
+  }
+
+  /**
+   * Gets an API resource.
+   *
+   * This method should *always* be used to build models
+   * (as opposed to using `new`),
+   * as it will associate them with their correct endpoint(s) automatically.
+   *
+   * @param string $name Resource classname (base name or fully qualified)
+   * @return Model
+   * @throws SdkException If the model is unknown
+   */
+  public function getModel(string $name) : Model {
+    if (is_a($name, Model::class, true)) {
+      $model = $name;
+
+      $parts = explode('\\', $name);
+      array_pop($parts);
+      $parts[] = 'Endpoint';
+      $endpoint = implode('\\', $parts);
+    } else {
+      $endpoint = $name;
+      $model = __NAMESPACE__ . "\\Resource\\{$name}\\Resource";
+
+      if (! is_a($model, Model::class, true)) {
+        throw new SdkException(SdkException::NO_SUCH_MODEL, ['name' => $name]);
+      }
+    }
+
+    return new $model($this->getEndpoint($endpoint));
   }
 
   /**
@@ -333,7 +364,7 @@ class Client {
   /**
    * Creates a new Endpoint instance.
    *
-   * @param string $name Endpoint classname (short name or fully qualified)
+   * @param string $name Endpoint classname (base name or fully qualified)
    * @return Endpoint
    * @throws SdkException If the endpoint is unknown
    */
@@ -346,7 +377,7 @@ class Client {
       return new $fqcn($this, $this->_config);
     }
 
-    throw new ApiException(ApiException::NO_SUCH_ENDPOINT, ['name' => $name]);
+    throw new SdkException(SdkException::NO_SUCH_ENDPOINT, ['name' => $name]);
   }
 
   /**

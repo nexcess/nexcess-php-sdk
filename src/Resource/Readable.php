@@ -20,17 +20,17 @@ use Nexcess\Sdk\ {
  *
  * Not all endpoints are editable.
  * This interface only defines read-oriented methods.
- * For write-oriented methods, @see Writabler
+ * For write-oriented methods, @see Writable
  */
 interface Readable {
 
   /**
-   * Gets a new Model instance, and sets the model id if provided.
+   * Gets a new (empty) Model instance.
    *
-   * @param int|null $id Model id
+   * @param string|null $name Model name (base name or fully qualified)
    * @return Model
    */
-  public function getModel(int $id = null) : Model;
+  public function getModel(string $name = null) : Model;
 
   /**
    * Fetches a paginated list of items from the API.
@@ -56,7 +56,7 @@ interface Readable {
    *
    * Note, this can OVERWRITE the model's state with the response from the API;
    * but it WILL NOT UPDATE the API with the model's current state.
-   * To save changes to an updatable model, @see Writable::update
+   * To save changes to an updatable model, @see Writable::update()
    *
    * @param bool $hard Force hard sync with API?
    * @return Model The sync'd model

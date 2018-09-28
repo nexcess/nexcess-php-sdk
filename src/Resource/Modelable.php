@@ -20,15 +20,6 @@ use Nexcess\Sdk\Exception\ModelException;
 interface Modelable extends ArrayAccess, JsonSerializable {
 
   /**
-   * Makes a new Model instance and populates it with given data.
-   *
-   * @param array $data Map of property:value pairs to assign
-   * @return Modelable On success
-   * @throws ModelException On error
-   */
-  public static function fromArray(array $data) : Modelable;
-
-  /**
    * Checks whether this Model instance represents the same item as another.
    *
    * Note, this compares item identity (id), and does NOT compare values!

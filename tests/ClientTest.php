@@ -57,6 +57,13 @@ class ClientTest extends TestCase {
   }
 
   /**
+   * @covers Client::getModel
+   */
+  public function testGetModel() {
+    $this->markTestIncomplete('depends on endpoint classes being available');
+  }
+
+  /**
    * @covers Client::getRequestLog
    */
   public function testGetRequestLog() {

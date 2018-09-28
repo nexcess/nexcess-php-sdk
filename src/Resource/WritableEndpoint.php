@@ -79,17 +79,18 @@ abstract class WritableEndpoint extends Endpoint implements Writable {
     if (! static::CAN_DELETE) {
       throw new ApiException(
         ApiException::CANNOT_DELETE,
-        ['endpoint' => basename(static::_MODEL_FQCN)]
+        ['endpoint' => static::class]
       );
     }
 
-    $model = is_int($model_or_id) ?
-      $this->getModel($model_or_id) :
-      $model_or_id;
-    $this->_checkModelType($model);
+    if ($model_or_id instanceof Model) {
+      $this->_checkModelType($model_or_id);
+      $id = $model_or_id->getId();
+    } else {
+      $id = $model_or_id;
+    }
 
-    $id = $model->getId();
-    if (! is_int($id)) {
+    if (! is_int($model_or_id)) {
       throw new ApiException(
         ApiException::MISSING_ID,
         ['model' => static::class]
