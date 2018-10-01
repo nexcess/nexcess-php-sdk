@@ -119,7 +119,7 @@ abstract class WritableEndpoint extends Endpoint implements Writable {
     if (! $id) {
       throw new ApiException(
         ApiException::MISSING_ID,
-        ['model' => static::MODEL]
+        ['model' => static::_MODEL_FQCN]
       );
     }
 

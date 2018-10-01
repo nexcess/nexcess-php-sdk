@@ -69,7 +69,7 @@ abstract class Endpoint implements Readable {
    */
   public function getModel(int $id = null) : Model {
     $fqcn = static::_MODEL_FQCN;
-    return new $fqcn($id);
+    return new $fqcn($id, $this);
   }
 
   /**
@@ -89,9 +89,7 @@ abstract class Endpoint implements Readable {
         );
       }
 
-      $item = $this->getModel();
-      $item->sync($data);
-      $collection->add($item);
+      $collection->add($this->getModel()->sync($data));
     }
 
     // this might end up being redundant,
@@ -140,7 +138,7 @@ abstract class Endpoint implements Readable {
    * @throws ApiException If the model is of the wrong class
    */
   protected function _checkModelType(Model $model) {
-    $fqcn = static::MODEL;
+    $fqcn = static::_MODEL_FQCN;
     if (! $model instanceof $fqcn) {
       throw new ApiException(
         ApiException::WRONG_MODEL_FOR_URI,
