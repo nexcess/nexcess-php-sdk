@@ -60,5 +60,8 @@
     "invalid_translation": "Language translations must be strings; '{key}' translates as '{translated}'",
     "json_decode_failure": "failed to decode json: {message}",
     "json_encode_failure": "failed to encode json: {message}"
+  },
+  "service": {
+    "not_cancelable": "This service cannot be canceled via the API."
   }
 }
