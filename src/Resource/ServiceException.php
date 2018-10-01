@@ -12,7 +12,7 @@ namespace Nexcess\Sdk\Resource;
 use Nexcess\Sdk\Exception;
 
 /**
- * Error conditions involving Package resources.
+ * Error conditions involving Service resources.
  */
 class ServiceException extends Exception {
 
