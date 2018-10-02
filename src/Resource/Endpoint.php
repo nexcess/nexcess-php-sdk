@@ -67,9 +67,8 @@ abstract class Endpoint implements Readable {
   /**
    * {@inheritDoc}
    */
-  public function getModel(int $id = null) : Model {
-    $fqcn = static::_MODEL_FQCN;
-    return new $fqcn($id, $this);
+  public function getModel(string $name = null) : Model {
+    return $this->_client->getModel($name ?? static::_MODEL_FQCN);
   }
 
   /**
@@ -101,7 +100,7 @@ abstract class Endpoint implements Readable {
    * {@inheritDoc}
    */
   public function retrieve(int $id) : Model {
-    return $this->sync($this->getModel($id), true);
+    return $this->sync($this->getModel()->set('id', $id), true);
   }
 
   /**

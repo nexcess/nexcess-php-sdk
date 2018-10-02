@@ -10,6 +10,7 @@ declare(strict_types  = 1);
 namespace Nexcess\Sdk\Resource;
 
 use DateTimeImmutable as DateTime,
+  ReflectionClass,
   Throwable;
 
 use Nexcess\Sdk\ {
@@ -54,45 +55,38 @@ abstract class Model implements Modelable {
    * @see https://php.net/__set_state
    *
    * @internal
-   * This method is meant for internal development/testing use only,
-   * and should not be used otherwise.
+   * This method is meant for internal use only,
+   * and should not be used in code.
    * Use of this method CAN result in a BROKEN object instance!
    */
   public static function __set_state($data) {
     $model = new static();
+    $model->_endpoint = $data['_endpoint'] ?? null;
     $model->_values = $data['_values'] ?? [];
     return $model;
   }
 
   /**
-   * {@inheritDoc}
-   */
-  public static function fromArray(array $data) : Modelable {
-    $model = new static();
-
-    foreach ($data as $property => $value) {
-      $model->set($property, $value);
-    }
-
-    return $model;
-  }
-
-  /**
-   * Prefer using the SDK Client and Endpoints (e.g., $client->Foo->retrieve())
+   * Prefer using the SDK Client and Endpoints
+   * (e.g., `$client->getEndpoint($name)->retrieve($id)`)
    * over instantiating models directly in your code.
    *
+   * Note that models without endpoints cannot proxy api actions,
+   * so most behaviors of the resource will be unavailable
+   * (the resource will essentially be a value object).
+   *
+   * @param Endpoint|null $endpoint API Endpoint to use
    * @param int|null $id Model id
-   * @param Endpoint $endpoint API Endpoint to use
    */
-  public function __construct(int $id = null, Endpoint $endpoint = null) {
+  public function __construct(Endpoint $endpoint = null, int $id = null) {
     $this->sync([], true);
-
-    if ($id) {
-      $this->set('id', $id);
-    }
 
     if ($endpoint) {
       $this->setApiEndpoint($endpoint);
+    }
+
+    if ($id) {
+      $this->set('id', $id);
     }
   }
 
@@ -101,7 +95,7 @@ abstract class Model implements Modelable {
    */
   public function equals(Modelable $other) : bool {
     return ($other instanceof $this) &&
-      $other->getId() === $this->getId();
+      ($other->getId() === $this->getId());
   }
 
   /**
@@ -130,7 +124,11 @@ abstract class Model implements Modelable {
       return $this->$getter();
     }
 
-    $value = Util::dig($this->_values, $name) ?? null;
+    $value = Util::dig($this->_values, $name);
+    if (! isset($value)) {
+      $this->_tryToHydrate();
+      $value = Util::dig($this->_values, $name);
+    }
 
     if (is_int($value) && $value > 0 && strpos($name, 'date') !== false) {
       $value = (new DateTime("@{$value}"))
@@ -225,7 +223,6 @@ abstract class Model implements Modelable {
    */
   public function setApiEndpoint(Endpoint $endpoint) : Model {
     $this->_endpoint = $endpoint;
-
     return $this;
   }
 
@@ -415,6 +412,7 @@ abstract class Model implements Modelable {
    *
    * @param string $fqcn Fully qualified classname of model to build
    * @param int|array $value Value(s) to build model from
+   * @return Modelable
    */
   protected function _buildPropertyModel(string $fqcn, $value) : Modelable {
     if (is_int($value)) {
@@ -422,8 +420,7 @@ abstract class Model implements Modelable {
     }
 
     if (is_array($value)) {
-      $model = new $fqcn;
-      return $model->sync($value);
+      return $this->_getModel($fqcn)->sync($value);
     }
 
     throw new ResourceException(
@@ -433,15 +430,56 @@ abstract class Model implements Modelable {
   }
 
   /**
+   * Gets an empty model instance for a child property.
+   *
+   * @param string $fqcn Fully qualified classname of model
+   * @return Modelable
+   */
+  protected function _getModel(string $fqcn) : Modelable {
+    return $this->_hasEndpoint() ?
+      $this->_getEndpoint()->getModel($fqcn) :
+      new $fqcn();
+  }
+
+  /**
    * Gets the API Endpoint associated with this Model.
    *
    * @return Endpoint The Endpoint associated with this Model
    */
   protected function _getEndpoint() : Endpoint {
-    if (empty($this->_endpoint)) {
+    if (! $this->_hasEndpoint()) {
       throw new ResourceException(ResourceException::NO_ENDPOINT_AVAILABLE);
     }
 
     return $this->_endpoint;
+  }
+
+  /**
+   * Is there an API endpoint associated with this model?
+   *
+   * @return bool
+   */
+  protected function _hasEndpoint() : bool {
+    return ! empty($this->_endpoint);
+  }
+
+  /**
+   * Attempts to retrieve missing property values from the API.
+   *
+   * This method is a non-op if the model endpoint is empty,
+   * or if the model has no id.
+   */
+  protected function _tryToHydrate() {
+    if ($this->_hasEndpoint() && $this->isReal()) {
+      $model = $this->_getEndpoint()->retrieve($this->getId());
+      $this->_values += $model->_values;
+      foreach ($this->_values as $property => $value) {
+        if (isset($value)) {
+          continue;
+        }
+
+        $this->_values[$property] = $model->_values[$property];
+      }
+    }
   }
 }
