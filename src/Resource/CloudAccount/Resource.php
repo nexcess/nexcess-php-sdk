@@ -25,6 +25,7 @@ class Resource extends Model {
   protected const _PROPERTY_ALIASES = [
     'id' => 'account_id',
     'location' => 'service.location',
+    'php_version' => 'environment.software.php.version',
     'software' => 'environment.software',
     'status' => 'service.status'
   ];
@@ -53,6 +54,7 @@ class Resource extends Model {
     'domain',
     'environment',
     'environment.software',
+    'environment.software.php.version',
     'identity',
     'ip',
     'is_dev_account',
@@ -66,4 +68,17 @@ class Resource extends Model {
     'temp_domain',
     'unix_username'
   ];
+
+  /**
+   * Switches PHP version on this cloud account.
+   *
+   * @param string $version Target PHP version
+   * @return Resource $this
+   * @throws ResourceException If endpoint not available
+   * @throws ApiException If request fails
+   */
+  public function setPhpVersion(string $version) : Resource {
+    $this->_getEndpoint()->setPhpVersion($this, $version)->wait();
+    return $this;
+  }
 }

@@ -174,7 +174,7 @@ abstract class WritableEndpoint extends Endpoint implements Writable {
     $deadline = time() + $timeout;
 
     try {
-      while ($until($this) !== true) {
+      while ($until($this) !== true) { echo '-';
         if (time() > $deadline) {
           throw new SdkException(
             SdkException::WAIT_TIMEOUT_EXCEEDED,
