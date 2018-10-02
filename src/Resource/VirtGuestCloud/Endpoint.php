@@ -26,7 +26,7 @@ class Endpoint extends ServiceEndpoint {
   protected const _SERVICE_TYPE = 'virt-guest-cloud';
 
   /**
-   * Switches PHP versions active on an existing cloud service.
+   * Switches PHP versions active on a service's primary cloud account.
    *
    * @param Resource $resource Service instance
    * @param string $version Desired PHP version
@@ -37,21 +37,7 @@ class Endpoint extends ServiceEndpoint {
     Resource $resource,
     string $version
   ) : Endpoint {
-    $this->_client->request(
-      'POST',
-      self::_URI . "/{$resource->getId()}",
-      ['json' => ['_action' => 'set-php-version', 'php_version' => $version]]
-    );
-
-    $cloud = $resource->get('cloud_account');
-    $this->_wait(function ($endpoint) use ($cloud, $version) {
-      if (
-        $endpoint->retrieve($cloud->getId())->get('php_version') === $version
-      ) {
-        $cloud->sync(['php_version' => $version]);
-        return true;
-      }
-    });
+    $resource->get('cloud_account')->setPhpVersion($version);
     return $this;
   }
 }
