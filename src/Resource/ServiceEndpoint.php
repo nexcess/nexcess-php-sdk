@@ -13,6 +13,7 @@ use Nexcess\Sdk\ {
   ApiException,
   Resource\CloudServer\Endpoint as CloudServer,
   Resource\Service,
+  Resource\ServiceCancellation\Resource as ServiceCancellation,
   Resource\VirtGuestCloud\Endpoint as VirtGuestCloud,
   Resource\WritableEndpoint
 };
@@ -84,23 +85,33 @@ abstract class ServiceEndpoint extends WritableEndpoint {
   /**
    * Requests a service cancellation.
    *
-   * @param Service $model Service model to cancel
+   * @param Service $service Service model to cancel
    * @param array $survey Cancellation survey
-   * @return Model
+   * @return ServiceCancellation
    * @throws ApiException If request fails
    */
-  public function cancel(Service $model, array $survey) : Service {
-    $this->_checkModelType($model);
+  public function cancel(
+    Service $service,
+    array $survey
+  ) : ServiceCancellation {
+    throw new SdkException(
+      SdkException::NOT_IMPLEMENTED,
+      ['method' => __METHOD__]
+    );
 
-    if ($model->get('is_cancellable') !== true) {
+    $this->_checkModelType($service);
+
+    if ($service->get('is_cancellable') !== true) {
       throw new ServiceException(
         ServiceException::NOT_CANCELLABLE,
-        ['service' => static::_SERVICE_TYPE, 'id' => $model->getId()]
+        ['service' => static::_SERVICE_TYPE, 'id' => $service->getId()]
       );
     }
 
-    $survey['service_id'] = $model->getId();
-    return $this->_client->request('POST', static::_URI_CANCEL, $survey);
+    $survey['service_id'] = $service->getId();
+    return $this->getModel(ServiceCancellation::class)->sync(
+      $this->_client->request('POST', static::_URI_CANCEL, $survey)
+    );
   }
 
   /**
