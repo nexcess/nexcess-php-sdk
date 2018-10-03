@@ -157,5 +157,6 @@ return [
   'state' => 'stable',
   'status' => 'enabled',
   'temp_domain' => 'example.nxcli.net',
-  'unix_username' => 'abcd1234'
+  'unix_username' => 'abcd1234',
+  'php_version' => '7.1'
 ];
