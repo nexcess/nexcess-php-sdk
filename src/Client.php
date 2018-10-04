@@ -25,10 +25,11 @@ use function GuzzleHttp\default_user_agent as guzzle_user_agent;
 
 use Nexcess\Sdk\ {
   ApiException,
+  Resource\Creatable,
   Resource\Modelable as Model,
   Resource\Readable as Endpoint,
-  Resource\Writable as WritableEndpoint,
   Resource\Response,
+  Resource\Updatable,
   SdkException,
   Util\Config,
   Util\Language,
@@ -129,7 +130,7 @@ class Client {
     }
 
     if (is_array($arg)) {
-      if (! $endpoint instanceof WritableEndpoint) {
+      if (! $endpoint instanceof Creatable) {
         throw new ApiException(
           ApiException::ENDPOINT_NOT_WRITABLE,
           ['endpoint' => $name]
@@ -140,7 +141,7 @@ class Client {
     }
 
     if ($arg instanceof Model) {
-      if (! $endpoint instanceof WritableEndpoint) {
+      if (! $endpoint instanceof Updatable) {
         throw new ApiException(
           ApiException::ENDPOINT_NOT_WRITABLE,
           ['endpoint' => $name]

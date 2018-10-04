@@ -17,10 +17,6 @@ use Nexcess\Sdk\ {
 
 /**
  * Interface for readable API endpoints for nexcess.net / thermo.io.
- *
- * Not all endpoints are editable.
- * This interface only defines read-oriented methods.
- * For write-oriented methods, @see Writabler
  */
 interface Readable {
 
@@ -56,10 +52,44 @@ interface Readable {
    *
    * Note, this can OVERWRITE the model's state with the response from the API;
    * but it WILL NOT UPDATE the API with the model's current state.
-   * To save changes to an updatable model, @see Writable::update
+   * To save changes to an updatable model, @see Updatable::update
    *
    * @param bool $hard Force hard sync with API?
    * @return Model The sync'd model
    */
   public function sync(Model $model, bool $hard = false) : Model;
+
+  /**
+   * Blocks until callback returns true.
+   *
+   * Some actions are queued by the API,
+   * and so may not be complete at the time the API response is received.
+   * This method is used to wait for a queued action to complete
+   * (though it is possible, of course, to use it to wait for anything).
+   *
+   * @example <?php
+   *  // suppose this code may experience a race condition,
+   *  //  where the $model object is in the wrong state for the second call:
+   *  $endpoint->someQueuedAction($model)
+   *    ->someOtherAction($model);
+   *
+   *  // to prevent this, wait() for the queued action to complete first:
+   *  $endpoint->someQueuedAction($model)
+   *    ->wait()
+   *    ->someOtherAction($model);
+   *
+   * The callback signature is like
+   *  bool $until(Readable $endpoint) Returns true when done waiting
+   *
+   * If no callback is provided,
+   * this will use a callback provided by the most recent action,
+   * or return immediately if none exists.
+   *
+   * @param callable|null $until The callback to wait for
+   * @param array $opts Wait interval/timeout options
+   * @return Readable $this
+   * @throws ApiException If callback throws an ApiException
+   * @throws SdkException If callback throws any other exception
+   */
+  public function wait(callable $until = null, array $opts = []) : Readable;
 }

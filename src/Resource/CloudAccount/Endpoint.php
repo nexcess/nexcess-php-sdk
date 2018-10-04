@@ -10,17 +10,18 @@ declare(strict_types  = 1);
 namespace Nexcess\Sdk\Resource\CloudAccount;
 
 use Nexcess\Sdk\ {
-  Exception\ApiException,
+  ApiException,
   Resource\CloudAccount\Resource,
-  Resource\VirtGuestCloud\Endpoint as ServiceEndpoint,
-  Resource\Modelable as Model,
-  Resource\WritableEndpoint
+  Resource\Create,
+  Resource\Createable,
+  Resource\Endpoint as BaseEndpoint
 };
 
 /**
  * API endpoint for Cloud Accounts (virtual hosting).
  */
-class Endpoint extends WritableEndpoint {
+class Endpoint extends BaseEndpoint implements Creatable {
+  use Create;
 
   /** {@inheritDoc} */
   protected const _URI = 'cloud-account';
@@ -47,7 +48,7 @@ class Endpoint extends WritableEndpoint {
   /**
    * Switches PHP versions active on an existing cloud account.
    *
-   * @param Resource $resource Cloud server resource
+   * @param Resource $resource Cloud server instance
    * @param string $version Desired PHP version
    * @return Endpoint $this
    * @throws ApiException If request fails

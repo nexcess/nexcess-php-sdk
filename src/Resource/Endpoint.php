@@ -46,6 +46,18 @@ abstract class Endpoint implements Readable {
   /** @var string API endpoint. */
   protected const _URI = '';
 
+  /** @var int Key for wait() $opts interval. */
+  public const OPT_WAIT_INTERVAL = 0;
+
+  /** @var int Key for wait() $opts timeout. */
+  public const OPT_WAIT_TIMEOUT = 1;
+
+  /** @var int Default wait interval. */
+  protected const _DEFAULT_WAIT_INTERVAL = 1;
+
+  /** @var int Default timeout before waiting fails. */
+  protected const _DEFAULT_WAIT_TIMEOUT = 30;
+
   /** @var Guzzle The Sdk Client. */
   protected $_client;
 
@@ -54,6 +66,9 @@ abstract class Endpoint implements Readable {
 
   /** @var array Map of last fetched property:value pairs. */
   protected $_retrieved = [];
+
+  /** @var callable Queued callback for wait(). */
+  protected $_wait_until;
 
   /**
    * @param Client $client Api Client instance
@@ -117,6 +132,53 @@ abstract class Endpoint implements Readable {
   }
 
   /**
+   * {@inheritDoc}
+   */
+  public function wait(callable $until = null, array $opts = []) : Readable {
+    $config = $this->_config;
+
+    $until = $until ??
+      $this->_wait_until ??
+      function () {
+        return true;
+      };
+    $this->_wait_until = null;
+
+    $tick = $config->get('wait.tick_function');
+
+    $wait = $opts[self::OPT_WAIT_INTERVAL] ??
+      $config->get('wait.interval') ??
+      self::_DEFAULT_WAIT_INTERVAL;
+
+    $timeout = $opts[self::OPT_WAIT_TIMEOUT] ??
+      $config->get('wait.timeout') ??
+      self::_DEFAULT_WAIT_TIMEOUT;
+    $deadline = time() + $timeout;
+
+    try {
+      while ($until($this) !== true) {
+        if (time() > $deadline) {
+          throw new SdkException(
+            SdkException::WAIT_TIMEOUT_EXCEEDED,
+            ['timeout' => $timeout]
+          );
+        }
+
+        if ($tick) {
+          $tick($this);
+        }
+        sleep($wait);
+      }
+
+      return $this;
+    } catch (ApiException $e) {
+      throw $e;
+    } catch (Throwable $e) {
+      throw new SdkException(SdkException::CALLBACK_ERROR, $e);
+    }
+  }
+
+  /**
    * Builds a query string for list requests.
    *
    * @param array $filter Map of query string parameters
@@ -163,5 +225,18 @@ abstract class Endpoint implements Readable {
       $this->_client->request('GET', static::_URI . "/{$id}");
 
     return $this->_retrieved[$id];
+  }
+
+  /**
+   * Queues or invokes a wait callback based on config options.
+   *
+   * @param callable|null $until
+   */
+  protected function _wait(callable $until = null) {
+    $this->_wait_until = $until;
+    if ($until !== null && $this->_config->get('wait.always')) {
+      $this->wait($until);
+      return;
+    }
   }
 }
