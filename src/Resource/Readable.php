@@ -21,12 +21,12 @@ use Nexcess\Sdk\ {
 interface Readable {
 
   /**
-   * Gets a new Model instance, and sets the model id if provided.
+   * Gets a new (empty) Model instance.
    *
-   * @param int|null $id Model id
+   * @param string|null $name Model name (base name or fully qualified)
    * @return Model
    */
-  public function getModel(int $id = null) : Model;
+  public function getModel(string $name = null) : Model;
 
   /**
    * Fetches a paginated list of items from the API.

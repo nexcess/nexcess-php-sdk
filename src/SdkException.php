@@ -31,6 +31,12 @@ class SdkException extends Exception {
   /** @var int Attempt to use a debug-only method when debug is not enabled. */
   const DEBUG_NOT_ENABLED = 11;
 
+  /** @var int Request for endpoint that doesn't exist. */
+  const NO_SUCH_ENDPOINT = 12;
+
+  /** @var int Request for model that doesn't exist. */
+  const NO_SUCH_MODEL = 13;
+
   /** {@inheritDoc} */
   const INFO = [
     self::NOT_IMPLEMENTED => ['message' => 'sdk.not_implemented'],
@@ -39,6 +45,8 @@ class SdkException extends Exception {
     self::CALLBACK_ERROR => ['message' => 'sdk.callback_error'],
     self::REQUEST_LOG_NOT_ENABLED =>
       ['message' => 'sdk.request_log_not_enabled'],
-    self::DEBUG_NOT_ENABLED => ['message' => 'sdk.debug_not_enabled']
+    self::DEBUG_NOT_ENABLED => ['message' => 'sdk.debug_not_enabled'],
+    self::NO_SUCH_MODEL => ['message' => 'sdk.no_such_model'],
+    self::NO_SUCH_ENDPOINT => ['message' => 'sdk.no_such_endpoint']
   ];
 }

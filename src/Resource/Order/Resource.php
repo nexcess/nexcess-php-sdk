@@ -106,8 +106,8 @@ class Resource extends Model {
       );
     }
 
-    $model_fqcn = ServiceEndpoint::findServiceModel($service['type']);
-    $this->_values['service'] = new $model_fqcn($service['id']);
-    $this->_values['service']->sync($service);
+    $this->_values['service'] = $this->_getModel(
+      ServiceEndpoint::findServiceModel($service['type'])
+    )->sync($service);
   }
 }

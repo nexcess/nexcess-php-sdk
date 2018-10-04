@@ -101,8 +101,11 @@ abstract class ModelTestCase extends TestCase {
       'Models of same class with different ids must not compare equal'
     );
 
-    $another = new class(1) extends Model {
+    $another = new class() extends Model {
       protected const _PROPERTY_NAMES = ['id'];
+      public function __construct() {
+        $this->set('id', 1);
+      }
     };
     $this->assertFalse(
       $model->equals($another),
@@ -272,23 +275,6 @@ abstract class ModelTestCase extends TestCase {
   }
 
   /**
-   * @covers Model::setApiEndpoint
-   */
-  public function testSetApiEndpoint() {
-    $endpoint = new class extends Endpoint {
-      public function __construct() {}
-    };
-    $model = $this->_getSubject(1);
-    $model->setApiEndpoint($endpoint);
-
-    $this->assertEquals(
-      $this->_getNonpublicProperty($model, '_endpoint'),
-      $endpoint,
-      'Must assign given endpoint to model'
-    );
-  }
-
-  /**
    * @covers Modelable::sync
    * @dataProvider syncProvider
    */
@@ -307,5 +293,17 @@ abstract class ModelTestCase extends TestCase {
       $this->_getResource(static::_RESOURCE_FROMARRAY),
       $this->_getResource(static::_RESOURCE_TOARRAY)
     ]];
+  }
+
+  /**
+   * {@inheritDoc}
+   */
+  protected function _getSubject(...$constructor_args) {
+    if (! reset($constructor_args) instanceof Endpoint) {
+      // skip endpoint arg if none provided
+      array_unshift($constructor_args, null);
+    }
+
+    return parent::_getSubject(...$constructor_args);
   }
 }
