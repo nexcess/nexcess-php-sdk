@@ -15,4 +15,10 @@ abstract class Service extends Model {
 
   /** {@inheritDoc} */
   protected const _PROPERTY_ALIASES = ['id' => 'service_id'];
+
+  /**
+   * Request cancellation of this service.
+   *
+   * @param array $survey Cancellation survey
+   */
 }

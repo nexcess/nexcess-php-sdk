@@ -29,36 +29,23 @@ class Endpoint extends WritableEndpoint {
   protected const _MODEL_FQCN = Resource::class;
 
   /**
-   * Requests cancellation of the associated service.
+   * Requests cancellation of the service associated with a cloud account.
+   *
+   * Note, this creates a cancellation request,
+   * and does not delete the cloud account directly.
+   * Use this method to cancel a primary cloud account, not a dev account.
    *
    * @param Resource $resource Cloud Server resource
    * @param array $survey Cancellation survey
    * @return Endpoint $this
    */
   public function cancel(Resource $resource, array $survey) : Endpoint {
-    return $this->_client
-      ->getEndpoint(ServiceEndpoint::class)
-      ->cancel($resource->get('service'), $survey);
+    $resource->get('service')->cancel($survey);
+    return $this;
   }
 
   /**
-   * {@inheritDoc}
-   */
-  public function create(array $data) : Model {
-    $resource = $this->getModel()->sync(
-      $this->_client->request(
-        'POST',
-        static::_URI_CREATE ?? static::_URI,
-        ['json' => $data]
-      )['cloud_account']
-    );
-
-    $this->_wait($this->_waitUntilCreate($resource));
-    return $resource;
-  }
-
-  /**
-   * Switches PHP versions active on an existing cloud server.
+   * Switches PHP versions active on an existing cloud account.
    *
    * @param Resource $resource Cloud server resource
    * @param string $version Desired PHP version
@@ -69,19 +56,19 @@ class Endpoint extends WritableEndpoint {
     Resource $resource,
     string $version
   ) : Endpoint {
-    $this->_client
-      ->getEndpoint(ServiceEndpoint::class)
-      ->setPhpVersion($resource->get('service'), $version);
+    $this->_client->request(
+      'POST',
+      self::_URI . "/{$resource->getId()}",
+      ['json' => ['_action' => 'set-php-version', 'php_version' => $version]]
+    );
 
     $this->_wait(function ($endpoint) use ($resource, $version) {
-      if (
-        $endpoint->retrieve($resource->getId())->get('php_version') === $version
-      ) {
-        $endpoint->sync($resource);
+      $updated = $endpoint->retrieve($resource->getId());
+      if ($updated->get('php_version') === $version) {
+        $resource->sync(['environment' => $updated->get('environment')]);
         return true;
       }
     });
-
     return $this;
   }
 }
