@@ -11,14 +11,14 @@ declare(strict_types  = 1);
 namespace Nexcess\Sdk\Resource\User;
 
 use Nexcess\Sdk\ {
-  Resource\WritableEndpoint,
+  Resource\Endpoint as BaseEndpoint,
   Resource\User\Resource
 };
 
 /**
  * API actions for portal Users.
  */
-class Endpoint extends WritableEndpoint {
+class Endpoint extends BaseEndpoint {
 
   /** {@inheritDoc} */
   protected const _URI = 'user';
