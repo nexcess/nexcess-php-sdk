@@ -36,7 +36,7 @@
     "wrong_model_for_collection": "Cannot add {model} to collection of '{collection}' models"
   },
   "sandbox": {
-    "invalid_response": "Response must be a Guzzle\\PSR-7\\Response, Throwable, or a callable which returns one of the same; {type} provided"
+    "invalid_response": "Response must be an instance of Guzzle\\PSR-7\\Response or Throwable, or a callable which returns the same; {type} returned"
   },
   "sdk": {
     "callback_error": "Uncaught error while invoking callback: {__rootMessage__}",
@@ -53,6 +53,9 @@
     },
     "unknown_error": "Unknown error: {__rootMessage__}"
   },
+  "service": {
+    "not_cancelable": "This service cannot be canceled via the API."
+  },
   "util": {
     "file_not_readable": "File '{file}' is not readable",
     "invalid_config_option": "Invalid configuration: {option} must be {rule}; '{value}' provided",
@@ -61,8 +64,5 @@
     "invalid_translation": "Language translations must be strings; '{key}' translates as '{translated}'",
     "json_decode_failure": "failed to decode json: {message}",
     "json_encode_failure": "failed to encode json: {message}"
-  },
-  "service": {
-    "not_cancelable": "This service cannot be canceled via the API."
   }
 }

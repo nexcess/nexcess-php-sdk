@@ -7,11 +7,11 @@
 
 declare(strict_types  = 1);
 
-namespace Nexcess\Sdk\Resource;
+namespace Nexcess\Sdk\Resource\Service;
 
 use Nexcess\Sdk\Resource\Model;
 
-abstract class Service extends Model {
+abstract class Resource extends Model {
 
   /** {@inheritDoc} */
   protected const _PROPERTY_ALIASES = ['id' => 'service_id'];

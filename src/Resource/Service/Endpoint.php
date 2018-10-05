@@ -7,13 +7,13 @@
 
 declare(strict_types  = 1);
 
-namespace Nexcess\Sdk\Resource;
+namespace Nexcess\Sdk\Resource\Service;
 
 use Nexcess\Sdk\ {
   ApiException,
   Resource\CloudServer\Endpoint as CloudServer,
   Resource\Endpoint as BaseEndpoint,
-  Resource\Service\Resource,
+  Resource\Service\ServiceException,
   Resource\ServiceCancellation\Resource as ServiceCancellation,
   Resource\VirtGuestCloud\Endpoint as VirtGuestCloud
 };
@@ -79,7 +79,7 @@ abstract class Endpoint extends BaseEndpoint {
       );
     }
 
-    return $this->_client->getEndpoint();
+    // @todo
   }
 
   /**

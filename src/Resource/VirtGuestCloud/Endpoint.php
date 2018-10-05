@@ -10,7 +10,7 @@ declare(strict_types  = 1);
 namespace Nexcess\Sdk\Resource\VirtGuestCloud;
 
 use Nexcess\Sdk\ {
-  Resource\ServiceEndpoint,
+  Resource\Service\Endpoint as ServiceEndpoint,
   Resource\VirtGuestCloud\Resource
 };
 
