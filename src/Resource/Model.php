@@ -9,10 +9,9 @@ declare(strict_types  = 1);
 
 namespace Nexcess\Sdk\Resource;
 
-use DateTimeImmutable as DateTime,
-  ReflectionClass,
+use DateTimeImmutable,
+  DateTimeInterface as DateTime,
   Throwable;
-
 use Nexcess\Sdk\ {
   Resource\Collection,
   Resource\Collector,
@@ -22,9 +21,6 @@ use Nexcess\Sdk\ {
 };
 
 abstract class Model implements Modelable {
-
-  /** @var string Formatting string for date properties. */
-  protected const _DEFAULT_DATE_FORMAT = 'm/d/Y H:i:s e';
 
   /** @var string[] Map of property aliases:names. */
   protected const _PROPERTY_ALIASES = [];
@@ -111,12 +107,18 @@ abstract class Model implements Modelable {
    * {@inheritDoc}
    */
   public function get(string $name) {
+    $getter = str_replace('_', '', "get{$name}");
+    if (method_exists($this, $getter)) {
+      return $this->$getter();
+    }
+
     if (! $this->exists($name)) {
       throw new ResourceException(
         ResourceException::NO_SUCH_PROPERTY,
         ['name' => $name, 'model' => static::class]
       );
     }
+
     $name = static::_PROPERTY_ALIASES[$name] ?? $name;
 
     $getter = str_replace('_', '', "get{$name}");
@@ -128,11 +130,6 @@ abstract class Model implements Modelable {
     if (! isset($value)) {
       $this->_tryToHydrate();
       $value = Util::dig($this->_values, $name);
-    }
-
-    if (is_int($value) && $value > 0 && strpos($name, 'date') !== false) {
-      $value = (new DateTime("@{$value}"))
-        ->format(static::_DEFAULT_DATE_FORMAT);
     }
 
     return $value;
@@ -196,6 +193,11 @@ abstract class Model implements Modelable {
    * {@inheritDoc}
    */
   public function set(string $name, $value) : Modelable {
+    $setter = str_replace('_', '', "set{$name}");
+    if (method_exists($this, $setter)) {
+      return $this->$setter();
+    }
+
     if (! $this->exists($name, false)) {
       throw new ResourceException(
         ResourceException::NO_SUCH_WRITABLE_PROPERTY,
@@ -204,6 +206,16 @@ abstract class Model implements Modelable {
     }
 
     $name = static::_PROPERTY_ALIASES[$name] ?? $name;
+
+    $setter = str_replace('_', '', "set{$name}");
+    if (method_exists($this, $setter)) {
+      return $this->$setter();
+    }
+
+    if (strpos($name, 'date') !== false && ! $value instanceof DateTime) {
+      $value = $this->_toDateTime($value);
+    }
+
     $this->sync([$name => $value]);
 
     return $this;
@@ -270,6 +282,10 @@ abstract class Model implements Modelable {
             );
           }
 
+          if (is_int($value) && strpos($key, 'date') !== false) {
+            $value = $this->_toDateTime($value);
+          }
+
           $this->_values[$key] = $value;
         }
       }
@@ -316,11 +332,14 @@ abstract class Model implements Modelable {
       if (is_array($value)) {
         Util::kSortRecursive($value);
       }
-      if (
-        $recurse &&
-        ($value instanceof Modelable || $value instanceof Collector)
-      ) {
-        $value = $value->toArray($recurse);
+      if ($recurse) {
+        if ($value instanceof Modelable || $value instanceof Collector) {
+          $value = $value->toArray($recurse);
+        }
+
+        if ($value instanceof DateTime) {
+          $value = $value->format('U');
+        }
       }
       $array[$property] = $value;
     }
@@ -335,6 +354,10 @@ abstract class Model implements Modelable {
 
     foreach ($values ?? $this->_values as $property => $value) {
       $property = static::_PROPERTY_ALIASES[$property] ?? $property;
+
+      if ($value instanceof DateTime) {
+        $value = $value->format('U');
+      }
 
       if (is_scalar($value) && in_array($property, static::_PROPERTY_NAMES)) {
         $collapsed[$property] = $value;
@@ -461,6 +484,29 @@ abstract class Model implements Modelable {
    */
   protected function _hasEndpoint() : bool {
     return ! empty($this->_endpoint);
+  }
+
+  /**
+   * Attempts to convert given value to DateTime.
+   *
+   * @param int|string $datetime A unix timestamp,
+   *  or any value accepted by DateTime::__construct
+   * @return DateTime On success
+   * @throws ResourceException On failure
+   */
+  protected function _toDateTime($datetime) : DateTime {
+    if (is_int($datetime)) {
+      $datetime = "@{$datetime}";
+    }
+
+    try {
+      return new DateTimeImmutable($datetime);
+    } catch (Throwable $e) {
+      throw new ResourceException(
+        ResourceException::INVALID_DATETIME,
+        ['datetime' => $datetime]
+      );
+    }
   }
 
   /**
