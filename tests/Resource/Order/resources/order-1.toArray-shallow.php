@@ -27,7 +27,7 @@ return [
       'total' => 50,
     ]
   ]),
-  'order_date' => '05/11/2018 13:42:47 +00:00',
+  'order_date' => new DateTimeImmutable('05/11/2018 13:42:47 +00:00'),
   'package' => Package::__set_state([
     '_values' => [
       'package_id' => 700,

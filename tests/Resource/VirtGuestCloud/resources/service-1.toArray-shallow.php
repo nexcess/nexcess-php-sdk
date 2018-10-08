@@ -101,7 +101,7 @@ return [
   'identity' => 'nexcess-cli.example.com - nc.xsmall-test',
   'is_cancellable' => true,
   'is_rebootable' => false,
-  'last_bill_date' => '06/11/2018 04:00:00 +00:00',
+  'last_bill_date' => new DateTimeImmutable('06/11/2018 04:00:00 +00:00'),
   'cloud' => Cloud::__set_state([
     '_values' => [
       'cloud_id' => 3,
@@ -113,7 +113,7 @@ return [
       'country' => 'US'
     ],
   ]),
-  'next_bill_date' => '07/11/2018 04:00:00 +00:00',
+  'next_bill_date' => new DateTimeImmutable('07/11/2018 04:00:00 +00:00'),
   'nickname' => '',
   'order' => Order::__set_state([
     '_values' => [
@@ -139,10 +139,10 @@ return [
   'settings' => [
     'extranet.disable-networking.enabled' => false
   ],
-  'start_date' => '05/11/2018 13:42:51 +00:00',
+  'start_date' => new DateTimeImmutable('05/11/2018 13:42:51 +00:00'),
   'state' => 'stable',
   'status' => 'enabled',
   'term' => 1,
-  'turnup_date' => '05/11/2018 13:42:51 +00:00',
+  'turnup_date' => new DateTimeImmutable('05/11/2018 13:42:51 +00:00'),
   'type' => 'virt-guest-cloud'
 ];

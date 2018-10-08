@@ -107,12 +107,12 @@ abstract class Model implements Modelable {
    * {@inheritDoc}
    */
   public function get(string $name) {
-    $getter = str_replace('_', '', "get{$name}");
-    if (method_exists($this, $getter)) {
-      return $this->$getter();
-    }
-
     if (! $this->exists($name)) {
+      $getter = str_replace('_', '', "get{$name}");
+      if (method_exists($this, $getter)) {
+        return $this->$getter();
+      }
+
       throw new ResourceException(
         ResourceException::NO_SUCH_PROPERTY,
         ['name' => $name, 'model' => static::class]
@@ -286,7 +286,7 @@ abstract class Model implements Modelable {
           }
 
           if (is_int($value) && strpos($key, 'date') !== false) {
-            $value = $this->_buildDateTime($value);
+            $value = ($value === 0)? null : $this->_buildDateTime($value);
           }
 
           $this->_values[$key] = $value;
