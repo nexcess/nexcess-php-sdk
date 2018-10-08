@@ -286,7 +286,7 @@ abstract class Model implements Modelable {
           }
 
           if (is_int($value) && strpos($key, 'date') !== false) {
-            $value = ($value === 0)? null : $this->_buildDateTime($value);
+            $value = ($value === 0) ? null : $this->_buildDateTime($value);
           }
 
           $this->_values[$key] = $value;
