@@ -18,7 +18,7 @@ use Nexcess\Sdk\ {
  * Provides create() functionality for API endpoints.
  * Endpoints using this trait MUST implement Creatable.
  */
-trait Create {
+trait CanCreate {
 
   /**
    * {@inheritDoc}

@@ -11,12 +11,12 @@ namespace Nexcess\Sdk\Resource\ApiToken;
 
 use Nexcess\Sdk\ {
   Resource\ApiToken\Resource,
-  Resource\Create,
+  Resource\CanCreate,
+  Resource\CanDelete,
+  Resource\CanUpdate,
   Resource\Createable,
-  Resource\Delete,
   Resource\Deleteable,
   Resource\Endpoint as BaseEndpoint,
-  Resource\Update,
   Resource\Updateable
 };
 
@@ -26,7 +26,7 @@ use Nexcess\Sdk\ {
 class Endpoint
   extends BaseEndpoint
   implements Creatable, Deletable, Updatable {
-  use Create, Delete, Update;
+  use CanCreate, CanDelete, CanUpdate;
 
   /** {@inheritDoc} */
   protected const _URI = 'api-token';

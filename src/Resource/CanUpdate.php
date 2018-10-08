@@ -19,7 +19,7 @@ use Nexcess\Sdk\ {
  * Provides update() functionality for API endpoints.
  * Endpoints using this trait MUST implement Updatable.
  */
-trait Update {
+trait CanUpdate {
 
   /**
    * {@inheritDoc}

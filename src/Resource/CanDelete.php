@@ -19,7 +19,7 @@ use Nexcess\Sdk\ {
  * Provides delete() functionality for API endpoints.
  * Endpoints using this trait MUST implement Deletable.
  */
-trait Delete {
+trait CanDelete {
 
   /**
    * {@inheritDoc}

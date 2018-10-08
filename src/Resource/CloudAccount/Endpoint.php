@@ -11,8 +11,8 @@ namespace Nexcess\Sdk\Resource\CloudAccount;
 
 use Nexcess\Sdk\ {
   ApiException,
+  Resource\CanCreate,
   Resource\CloudAccount\Resource,
-  Resource\Create,
   Resource\Createable,
   Resource\Endpoint as BaseEndpoint
 };
@@ -21,7 +21,7 @@ use Nexcess\Sdk\ {
  * API endpoint for Cloud Accounts (virtual hosting).
  */
 class Endpoint extends BaseEndpoint implements Creatable {
-  use Create;
+  use CanCreate;
 
   /** {@inheritDoc} */
   protected const _URI = 'cloud-account';
