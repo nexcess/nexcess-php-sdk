@@ -33,7 +33,10 @@
     "readonly_model": "Cannot create or modify read-only model '{model}'",
     "sync_failed": "Failed to sync {model}:{id} with API response: {__rootMessage__}",
     "wait_timeout_exceeded": "Wait timeout exceeded (waited {timeout} seconds)",
-    "wrong_model_for_collection": "Cannot add {model} to collection of '{collection}' models"
+    "wrong_model_for_collection": "Cannot add {model} to collection of '{collection}' models",
+    "uncollectable": "cannot build a collection of {of} using {type}: {data}",
+    "undatetimeable": "cannot build datetime using {type}: {datetime}",
+    "unmodelable": "cannot build {model} model using {type}: {data}"
   },
   "sandbox": {
     "invalid_response": "Response must be a Guzzle\\PSR-7\\Response, Throwable, or a callable which returns one of the same; {type} provided"

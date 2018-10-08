@@ -268,7 +268,10 @@ abstract class Model implements Modelable {
             continue;
           }
 
-          if (isset(static::_PROPERTY_MODELS[$key])) {
+          if (
+            isset(static::_PROPERTY_MODELS[$key]) &&
+            ! is_a($value, static::_PROPERTY_MODELS[$key])
+          ) {
             $value = $this->_buildPropertyModel(
               static::_PROPERTY_MODELS[$key],
               $value
@@ -283,7 +286,7 @@ abstract class Model implements Modelable {
           }
 
           if (is_int($value) && strpos($key, 'date') !== false) {
-            $value = $this->_toDateTime($value);
+            $value = $this->_buildDateTime($value);
           }
 
           $this->_values[$key] = $value;
@@ -412,6 +415,33 @@ abstract class Model implements Modelable {
   }
 
   /**
+   * Attempts to convert given value to DateTime.
+   *
+   * @param int|string $datetime A unix timestamp,
+   *  or any value accepted by DateTime::__construct
+   * @return DateTime On success
+   * @throws ResourceException On failure
+   */
+  protected function _buildDateTime($datetime) : DateTime {
+    if ($datetime instanceof DateTime) {
+      return $datetime;
+    }
+
+    if (is_int($datetime)) {
+      $datetime = "@{$datetime}";
+    }
+
+    try {
+      return new DateTimeImmutable($datetime);
+    } catch (Throwable $e) {
+      throw new ResourceException(
+        ResourceException::UNDATETIMEABLE,
+        ['type' => Util::type($datetime), 'datetime' => $datetime]
+      );
+    }
+  }
+
+  /**
    * Builds a Collection of Models given an array of ids or values.
    *
    * @param string $fqcn Fully qualified classname of model to build
@@ -422,12 +452,23 @@ abstract class Model implements Modelable {
     string $fqcn,
     array $values
   ) : Collector {
-    $collection = new Collection($fqcn);
-    foreach ($values as $value) {
-      $collection->add($this->_buildPropertyModel($fqcn, $value));
+    if ($values instanceof Collection && $values->of() === $fqcn) {
+      return $values;
     }
 
-    return $collection;
+    if (is_array($values)) {
+      $collection = new Collection($fqcn);
+      foreach ($values as $value) {
+        $collection->add($this->_buildPropertyModel($fqcn, $value));
+      }
+
+      return $collection;
+    }
+
+    throw new ResourceException(
+      ResourceException::UNCOLLECTABLE,
+      ['of' => $fqcn, 'type' => Util::type($values), 'data' => $values]
+    );
   }
 
   /**
@@ -484,29 +525,6 @@ abstract class Model implements Modelable {
    */
   protected function _hasEndpoint() : bool {
     return ! empty($this->_endpoint);
-  }
-
-  /**
-   * Attempts to convert given value to DateTime.
-   *
-   * @param int|string $datetime A unix timestamp,
-   *  or any value accepted by DateTime::__construct
-   * @return DateTime On success
-   * @throws ResourceException On failure
-   */
-  protected function _toDateTime($datetime) : DateTime {
-    if (is_int($datetime)) {
-      $datetime = "@{$datetime}";
-    }
-
-    try {
-      return new DateTimeImmutable($datetime);
-    } catch (Throwable $e) {
-      throw new ResourceException(
-        ResourceException::INVALID_DATETIME,
-        ['datetime' => $datetime]
-      );
-    }
   }
 
   /**
