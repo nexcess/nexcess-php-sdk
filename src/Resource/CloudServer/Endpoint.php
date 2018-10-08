@@ -39,7 +39,7 @@ class Endpoint extends ServiceEndpoint {
       ['json' => ['_action' => 'reboot']]
     );
 
-    $this->_wait($this->_waitForReboot($resource));
+    $this->_wait($this->_waitForStart($resource));
 
     return $this;
   }
@@ -121,5 +121,49 @@ class Endpoint extends ServiceEndpoint {
         ['_action' => 'console-log']
       )
     );
+  }
+
+  /**
+   * Builds callback to wait() for a cloud server to turn on.
+   *
+   * @param Resource $resource The CloudServer instance to check
+   * @return Closure Callback for wait()
+   */
+  protected function _waitForStart(Resource $resource) : Closure {
+    return function (Endpoint $endpoint) use ($resource) {
+      $resource->sync($this->_retrieve($resource->getId()));
+      return $resource->get('power_status') === 'on';
+    };
+  }
+
+  /**
+   * Builds callback to wait() for a cloud server to turn off.
+   *
+   * @param Resource $resource The CloudServer instance to check
+   * @return Closure Callback for wait()
+   */
+  protected function _waitForStop(Resource $resource) : Closure {
+    return function (Endpoint $endpoint) use ($resource) {
+      $resource->sync($this->_retrieve($resource->getId()));
+      return $resource->get('power_status') === 'off';
+    };
+  }
+
+  /**
+   * Builds callback to wait() for a cloud server to be resized.
+   *
+   * @param Resource $resource The CloudServer instance to check
+   * @param int $package_id The resized package id
+   * @return Closure Callback for wait()
+   */
+  protected function _waitForResize(
+    Resource $resource,
+    int $package_id
+  ) : Closure {
+    return function (Endpoint $endpoint) use ($resource, $package_id) {
+      $resource->sync($this->_retrieve($resource->getId()));
+      return $resource->get('package_id') === $package_id &&
+        $resource->get('state') === 'stable';
+    };
   }
 }

@@ -62,13 +62,25 @@ class Endpoint extends WritableEndpoint {
       ['json' => ['_action' => 'set-php-version', 'php_version' => $version]]
     );
 
-    $this->_wait(function ($endpoint) use ($resource, $version) {
-      $updated = $endpoint->retrieve($resource->getId());
-      if ($updated->get('php_version') === $version) {
-        $resource->sync(['environment' => $updated->get('environment')]);
-        return true;
-      }
-    });
+    $this->_wait($this->_waitForPhpVersion($resource, $version));
+
     return $this;
+  }
+
+  /**
+   * Builds callback to wait() for a cloud account to update php versions.
+   *
+   * @param Resource $resource The CloudAccount instance to check
+   * @param string $version The target php version
+   * @return Closure Callback for wait()
+   */
+  protected function _waitForPhpVersion(
+    Resource $resource,
+    string $version
+  ) : Closure {
+    return function(Endpoint $endpoint) use ($resource, $version) {
+      $resource->sync($this->_retrieve($resource->getId()));
+      return $resource->get('php_version') === $version;
+    };
   }
 }
