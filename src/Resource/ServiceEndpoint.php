@@ -12,16 +12,16 @@ namespace Nexcess\Sdk\Resource;
 use Nexcess\Sdk\ {
   ApiException,
   Resource\CloudServer\Endpoint as CloudServer,
+  Resource\Endpoint,
   Resource\Service,
   Resource\ServiceCancellation\Resource as ServiceCancellation,
-  Resource\VirtGuestCloud\Endpoint as VirtGuestCloud,
-  Resource\WritableEndpoint
+  Resource\VirtGuestCloud\Endpoint as VirtGuestCloud
 };
 
 /**
  * Represents an API endpoint for client services.
  */
-abstract class ServiceEndpoint extends WritableEndpoint {
+abstract class ServiceEndpoint extends Endpoint {
 
   /** {@inheritDoc} */
   protected const _URI = 'service';

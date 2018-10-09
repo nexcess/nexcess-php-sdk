@@ -11,13 +11,22 @@ namespace Nexcess\Sdk\Resource\ApiToken;
 
 use Nexcess\Sdk\ {
   Resource\ApiToken\Resource,
-  Resource\WritableEndpoint
+  Resource\CanCreate,
+  Resource\CanDelete,
+  Resource\CanUpdate,
+  Resource\Createable,
+  Resource\Deleteable,
+  Resource\Endpoint as BaseEndpoint,
+  Resource\Updateable
 };
 
 /**
  * API actions for portal Login.
  */
-class Endpoint extends WritableEndpoint {
+class Endpoint
+  extends BaseEndpoint
+  implements Creatable, Deletable, Updatable {
+  use CanCreate, CanDelete, CanUpdate;
 
   /** {@inheritDoc} */
   protected const _URI = 'api-token';
