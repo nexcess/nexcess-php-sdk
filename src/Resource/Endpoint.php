@@ -29,6 +29,7 @@ use Nexcess\Sdk\ {
   Resource\Modelable as Model,
   Resource\Readable,
   Util\Config,
+  Util\Language,
   Util\Util
 };
 
@@ -105,7 +106,6 @@ abstract class Endpoint implements Readable {
    * {@inheritDoc}
    */
   public function getParams(string $action) : array {
-    return static::_PARAMS[$action] ?? [];
     $params = static::_PARAMS[$action] ?? [];
     foreach ($params as $param => $info) {
       if (! isset($info[self::PARAM_TYPE])) {
@@ -114,7 +114,8 @@ abstract class Endpoint implements Readable {
       if (! isset($info[self::PARAM_REQUIRED])) {
         $params[$param][self::PARAM_REQUIRED] = true;
       }
-      $params[$param][self::PARAM_DESCRIPTION] = "{$param} ({$type}): " .
+      $params[$param][self::PARAM_DESCRIPTION] =
+        "{$param} ({$info[self::PARAM_TYPE]}): " .
         Language::get(
           $params[$param][self::PARAM_REQUIRED] ? 'required' : 'optional'
         ) . '. ' .

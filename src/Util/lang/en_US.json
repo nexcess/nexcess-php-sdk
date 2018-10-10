@@ -19,6 +19,11 @@
   "optional": "Optional",
   "required": "Required",
   "resource": {
+    "ApiToken": {
+      "create": {
+        "name": "A name to use for the new api token."
+      }
+    },
     "CloudAccount": {
       "create": {
         "app_id": "ID for the application environment to build on the new cloud account. @see App::list().",

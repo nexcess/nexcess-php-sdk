@@ -13,8 +13,9 @@ use Nexcess\Sdk\ {
   ApiException,
   Resource\CanCreate,
   Resource\CloudAccount\Resource,
-  Resource\Createable,
-  Resource\Endpoint as BaseEndpoint
+  Resource\Creatable,
+  Resource\Endpoint as BaseEndpoint,
+  Util\Util
 };
 
 /**
@@ -35,13 +36,13 @@ class Endpoint extends BaseEndpoint implements Creatable {
   /** {@inheritDoc} */
   protected const _PARAMS = [
     'create' => [
-      'app_id' => [Util::TYPE_INT, true],
-      'cloud_id' => [Util::TYPE_INT, true],
-      'domain' => [Util::TYPE_STRING, true],
-      'install_app' => [Util::TYPE_BOOL, true],
-      'package_id' => [Util::TYPE_INT, true]
+      'app_id' => [Util::TYPE_INT],
+      'cloud_id' => [Util::TYPE_INT],
+      'domain' => [Util::TYPE_STRING],
+      'install_app' => [Util::TYPE_BOOL, false],
+      'package_id' => [Util::TYPE_INT]
     ],
-    'setPhpVersion' => ['version' => [Util::TYPE_STRING, true]]
+    'setPhpVersion' => ['version' => [Util::TYPE_STRING]]
   ];
 
   /**
@@ -94,7 +95,7 @@ class Endpoint extends BaseEndpoint implements Creatable {
     Resource $resource,
     string $version
   ) : Closure {
-    return function(Endpoint $endpoint) use ($resource, $version) {
+    return function (Endpoint $endpoint) use ($resource, $version) {
       $resource->sync($this->_retrieve($resource->getId()));
       return $resource->get('php_version') === $version;
     };

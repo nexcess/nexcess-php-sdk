@@ -14,10 +14,11 @@ use Nexcess\Sdk\ {
   Resource\CanCreate,
   Resource\CanDelete,
   Resource\CanUpdate,
-  Resource\Createable,
-  Resource\Deleteable,
+  Resource\Creatable,
+  Resource\Deletable,
   Resource\Endpoint as BaseEndpoint,
-  Resource\Updateable
+  Resource\Updatable,
+  Util\Util
 };
 
 /**
@@ -29,8 +30,18 @@ class Endpoint
   use CanCreate, CanDelete, CanUpdate;
 
   /** {@inheritDoc} */
+  public const MODULE_NAME = 'ApiToken';
+
+  /** {@inheritDoc} */
   protected const _URI = 'api-token';
 
   /** {@inheritDoc} */
   protected const _MODEL_FQCN = Resource::class;
+
+  /** {@inheritDoc} */
+  protected const _PARAMS = [
+    'create' => [
+      'name' => [Util::TYPE_STRING]
+    ]
+  ];
 }

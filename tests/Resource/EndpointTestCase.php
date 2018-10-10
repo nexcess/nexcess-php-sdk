@@ -10,9 +10,12 @@ declare(strict_types  = 1);
 namespace Nexcess\Sdk\Tests\Resource;
 
 use Throwable;
-
+use GuzzleHttp\ {
+  Psr7\Response as GuzzleResponse
+};
 use Nexcess\Sdk\ {
   Resource\Collector as Collection,
+  Resource\Modelable as Model,
   Sandbox\Sandbox,
   Tests\TestCase,
   Tests\TestException,
@@ -39,7 +42,7 @@ abstract class EndpointTestCase extends TestCase {
   public function testGetModel() {
     $this->_getSandbox()->play(function ($api, $sandbox) {
       $endpoint = $api->getEndpoint(static::_SUBJECT_FQCN);
-      $actual = $endpoint->getModel(1);
+      $actual = $endpoint->getModel()->set('id', 1);
 
       $this->assertInstanceOf(static::_SUBJECT_MODEL_FQCN, $actual);
       $this->assertEquals(1, $actual->getId(), 'Must set given model id');
@@ -60,10 +63,11 @@ abstract class EndpointTestCase extends TestCase {
    * @param array $expected The expected parameter list
    */
   public function testGetParams(string $action, array $expected) {
-    $this->_getSandbox()->play(function ($api, $sandbox) {
-      $endpoint = $api->getEndpoint(static::_SUBJECT_FQCN);
-      $this->assertEquals($exepcted, $endpoint->getParams($action));
-    });
+    $this->_getSandbox()
+      ->play(function ($api, $sandbox) use ($action, $expected) {
+        $endpoint = $api->getEndpoint(static::_SUBJECT_FQCN);
+        $this->assertEquals($expected, $endpoint->getParams($action));
+      });
   }
 
   /**
@@ -97,7 +101,7 @@ abstract class EndpointTestCase extends TestCase {
         ) :
         $response;
     };
-    $this->_getSandbox($handler)
+    $this->_getSandbox(null, $handler)
       ->play(function ($api, $sandbox) use ($filter) {
         $list = $api->getEndpoint(static::_SUBJECT_FQCN)->list($filter);
 
@@ -138,16 +142,25 @@ abstract class EndpointTestCase extends TestCase {
       $this->setExpectedException($response);
     }
 
-    $this->_getSandbox()->play(function ($api, $sandbox) use ($response) {
-      $sandbox->makeResponse('*', $response);
-      $endpoint = $api->getEndpoint(static::_SUBJECT_FQCN);
+    $this->_getSandbox()
+      ->play(function ($api, $sandbox) use ($response, $expected) {
+        $sandbox->makeResponse('*', 200, $response);
+        $endpoint = $api->getEndpoint(static::_SUBJECT_FQCN);
 
-      $endpoint->retrieve($expected['id']);
-      $this->assertInstanceOf(static::_SUBJECT_MODEL_FQCN, $actual);
-      foreach ($expected as $property => $value) {
-        $this->assertEquals($value, $actual->get($property));
-      }
-    });
+        $actual = $endpoint->retrieve($expected['id']);
+        $this->assertInstanceOf(static::_SUBJECT_MODEL_FQCN, $actual);
+
+        // disconnect from endpoint;
+        // we don't want any attempts at api requests while making assertions
+        $actual->setApiEndpoint(null);
+        foreach ($expected as $property => $value) {
+          if ($value instanceof Model || $value instanceof Collection) {
+            $this->assertTrue($value->equals($actual->get($property)));
+          } else {
+            $this->assertEquals($value, $actual->get($property));
+          }
+        }
+      });
   }
 
   /**

@@ -250,7 +250,7 @@ class Util {
    */
   public static function type($value) : string {
     return strtr(
-      is_object($value) ? get_class($value) : strtolower(gettype($value)),
+      is_object($value) ? get_class($value) : gettype($value),
       self::_TYPE_TR
     );
   }

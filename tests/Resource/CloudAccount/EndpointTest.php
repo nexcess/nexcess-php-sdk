@@ -20,14 +20,20 @@ use Nexcess\Sdk\ {
 class EndpointTest extends EndpointTestCase {
 
   /** {@inheritDoc} */
+  protected const _RESOURCE_PATH = __DIR__ . '/resources';
+
+  /** {@inheritDoc} */
   protected const _RESOURCE_INSTANCES = [
-    'cloud-account-1.fromArray.json' => 'cloud-account-1.toArray.json'
+    'cloud-account-1.fromArray.json' => 'cloud-account-1.toArray-shallow.php'
   ];
 
   /** {@inheritDoc} */
   protected const _RESOURCE_LISTS = [
     'GET %2Fcloud-account%3F.json' => []
   ];
+
+  /** {@inheritDoc} */
+  protected const _SUBJECT_FQCN = Endpoint::class;
 
   /** {@inheritDoc} */
   protected const _SUBJECT_MODEL_FQCN = Resource::class;
@@ -43,27 +49,32 @@ class EndpointTest extends EndpointTestCase {
           'app_id' => [
             Util::TYPE_INT,
             true,
-            Language::get('resource.CloudAccount.create.app_id')
+            'app_id (integer): Required. ' .
+              Language::get('resource.CloudAccount.create.app_id')
           ],
           'cloud_id' => [
             Util::TYPE_INT,
             true,
-            Language::get('resource.CloudAccount.create.cloud_id')
+            'cloud_id (integer): Required. ' .
+              Language::get('resource.CloudAccount.create.cloud_id')
           ],
           'domain' => [
             Util::TYPE_STRING,
             true,
-            Language::get('resource.CloudAccount.create.domain')
+            'domain (string): Required. ' .
+              Language::get('resource.CloudAccount.create.domain')
           ],
           'install_app' => [
             Util::TYPE_BOOL,
-            true,
-            Language::get('resource.CloudAccount.create.install_app')
+            false,
+            'install_app (boolean): Optional. ' .
+              Language::get('resource.CloudAccount.create.install_app')
           ],
           'package_id' => [
             Util::TYPE_INT,
             true,
-            Language::get('resource.CloudAccount.create.package_id')
+            'package_id (integer): Required. ' .
+              Language::get('resource.CloudAccount.create.package_id')
           ]
         ]
       ],
@@ -73,7 +84,8 @@ class EndpointTest extends EndpointTestCase {
           'version'=> [
             Util::TYPE_STRING,
             true,
-            Language::get('resource.CloudAccount.setPhpVersion.version')
+            'version (string): Required. ' .
+              Language::get('resource.CloudAccount.setPhpVersion.version')
           ]
         ]
       ]
