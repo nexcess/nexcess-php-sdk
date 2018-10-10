@@ -53,6 +53,25 @@ abstract class EndpointTestCase extends TestCase {
   }
 
   /**
+   * @covers Endpoint::getParams
+   * @dataProvider getParamsProvider
+   *
+   * @param string $action The action to get params for
+   * @param array $expected The expected parameter list
+   */
+  public function testGetParams(string $action, array $expected) {
+    $this->_getSandbox()->play(function ($api, $sandbox) {
+      $endpoint = $api->getEndpoint(static::_SUBJECT_FQCN);
+      $this->assertEquals($exepcted, $endpoint->getParams($action));
+    });
+  }
+
+  /**
+   * @return array[] List of testcases
+   */
+  abstract public function getParamsProvider() : array;
+
+  /**
    * @covers Endpoint::list
    * @dataProvider listProvider
    *

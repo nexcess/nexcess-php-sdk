@@ -16,8 +16,23 @@
     "wrong_call_arg": "{class}::__call() invoked with incorrect argument(s): expected {expected}; {type} provided",
     "wrong_model_for_uri": "{endpoint} expects an instance of {model}; cannot use {type}"
   },
+  "optional": "Optional",
+  "required": "Required",
   "resource": {
+    "CloudAccount": {
+      "create": {
+        "app_id": "ID for the application environment to build on the new cloud account. @see App::list().",
+        "cloud_id": "ID of the cloud (location) to create the new cloud account on. @see Cloud::list().",
+        "domain": "Domain name to use for the new cloud account.",
+        "install_app": "Should the application be installed? Note, this applies only to installable apps.",
+        "package_id": "ID of the service package for the new cloud account. @see VirtGuestCloud::list()."
+      },
+      "setPhpVersion": {
+        "version": "Target PHP version to use on cloud account. @see CloudAccount::getAvailablePhpVersions()."
+      }
+    },
     "invalid_filter": "{class}::{method} expects $filter to be callable or array; {type} provided",
+    "missing_param": "Missing required parameter '{param}' for {module}::{action}\n  {description}",
     "model_not_found": "No model {model}:{id} found",
     "no_endpoint_available": "No Endpoint is available to make API calls; use Model::setApiEndpoint() or create your Models via SDK Client",
     "no_such_model": "No model {model} exists",
@@ -36,7 +51,8 @@
     "wrong_model_for_collection": "Cannot add {model} to collection of '{collection}' models",
     "uncollectable": "cannot build a collection of {of} using {type}: {data}",
     "undatetimeable": "cannot build datetime using {type}: {datetime}",
-    "unmodelable": "cannot build {model} model using {type}: {data}"
+    "unmodelable": "cannot build {model} model using {type}: {data}",
+    "wrong_param": "Parameter '{param}' for {module}::{action} must be {type}; {actual} provided\n  {description}"
   },
   "sandbox": {
     "invalid_response": "Response must be an instance of Guzzle\\PSR-7\\Response or Throwable, or a callable which returns the same; {type} returned"

@@ -24,10 +24,25 @@ class Endpoint extends BaseEndpoint implements Creatable {
   use CanCreate;
 
   /** {@inheritDoc} */
+  public const MODULE_NAME = 'CloudAccount';
+
+  /** {@inheritDoc} */
   protected const _URI = 'cloud-account';
 
   /** {@inheritDoc} */
   protected const _MODEL_FQCN = Resource::class;
+
+  /** {@inheritDoc} */
+  protected const _PARAMS = [
+    'create' => [
+      'app_id' => [Util::TYPE_INT, true],
+      'cloud_id' => [Util::TYPE_INT, true],
+      'domain' => [Util::TYPE_STRING, true],
+      'install_app' => [Util::TYPE_BOOL, true],
+      'package_id' => [Util::TYPE_INT, true]
+    ],
+    'setPhpVersion' => ['version' => [Util::TYPE_STRING, true]]
+  ];
 
   /**
    * Requests cancellation of the service associated with a cloud account.
