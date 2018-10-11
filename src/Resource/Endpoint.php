@@ -59,9 +59,6 @@ abstract class Endpoint implements Readable {
   /** @var string API endpoint. */
   protected const _URI = '';
 
-  /** @var string Module name. */
-  public const MODULE_NAME = '';
-
   /** @var array[] Map of action name:parameter info pairs. */
   protected const _PARAMS = [];
 
@@ -92,7 +89,7 @@ abstract class Endpoint implements Readable {
   /**
    * {@inheritDoc}
    */
-  public static function getModule() : string {
+  public static function moduleName() : string {
     return static::MODULE_NAME;
   }
 

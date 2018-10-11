@@ -68,7 +68,7 @@ abstract class Model implements Modelable {
   /**
    * {@inheritDoc}
    */
-  public static function getModule() : string {
+  public static function moduleName() : string {
     return static::MODULE_NAME;
   }
 

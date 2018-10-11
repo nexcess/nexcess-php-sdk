@@ -25,7 +25,7 @@ interface Readable {
    *
    * @return string Module name
    */
-  public static function getModule() : string;
+  public static function moduleName() : string;
 
   /**
    * Gets a new (empty) Model instance.

@@ -216,7 +216,7 @@ class Client {
     $module = $endpoint::moduleName();
     if (empty($this->_endpoints[$module])) {
       $this->_endpoints[$module] =
-        new Endpoint($this, $this->_config);
+        new $endpoint($this, $this->_config);
     }
 
     return $this->_endpoints[$module];

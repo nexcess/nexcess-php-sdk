@@ -24,7 +24,7 @@ interface Modelable extends ArrayAccess, JsonSerializable {
    *
    * @return string Module name
    */
-  public static function getModule() : string;
+  public static function moduleName() : string;
 
   /**
    * Checks whether this Model instance represents the same item as another.
