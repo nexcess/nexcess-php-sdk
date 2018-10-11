@@ -11,7 +11,9 @@ namespace Nexcess\Sdk\Resource;
 
 use Nexcess\Sdk\ {
   ApiException,
-  Resource\Model
+  Resource\Modelable,
+  Resource\ResourceException,
+  Util\Util
 };
 
 /**
@@ -23,7 +25,9 @@ trait CanCreate {
   /**
    * {@inheritDoc}
    */
-  public function create(array $data) : Model {
+  public function create(array $data) : Modelable {
+    $this->_validateParams(__FUNCTION__, $data);
+
     $model = $this->getModel()->sync(
       $this->_client->request('POST', static::_URI . '/new', ['json' => $data])
     );

@@ -29,6 +29,7 @@ use Nexcess\Sdk\ {
   Resource\Modelable as Model,
   Resource\Readable,
   Util\Config,
+  Util\Language,
   Util\Util
 };
 
@@ -36,6 +37,18 @@ use Nexcess\Sdk\ {
  * Represents a readable API endpoint for nexcess.net / thermo.io.
  */
 abstract class Endpoint implements Readable {
+
+  /** @var string Name of resource module this endpoint belongs to. */
+  public const MODULE_NAME = '';
+
+  /** @var int Key for parameter type. */
+  public const PARAM_TYPE = 0;
+
+  /** @var int Key for parameter required. */
+  public const PARAM_REQUIRED = 1;
+
+  /** @var int Key for parameter description. */
+  public const PARAM_DESCRIPTION = 2;
 
   /** @var array Default filter values for list(). */
   protected const _BASE_LIST_FILTER = [];
@@ -45,6 +58,9 @@ abstract class Endpoint implements Readable {
 
   /** @var string API endpoint. */
   protected const _URI = '';
+
+  /** @var array[] Map of action name:parameter info pairs. */
+  protected const _PARAMS = [];
 
   /** @var int Key for wait() $opts interval. */
   public const OPT_WAIT_INTERVAL = 0;
@@ -84,6 +100,31 @@ abstract class Endpoint implements Readable {
    */
   public function getModel(string $name = null) : Model {
     return $this->_client->getModel($name ?? static::_MODEL_FQCN);
+  }
+
+  /**
+   * {@inheritDoc}
+   */
+  public function getParams(string $action) : array {
+    $params = static::_PARAMS[$action] ?? [];
+    foreach ($params as $param => $info) {
+      if (! isset($info[self::PARAM_TYPE])) {
+        $params[$param][self::PARAM_TYPE] = Util::TYPE_STRING;
+      }
+      if (! isset($info[self::PARAM_REQUIRED])) {
+        $params[$param][self::PARAM_REQUIRED] = true;
+      }
+      $params[$param][self::PARAM_DESCRIPTION] =
+        "{$param} ({$info[self::PARAM_TYPE]}): " .
+        Language::get(
+          $params[$param][self::PARAM_REQUIRED] ? 'required' : 'optional'
+        ) . '. ' .
+        Language::get(
+          'resource.' . static::MODULE_NAME . ".{$action}.{$param}"
+        );
+    }
+
+    return $params;
   }
 
   /**
@@ -224,6 +265,50 @@ abstract class Endpoint implements Readable {
       $this->_client->request('GET', static::_URI . "/{$id}");
 
     return $this->_retrieved[$id];
+  }
+
+  /**
+   * Inspects params passed for given API action and throws if invalid.
+   *
+   * NOTE, authoritative validation is performed by the API;
+   * to prevent conflicts/confusion, validation here should remain minimal:
+   * mainly limited to checking data names and types.
+   *
+   * @param array $data The provided data
+   * @throws ResourceException If data is missing/incorrect
+   */
+  protected function _validateParams(string $action, array $params) : void {
+    foreach ($this->getParams($action) as $param => $info) {
+      if (! isset($params[$param])) {
+        if ($info[self::PARAM_REQUIRED]) {
+          throw new ResourceException(
+            ResourceException::MISSING_PARAM,
+            [
+              'param' => $param,
+              'module' => static::MODULE_NAME,
+              'action' => $action,
+              'description' => $info[self::PARAM_DESCRIPTION]
+            ]
+          );
+        }
+
+        continue;
+      }
+
+      if (Util::type($params[$param]) !== $info[self::PARAM_TYPE]) {
+        throw new ResourceException(
+          ResourceException::WRONG_PARAM,
+          [
+            'param' => $param,
+            'module' => static::MODULE_NAME,
+            'action' => $action,
+            'type' => $info[self::PARAM_TYPE],
+            'actual' => Util::type($params[$param]),
+            'description' => $info[self::PARAM_DESCRIPTION]
+          ]
+        );
+      }
+    }
   }
 
   /**

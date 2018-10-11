@@ -9,6 +9,8 @@ declare(strict_types  = 1);
 
 namespace Nexcess\Sdk\Util;
 
+use JsonSerializable,
+  stdClass;
 use Nexcess\Sdk\Util\UtilException;
 
 /**
@@ -37,6 +39,33 @@ class Util {
   /** @var int Pretty-printing options for jsonEncode(). */
   public const JSON_ENCODE_PRETTY = self::JSON_ENCODE_DEFAULT_OPTS |
     JSON_PRETTY_PRINT;
+
+  /** @var string Php datatype. */
+  public const TYPE_ARRAY = 'array';
+
+  /** @var string Php datatype. */
+  public const TYPE_BOOL = 'boolean';
+
+  /** @var string Php datatype. */
+  public const TYPE_FLOAT = 'float';
+
+  /** @var string Php datatype. */
+  public const TYPE_INT = 'integer';
+
+  /** @var string Php datatype. */
+  public const TYPE_NULL = 'null';
+
+  /** @var string Php datatype. */
+  public const TYPE_OBJECT = 'object';
+
+  /** @var string Php datatype. */
+  public const TYPE_RESOURCE = 'resource';
+
+  /** @var string Php datatype. */
+  public const TYPE_STRING = 'string';
+
+  /** @var array Map of gettype => TYPE_* replacements. */
+  protected const _TYPE_TR = ['double' => 'float', 'NULL' => 'null'];
 
   /**
    * Looks up a value at given path in an array-like subject.
@@ -99,6 +128,30 @@ class Util {
     }
 
     return filter_var($value, $filter, $flags);
+  }
+
+  /**
+   * Checks if a value is json-encodable.
+   * Accepts scalar values, arrays, and stdClass or JsonSerializable objects.
+   *
+   * @param mixed $value The value to check
+   * @return bool True if value is suitable for json-encoding; false otherwise
+   */
+  public static function isJsonable($value) : bool {
+    if ($value instanceof JsonSerializable || $value === null) {
+      return true;
+    }
+
+    if (is_array($value) || $value instanceof stdClass) {
+      foreach ($value as $nested) {
+        if (! self::isJsonable($nested)) {
+          return false;
+        }
+      }
+      return true;
+    }
+
+    return is_scalar($value);
   }
 
   /**
@@ -196,8 +249,9 @@ class Util {
    * @return string The value's classname if an object, type otherwise
    */
   public static function type($value) : string {
-    return is_object($value) ?
-      get_class($value) :
-      strtolower(gettype($value));
+    return strtr(
+      is_object($value) ? get_class($value) : gettype($value),
+      self::_TYPE_TR
+    );
   }
 }

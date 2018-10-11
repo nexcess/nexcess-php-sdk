@@ -230,10 +230,10 @@ abstract class Model implements Modelable {
    *
    * Attaching a wrong endpoint here WILL CAUSE PROBLEMS down the line!
    *
-   * @param Endpoint $endpoint The endpoint to attach
+   * @param Endpoint|null $endpoint The endpoint to attach
    * @return Model $this
    */
-  public function setApiEndpoint(Endpoint $endpoint) : Model {
+  public function setApiEndpoint(Endpoint $endpoint = null) : Model {
     $this->_endpoint = $endpoint;
     return $this;
   }

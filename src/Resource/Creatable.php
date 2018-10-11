@@ -10,7 +10,7 @@ declare(strict_types  = 1);
 namespace Nexcess\Sdk\Resource;
 
 use Nexcess\Sdk\ {
-  Resource\Modelable as Model,
+  Resource\Modelable,
   Resource\Readable
 };
 
@@ -26,5 +26,5 @@ interface Creatable extends Readable {
    * @return Model
    * @throws ApiException If request fails
    */
-  public function create(array $data) : Model;
+  public function create(array $data) : Modelable;
 }
