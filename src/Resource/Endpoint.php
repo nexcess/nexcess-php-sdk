@@ -46,6 +46,9 @@ abstract class Endpoint implements Readable {
   /** @var string API endpoint. */
   protected const _URI = '';
 
+  /** @var string Module name. */
+  public const MODULE_NAME = '';
+
   /** @var int Key for wait() $opts interval. */
   public const OPT_WAIT_INTERVAL = 0;
 
@@ -69,6 +72,13 @@ abstract class Endpoint implements Readable {
 
   /** @var callable Queued callback for wait(). */
   protected $_wait_until;
+
+  /**
+   * {@inheritDoc}
+   */
+  public static function getModule() : string {
+    return static::MODULE_NAME;
+  }
 
   /**
    * @param Client $client Api Client instance

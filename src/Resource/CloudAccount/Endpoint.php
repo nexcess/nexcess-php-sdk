@@ -24,6 +24,9 @@ class Endpoint extends BaseEndpoint implements Creatable {
   use CanCreate;
 
   /** {@inheritDoc} */
+  public const MODULE_NAME = 'CloudAccount';
+
+  /** {@inheritDoc} */
   protected const _URI = 'cloud-account';
 
   /** {@inheritDoc} */
@@ -79,7 +82,7 @@ class Endpoint extends BaseEndpoint implements Creatable {
     Resource $resource,
     string $version
   ) : Closure {
-    return function(Endpoint $endpoint) use ($resource, $version) {
+    return function (Endpoint $endpoint) use ($resource, $version) {
       $resource->sync($this->_retrieve($resource->getId()));
       return $resource->get('php_version') === $version;
     };

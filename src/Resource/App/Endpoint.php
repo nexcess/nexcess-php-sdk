@@ -20,6 +20,9 @@ use Nexcess\Sdk\ {
 class Endpoint extends ReadableEndpoint {
 
   /** {@inheritDoc} */
+  public const MODULE_NAME = 'App';
+
+  /** {@inheritDoc} */
   protected const _URI = 'app';
 
   /** {@inheritDoc} */

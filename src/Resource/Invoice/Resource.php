@@ -17,6 +17,9 @@ use Nexcess\Sdk\Resource\Model;
 class Resource extends Model {
 
   /** {@inheritDoc} */
+  public const MODULE_NAME = 'Invoice';
+
+  /** {@inheritDoc} */
   protected const _PROPERTY_ALIASES = ['id' => 'invoice_id'];
 
   /** {@inheritDoc} */

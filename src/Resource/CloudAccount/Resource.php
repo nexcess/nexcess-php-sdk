@@ -22,6 +22,9 @@ use Nexcess\Sdk\ {
 class Resource extends Model {
 
   /** {@inheritDoc} */
+  public const MODULE_NAME = 'CloudAccount';
+
+  /** {@inheritDoc} */
   protected const _PROPERTY_ALIASES = [
     'id' => 'account_id',
     'location' => 'service.location',

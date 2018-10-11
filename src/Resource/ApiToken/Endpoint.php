@@ -29,6 +29,9 @@ class Endpoint
   use CanCreate, CanDelete, CanUpdate;
 
   /** {@inheritDoc} */
+  public const MODULE_NAME = 'ApiToken';
+
+  /** {@inheritDoc} */
   protected const _URI = 'api-token';
 
   /** {@inheritDoc} */

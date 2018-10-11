@@ -20,6 +20,9 @@ use Nexcess\Sdk\ {
 class Endpoint extends ReadableEndpoint {
 
   /** {@inheritDoc} */
+  public const MODULE_NAME = 'Invoice';
+
+  /** {@inheritDoc} */
   protected const _MODEL_FQCN = Resource::class;
 
   /** {@inheritDoc} */

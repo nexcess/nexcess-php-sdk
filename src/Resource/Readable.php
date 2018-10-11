@@ -21,6 +21,13 @@ use Nexcess\Sdk\ {
 interface Readable {
 
   /**
+   * Gets the module name this model belongs to.
+   *
+   * @return string Module name
+   */
+  public static function getModule() : string;
+
+  /**
    * Gets a new (empty) Model instance.
    *
    * @param string|null $name Model name (base name or fully qualified)

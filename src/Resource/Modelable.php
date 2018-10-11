@@ -20,6 +20,13 @@ use Nexcess\Sdk\Exception\ModelException;
 interface Modelable extends ArrayAccess, JsonSerializable {
 
   /**
+   * Gets the module name this model belongs to.
+   *
+   * @return string Module name
+   */
+  public static function getModule() : string;
+
+  /**
    * Checks whether this Model instance represents the same item as another.
    *
    * Note, this compares item identity (id), and does NOT compare values!

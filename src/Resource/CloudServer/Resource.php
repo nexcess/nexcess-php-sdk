@@ -22,6 +22,9 @@ use Nexcess\Sdk\ {
 class Resource extends Service {
 
   /** {@inheritDoc} */
+  public const MODULE_NAME = 'CloudServer';
+
+  /** {@inheritDoc} */
   protected const _PROPERTY_ALIASES = [
     'cloud' => 'location',
     'id' => 'service_id'
