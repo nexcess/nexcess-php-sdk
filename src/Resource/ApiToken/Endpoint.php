@@ -14,10 +14,11 @@ use Nexcess\Sdk\ {
   Resource\CanCreate,
   Resource\CanDelete,
   Resource\CanUpdate,
-  Resource\Createable,
-  Resource\Deleteable,
+  Resource\Creatable,
+  Resource\Deletable,
   Resource\Endpoint as BaseEndpoint,
-  Resource\Updateable
+  Resource\Updatable,
+  Util\Util
 };
 
 /**
@@ -36,4 +37,11 @@ class Endpoint
 
   /** {@inheritDoc} */
   protected const _MODEL_FQCN = Resource::class;
+
+  /** {@inheritDoc} */
+  protected const _PARAMS = [
+    'create' => [
+      'name' => [Util::TYPE_STRING]
+    ]
+  ];
 }

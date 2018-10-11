@@ -121,6 +121,57 @@ class UtilTest extends TestCase {
   }
 
   /**
+   * @covers Util::isJsonable
+   * @dataProvider isJsonableProvider
+   */
+  public function testIsJsonable($value, bool $expected) {
+    $this->assertEquals($expected, Util::isJsonable($value));
+  }
+
+
+  /**
+   * @return array[] @see UtilTest::testIsJsonable
+   */
+  public function isJsonableProvider() : array {
+    $jsonable_object = new stdClass();
+    $jsonable_object->a = 1;
+    $jsonable_object->b = 'B';
+    $jsonable_object->c = ['d' => null];
+
+    $resource = fopen('php://memory', 'r');
+    $unjsonable_object = clone $jsonable_object;
+    $unjsonable_object->z = $resource;
+
+    $unjsonable_object_2 = $this->_getSandbox();
+
+    $jsonable_array = [
+      'a' => 1,
+      'b' => 'B',
+      'c' => ['d' => null],
+      'e' => $jsonable_object
+    ];
+
+    $unjsonable_array = $jsonable_array +
+      ['y' => $unjsonable_object, 'z' => $resource];
+
+    return [
+      ['a', true],
+      [1, true],
+      [1.5, true],
+      [null, true],
+      [true, true],
+      [[], true],
+      [$jsonable_array, true],
+      [$jsonable_object, true],
+
+      [$resource, false],
+      [$unjsonable_array, false],
+      [$unjsonable_object, false],
+      [$unjsonable_object_2, false]
+    ];
+  }
+
+  /**
    * @covers Util::readJsonFile
    */
   public function testReadJsonFile() {
@@ -148,7 +199,7 @@ class UtilTest extends TestCase {
     return [
       [[], 'array'],
       [true, 'boolean'],
-      [1.2, 'double'],
+      [1.2, 'float'],
       [123, 'integer'],
       [null, 'null'],
       ['abc', 'string'],

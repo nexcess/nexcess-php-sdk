@@ -11,7 +11,7 @@ namespace Nexcess\Sdk\Resource;
 
 use Nexcess\Sdk\ {
   ApiException,
-  Resource\Model,
+  Resource\Modelable,
   Resource\Updatable
 };
 
@@ -24,7 +24,7 @@ trait CanUpdate {
   /**
    * {@inheritDoc}
    */
-  public function update(Model $model, array $data = []) : Updatable {
+  public function update(Modelable $model, array $data = []) : Updatable {
     $this->_checkModelType($model);
 
     $id = $model->getId();
