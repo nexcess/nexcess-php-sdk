@@ -87,6 +87,13 @@ abstract class Endpoint implements Readable {
   protected $_wait_until;
 
   /**
+   * {@inheritDoc}
+   */
+  public static function moduleName() : string {
+    return static::MODULE_NAME;
+  }
+
+  /**
    * @param Client $client Api Client instance
    * @param Config $config Api Config object
    */

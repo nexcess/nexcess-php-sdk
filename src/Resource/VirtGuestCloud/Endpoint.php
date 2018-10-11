@@ -20,6 +20,9 @@ use Nexcess\Sdk\ {
 class Endpoint extends ServiceEndpoint {
 
   /** {@inheritDoc} */
+  public const MODULE_NAME = 'VirtGuestCloud';
+
+  /** {@inheritDoc} */
   protected const _MODEL_FQCN = Resource::class;
 
   /** {@inheritDoc} */

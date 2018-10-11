@@ -64,6 +64,9 @@ class Client {
   /** @var string SDK root directory. */
   public const DIR = __DIR__;
 
+  /** @var string Base namespace for resource modules. */
+  public const RESOURCE_NAMESPACE = __NAMESPACE__ . '\\Resource';
+
   /** @var string Sdk version. */
   public const SDK_VERSION = '0.1-alpha';
 
@@ -192,16 +195,31 @@ class Client {
    * For convenience, endpoints can also be accessed as Client properties.
    * @see Client::__get
    *
-   * @param string $name Endpoint classname (base name or fully qualified)
+   * @param string $name Endpoint FQCN or module name
    * @return Endpoint
    * @throws SdkException If the endpoint is unknown
    */
   public function getEndpoint(string $name) : Endpoint {
-    if (empty($this->_endpoints[$name])) {
-      $this->_endpoints[$name] = $this->_newEndpoint($name);
+    if (is_a($name, Endpoint::class, true)) {
+      $endpoint = $name;
+    } else {
+      $endpoint = static::RESOURCE_NAMESPACE . "\\{$name}\\Endpoint";
+
+      if (! is_a($endpoint, Endpoint::class, true)) {
+        throw new SdkException(
+          SdkException::NO_SUCH_ENDPOINT,
+          ['name' => $name]
+        );
+      }
     }
 
-    return $this->_endpoints[$name];
+    $module = $endpoint::moduleName();
+    if (empty($this->_endpoints[$module])) {
+      $this->_endpoints[$module] =
+        new $endpoint($this, $this->_config);
+    }
+
+    return $this->_endpoints[$module];
   }
 
   /**
@@ -211,28 +229,22 @@ class Client {
    * (as opposed to using `new`),
    * as it will associate them with their correct endpoint(s) automatically.
    *
-   * @param string $name Resource classname (base name or fully qualified)
+   * @param string $name Resource FQCN or module name
    * @return Model
    * @throws SdkException If the model is unknown
    */
   public function getModel(string $name) : Model {
     if (is_a($name, Model::class, true)) {
       $model = $name;
-
-      $parts = explode('\\', $name);
-      array_pop($parts);
-      $parts[] = 'Endpoint';
-      $endpoint = implode('\\', $parts);
     } else {
-      $endpoint = $name;
-      $model = __NAMESPACE__ . "\\Resource\\{$name}\\Resource";
+      $model = static::RESOURCE_NAMESPACE . "\\{$name}\\Resource";
 
       if (! is_a($model, Model::class, true)) {
         throw new SdkException(SdkException::NO_SUCH_MODEL, ['name' => $name]);
       }
     }
 
-    return new $model($this->getEndpoint($endpoint));
+    return new $model($this->getEndpoint($model::moduleName()));
   }
 
   /**
@@ -360,25 +372,6 @@ class Client {
     }
 
     return $headers;
-  }
-
-  /**
-   * Creates a new Endpoint instance.
-   *
-   * @param string $name Endpoint classname (base name or fully qualified)
-   * @return Endpoint
-   * @throws SdkException If the endpoint is unknown
-   */
-  protected function _newEndpoint(string $name) : Endpoint {
-    $fqcn = is_a($name, Endpoint::class, true) ?
-      $name :
-      __NAMESPACE__ . "\\Resource\\{$name}\\Endpoint";
-
-    if (is_a($fqcn, Endpoint::class, true)) {
-      return new $fqcn($this, $this->_config);
-    }
-
-    throw new SdkException(SdkException::NO_SUCH_ENDPOINT, ['name' => $name]);
   }
 
   /**

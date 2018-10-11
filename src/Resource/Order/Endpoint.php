@@ -20,6 +20,9 @@ use Nexcess\Sdk\ {
 class Endpoint extends ReadableEndpoint {
 
   /** {@inheritDoc} */
+  public const MODULE_NAME = 'Order';
+
+  /** {@inheritDoc} */
   protected const _MODEL_FQCN = Order::class;
 
   /** {@inheritDoc} */

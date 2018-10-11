@@ -28,6 +28,9 @@ use Nexcess\Sdk\ {
 class Resource extends Model {
 
   /** {@inheritDoc} */
+  public const MODULE_NAME = 'Order';
+
+  /** {@inheritDoc} */
   protected const _PROPERTY_ALIASES = ['id' => 'order_id'];
 
   /** {@inheritDoc} */

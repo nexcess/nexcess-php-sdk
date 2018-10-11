@@ -22,6 +22,9 @@ use Nexcess\Sdk\ {
 
 abstract class Model implements Modelable {
 
+  /** @var string Module name. */
+  public const MODULE_NAME = '';
+
   /** @var string[] Map of property aliases:names. */
   protected const _PROPERTY_ALIASES = [];
 
@@ -60,6 +63,13 @@ abstract class Model implements Modelable {
     $model->_endpoint = $data['_endpoint'] ?? null;
     $model->_values = $data['_values'] ?? [];
     return $model;
+  }
+
+  /**
+   * {@inheritDoc}
+   */
+  public static function moduleName() : string {
+    return static::MODULE_NAME;
   }
 
   /**

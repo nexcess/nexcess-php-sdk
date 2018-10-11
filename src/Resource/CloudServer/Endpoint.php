@@ -20,6 +20,9 @@ use Nexcess\Sdk\ {
 class Endpoint extends ServiceEndpoint {
 
   /** {@inheritDoc} */
+  public const MODULE_NAME = 'CloudServer';
+
+  /** {@inheritDoc} */
   protected const _SERVICE_TYPE = 'virt-guest';
 
   /** {@inheritDoc} */

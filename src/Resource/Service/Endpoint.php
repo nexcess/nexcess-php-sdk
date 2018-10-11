@@ -24,6 +24,9 @@ use Nexcess\Sdk\ {
 abstract class Endpoint extends BaseEndpoint {
 
   /** {@inheritDoc} */
+  public const MODULE_NAME = 'Service';
+
+  /** {@inheritDoc} */
   protected const _URI = 'service';
 
   /** @var string API endpoint for service cancellation. */

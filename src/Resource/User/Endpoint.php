@@ -21,6 +21,9 @@ use Nexcess\Sdk\ {
 class Endpoint extends BaseEndpoint {
 
   /** {@inheritDoc} */
+  public const MODULE_NAME = 'User';
+
+  /** {@inheritDoc} */
   protected const _URI = 'user';
 
   /** {@inheritDoc} */
