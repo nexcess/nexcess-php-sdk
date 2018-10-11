@@ -46,6 +46,15 @@ class ResourceException extends Exception {
   /** @var int Attempt to use an api method when no endpoint is available. */
   const NO_ENDPOINT_AVAILABLE = 10;
 
+  /** @var int Attempt to build a collection from an invalid value. */
+  const UNCOLLECTABLE = 11;
+
+  /** @var int Attempt to build a datetime from an invalid value. */
+  const UNDATETIMEABLE = 12;
+
+  /** @var int Attempt to build a model from an invalid value. */
+  const UNMODELABLE = 13;
+
   /** {@inheritDoc} */
   const INFO = [
     self::NO_SUCH_PROPERTY => ['message' => 'resource.no_such_property'],
@@ -61,6 +70,9 @@ class ResourceException extends Exception {
       ['message' => 'resource.wait_timeout_exceeded'],
     self::INVALID_FILTER => ['message' => 'resource.invalid_filter'],
     self::NO_ENDPOINT_AVAILABLE =>
-      ['message' => 'resource.no_endpoint_available']
+      ['message' => 'resource.no_endpoint_available'],
+    self::UNCOLLECTABLE => ['message' => 'resource.uncollectable'],
+    self::UNDATETIMEABLE => ['message' => 'resource.undatetimeable'],
+    self::UNMODELABLE => ['message' => 'resource.unmodelable']
   ];
 }

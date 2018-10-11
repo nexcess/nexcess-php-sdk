@@ -34,7 +34,7 @@ return [
   'description' => 'nex1.small',
   'host' => 'nexcess-cli.example.com',
   'identity' => 'nexcess-cli.example.com - 203.0.113.1',
-  'last_bill_date' => 0,
+  'last_bill_date' => null,
   'cloud' => Cloud::__set_state([
     '_values' => [
       'cloud_id' => 3,
@@ -47,7 +47,7 @@ return [
     ],
   ]),
   'network' => null,
-  'next_bill_date' => '09/05/2017 04:00:00 +00:00',
+  'next_bill_date' => new DateTimeImmutable('09/05/2017 04:00:00 +00:00'),
   'os' => [
     'id' => 32,
     'identity' => 'ubuntu 17.04 (x86_64)',
@@ -68,7 +68,7 @@ return [
     ],
   ]),
   'power_status' => 'on',
-  'start_date' => '08/05/2017 13:02:15 +00:00',
+  'start_date' => new DateTimeImmutable('08/05/2017 13:02:15 +00:00'),
   'state' => 'stable',
   'status' => 'enabled',
 ];
