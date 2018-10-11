@@ -15,7 +15,7 @@ use Nexcess\Sdk\ {
   Resource\Modelable,
   Resource\Package\Resource as Package,
   Resource\Order\Resource as Order,
-  Resource\Service
+  Resource\Service\Resource as Service
 };
 
 /**
@@ -96,6 +96,7 @@ class Resource extends Service {
    * {@inheritDoc}
    */
   public function sync(array $data, bool $hard = false) : Modelable {
+    // remove "bandwidth" pre/suffixes
     $bandwidth_keys = [
       'bandwidth_overage_fee',
       'bandwidth_profile_id',

@@ -16,8 +16,8 @@ use Nexcess\Sdk\ {
   Resource\Model,
   Resource\Order\OrderException,
   Resource\Package\Resource as Package,
-  Resource\Service,
-  Resource\ServiceEndpoint,
+  Resource\Service\Endpoint as ServiceEndpoint,
+  Resource\Service\Resource as Service,
   SdkException,
   Util\Util
 };

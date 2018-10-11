@@ -11,7 +11,7 @@ namespace Nexcess\Sdk\Resource\CloudServer;
 
 use Nexcess\Sdk\ {
   Resource\CloudServer\Resource,
-  Resource\ServiceEndpoint
+  Resource\Service\Endpoint as ServiceEndpoint
 };
 
 /**
