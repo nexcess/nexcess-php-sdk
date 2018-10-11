@@ -39,6 +39,8 @@ class Endpoint extends ServiceEndpoint {
       ['json' => ['_action' => 'reboot']]
     );
 
+    $this->_wait($this->_waitForStart($resource));
+
     return $this;
   }
 
@@ -60,6 +62,8 @@ class Endpoint extends ServiceEndpoint {
       ['json' => ['_action' => 'resize', 'package_id' => $package_id]]
     );
 
+    $this->_wait($this->_waitForResize($resource));
+
     return $this;
   }
 
@@ -76,6 +80,8 @@ class Endpoint extends ServiceEndpoint {
       self::_URI . "/{$resource->getId()}",
       ['json' => ['_action' => 'start']]
     );
+
+    $this->_wait($this->_waitForStart($resource));
 
     return $this;
   }
@@ -94,6 +100,8 @@ class Endpoint extends ServiceEndpoint {
       ['json' => ['_action' => 'stop']]
     );
 
+    $this->_wait($this->_waitForStop($resource));
+
     return $this;
   }
 
@@ -101,15 +109,61 @@ class Endpoint extends ServiceEndpoint {
    * Views an existing cloud server's console log.
    *
    * @param Resource $resource Cloud Server model
-   * @return Endpoint $this
+   * @return string[] Lines from console log file
    * @throws ApiException If request fails
    */
-  public function viewConsoleLog(Resource $resource) : Endpoint {
-    $this->_client->request(
-      'GET',
-      self::_URI . "/{$resource->getId()}/console-log"
+  public function viewConsoleLog(Resource $resource) : array {
+    return explode(
+      "\n",
+      $this->_client->request(
+        'POST',
+        self::_URI . "/{$resource->getId()}",
+        ['_action' => 'console-log']
+      )
     );
+  }
 
-    return $this;
+  /**
+   * Builds callback to wait() for a cloud server to turn on.
+   *
+   * @param Resource $resource The CloudServer instance to check
+   * @return Closure Callback for wait()
+   */
+  protected function _waitForStart(Resource $resource) : Closure {
+    return function (Endpoint $endpoint) use ($resource) {
+      $resource->sync($this->_retrieve($resource->getId()));
+      return $resource->get('power_status') === 'on';
+    };
+  }
+
+  /**
+   * Builds callback to wait() for a cloud server to turn off.
+   *
+   * @param Resource $resource The CloudServer instance to check
+   * @return Closure Callback for wait()
+   */
+  protected function _waitForStop(Resource $resource) : Closure {
+    return function (Endpoint $endpoint) use ($resource) {
+      $resource->sync($this->_retrieve($resource->getId()));
+      return $resource->get('power_status') === 'off';
+    };
+  }
+
+  /**
+   * Builds callback to wait() for a cloud server to be resized.
+   *
+   * @param Resource $resource The CloudServer instance to check
+   * @param int $package_id The resized package id
+   * @return Closure Callback for wait()
+   */
+  protected function _waitForResize(
+    Resource $resource,
+    int $package_id
+  ) : Closure {
+    return function (Endpoint $endpoint) use ($resource, $package_id) {
+      $resource->sync($this->_retrieve($resource->getId()));
+      return $resource->get('package_id') === $package_id &&
+        $resource->get('state') === 'stable';
+    };
   }
 }
