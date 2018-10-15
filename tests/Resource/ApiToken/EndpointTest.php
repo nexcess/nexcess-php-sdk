@@ -11,7 +11,7 @@ namespace Nexcess\Sdk\Tests\Resource\ApiToken;
 
 use Nexcess\Sdk\ {
   Resource\ApiToken\Endpoint,
-  Resource\ApiToken\Resource,
+  Resource\ApiToken\Entity,
   Tests\Resource\EndpointTestCase,
   Util\Language,
   Util\Util
@@ -36,7 +36,7 @@ class EndpointTest extends EndpointTestCase {
   protected const _SUBJECT_FQCN = Endpoint::class;
 
   /** {@inheritDoc} */
-  protected const _SUBJECT_MODEL_FQCN = Resource::class;
+  protected const _SUBJECT_MODEL_FQCN = Entity::class;
 
   /**
    * {@inheritDoc}

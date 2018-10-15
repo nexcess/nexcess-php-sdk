@@ -14,7 +14,7 @@ use Nexcess\Sdk\Resource\Model;
 /**
  * API Token.
  */
-class Resource extends Model {
+class Entity extends Model {
 
   /** {@inheritDoc} */
   public const MODULE_NAME = 'ApiToken';

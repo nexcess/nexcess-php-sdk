@@ -10,18 +10,18 @@ declare(strict_types  = 1);
 namespace Nexcess\Sdk\Resource\VirtGuestCloud;
 
 use Nexcess\Sdk\ {
-  Resource\Cloud\Resource as Cloud,
-  Resource\CloudAccount\Resource as CloudAccount,
+  Resource\Cloud\Entity as Cloud,
+  Resource\CloudAccount\Entity as CloudAccount,
   Resource\Modelable,
-  Resource\Package\Resource as Package,
-  Resource\Order\Resource as Order,
-  Resource\Service\Resource as Service
+  Resource\Package\Entity as Package,
+  Resource\Order\Entity as Order,
+  Resource\Service\Entity as Service
 };
 
 /**
  * Cloud Account (virtual hosting) service object.
  */
-class Resource extends Service {
+class Entity extends Service {
 
   /** {@inheritDoc} */
   public const MODULE_NAME = 'VirtGuestCloud';

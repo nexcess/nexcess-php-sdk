@@ -10,7 +10,7 @@ declare(strict_types  = 1);
 namespace Nexcess\Sdk\Resource\CloudServer;
 
 use Nexcess\Sdk\ {
-  Resource\CloudServer\Resource,
+  Resource\CloudServer\Entity,
   Resource\Service\Endpoint as ServiceEndpoint
 };
 
@@ -26,23 +26,23 @@ class Endpoint extends ServiceEndpoint {
   protected const _SERVICE_TYPE = 'virt-guest';
 
   /** {@inheritDoc} */
-  protected const _MODEL_FQCN = Resource::class;
+  protected const _MODEL_FQCN = Entity::class;
 
   /**
    * Reboots an existing cloud server.
    *
-   * @param Resource $resource Cloud Server model
+   * @param Entity $entity Cloud Server model
    * @return Endpoint $this
    * @throws ApiException If request fails
    */
-  public function reboot(Resource $resource) : Endpoint {
+  public function reboot(Entity $entity) : Endpoint {
     $this->_client->request(
       'POST',
-      self::_URI . "/{$resource->getId()}",
+      self::_URI . "/{$entity->getId()}",
       ['json' => ['_action' => 'reboot']]
     );
 
-    $this->_wait($this->_waitForStart($resource));
+    $this->_wait($this->_waitForStart($entity));
 
     return $this;
   }
@@ -50,22 +50,19 @@ class Endpoint extends ServiceEndpoint {
   /**
    * Resizes an existing cloud server.
    *
-   * @param Resource $resource Cloud Server model
+   * @param Entity $entity Cloud Server model
    * @param int $package_id Desired package id
    * @return Endpoint $this
    * @throws ApiException If request fails
    */
-  public function resize(
-    Resource $resource,
-    int $package_id
-  ) : Endpoint {
+  public function resize(Entity $entity, int $package_id) : Endpoint {
     $this->_client->request(
       'POST',
-      self::_URI . "/{$resource->getId()}",
+      self::_URI . "/{$entity->getId()}",
       ['json' => ['_action' => 'resize', 'package_id' => $package_id]]
     );
 
-    $this->_wait($this->_waitForResize($resource));
+    $this->_wait($this->_waitForResize($entity));
 
     return $this;
   }
@@ -73,18 +70,18 @@ class Endpoint extends ServiceEndpoint {
   /**
    * Starts an existing cloud server.
    *
-   * @param Resource $resource Cloud Server model
+   * @param Entity $entity Cloud Server model
    * @return Endpoint $this
    * @throws ApiException If request fails
    */
-  public function start(Resource $resource) : Endpoint {
+  public function start(Entity $entity) : Endpoint {
     $this->_client->request(
       'POST',
-      self::_URI . "/{$resource->getId()}",
+      self::_URI . "/{$entity->getId()}",
       ['json' => ['_action' => 'start']]
     );
 
-    $this->_wait($this->_waitForStart($resource));
+    $this->_wait($this->_waitForStart($entity));
 
     return $this;
   }
@@ -92,18 +89,18 @@ class Endpoint extends ServiceEndpoint {
   /**
    * Stops an existing cloud server.
    *
-   * @param Resource $resource Cloud Server model
+   * @param Entity $entity Cloud Server model
    * @return Endpoint $this
    * @throws ApiException If request fails
    */
-  public function stop(Resource $resource) : Endpoint {
+  public function stop(Entity $entity) : Endpoint {
     $this->_client->request(
       'POST',
-      self::_URI . "/{$resource->getId()}",
+      self::_URI . "/{$entity->getId()}",
       ['json' => ['_action' => 'stop']]
     );
 
-    $this->_wait($this->_waitForStop($resource));
+    $this->_wait($this->_waitForStop($entity));
 
     return $this;
   }
@@ -111,16 +108,16 @@ class Endpoint extends ServiceEndpoint {
   /**
    * Views an existing cloud server's console log.
    *
-   * @param Resource $resource Cloud Server model
+   * @param Entity $entity Cloud Server model
    * @return string[] Lines from console log file
    * @throws ApiException If request fails
    */
-  public function viewConsoleLog(Resource $resource) : array {
+  public function viewConsoleLog(Entity $entity) : array {
     return explode(
       "\n",
       $this->_client->request(
         'POST',
-        self::_URI . "/{$resource->getId()}",
+        self::_URI . "/{$entity->getId()}",
         ['_action' => 'console-log']
       )
     );
@@ -129,44 +126,44 @@ class Endpoint extends ServiceEndpoint {
   /**
    * Builds callback to wait() for a cloud server to turn on.
    *
-   * @param Resource $resource The CloudServer instance to check
+   * @param Entity $entity The CloudServer instance to check
    * @return Closure Callback for wait()
    */
-  protected function _waitForStart(Resource $resource) : Closure {
-    return function (Endpoint $endpoint) use ($resource) {
-      $resource->sync($this->_retrieve($resource->getId()));
-      return $resource->get('power_status') === 'on';
+  protected function _waitForStart(Entity $entity) : Closure {
+    return function (Endpoint $endpoint) use ($entity) {
+      $entity->sync($this->_retrieve($entity->getId()));
+      return $entity->get('power_status') === 'on';
     };
   }
 
   /**
    * Builds callback to wait() for a cloud server to turn off.
    *
-   * @param Resource $resource The CloudServer instance to check
+   * @param Entity $entity The CloudServer instance to check
    * @return Closure Callback for wait()
    */
-  protected function _waitForStop(Resource $resource) : Closure {
-    return function (Endpoint $endpoint) use ($resource) {
-      $resource->sync($this->_retrieve($resource->getId()));
-      return $resource->get('power_status') === 'off';
+  protected function _waitForStop(Entity $entity) : Closure {
+    return function (Endpoint $endpoint) use ($entity) {
+      $entity->sync($this->_retrieve($entity->getId()));
+      return $entity->get('power_status') === 'off';
     };
   }
 
   /**
    * Builds callback to wait() for a cloud server to be resized.
    *
-   * @param Resource $resource The CloudServer instance to check
+   * @param Entity $entity The CloudServer instance to check
    * @param int $package_id The resized package id
    * @return Closure Callback for wait()
    */
   protected function _waitForResize(
-    Resource $resource,
+    Entity $entity,
     int $package_id
   ) : Closure {
-    return function (Endpoint $endpoint) use ($resource, $package_id) {
-      $resource->sync($this->_retrieve($resource->getId()));
-      return $resource->get('package_id') === $package_id &&
-        $resource->get('state') === 'stable';
+    return function (Endpoint $endpoint) use ($entity, $package_id) {
+      $entity->sync($this->_retrieve($entity->getId()));
+      return $entity->get('package_id') === $package_id &&
+        $entity->get('state') === 'stable';
     };
   }
 }

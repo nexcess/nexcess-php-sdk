@@ -11,7 +11,7 @@ namespace Nexcess\Sdk\Resource\Service;
 
 use Nexcess\Sdk\Resource\Model;
 
-abstract class Resource extends Model {
+abstract class Entity extends Model {
 
   /** {@inheritDoc} */
   public const MODULE_NAME = 'Service';

@@ -229,7 +229,7 @@ class Client {
    * (as opposed to using `new`),
    * as it will associate them with their correct endpoint(s) automatically.
    *
-   * @param string $name Resource FQCN or module name
+   * @param string $name Entity FQCN or module name
    * @return Model
    * @throws SdkException If the model is unknown
    */
@@ -237,7 +237,7 @@ class Client {
     if (is_a($name, Model::class, true)) {
       $model = $name;
     } else {
-      $model = static::RESOURCE_NAMESPACE . "\\{$name}\\Resource";
+      $model = static::RESOURCE_NAMESPACE . "\\{$name}\\Entity";
 
       if (! is_a($model, Model::class, true)) {
         throw new SdkException(SdkException::NO_SUCH_MODEL, ['name' => $name]);
