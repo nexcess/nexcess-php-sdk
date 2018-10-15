@@ -11,7 +11,7 @@ namespace Nexcess\Sdk\Resource\Package;
 
 use Nexcess\Sdk\ {
   Resource\Endpoint as ReadableEndpoint,
-  Resource\Package\Resource,
+  Resource\Package\Entity,
   Resource\Package\PackageException
 };
 
@@ -27,7 +27,7 @@ class Endpoint extends ReadableEndpoint {
   protected const _URI = 'package';
 
   /** {@inheritDoc} */
-  protected const _MODEL_FQCN = Resource::class;
+  protected const _MODEL_FQCN = Entity::class;
 
   /**
    * {@inheritDoc}

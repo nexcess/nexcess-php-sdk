@@ -1,14 +1,14 @@
 <?php
 
 use Nexcess\Sdk\ {
-  Resource\App\Resource as App,
-  Resource\Cloud\Resource as Cloud,
-  Resource\CloudAccount\Resource as CloudAccount,
+  Resource\App\Entity as App,
+  Resource\Cloud\Entity as Cloud,
+  Resource\CloudAccount\Entity as CloudAccount,
   Resource\Collection,
-  Resource\Invoice\Resource as Invoice,
-  Resource\Package\Resource as Package,
-  Resource\Order\Resource AS Order,
-  Resource\VirtGuestCloud\Resource as VirtGuestCloud
+  Resource\Invoice\Entity as Invoice,
+  Resource\Package\Entity as Package,
+  Resource\Order\Entity as Order,
+  Resource\VirtGuestCloud\Entity as VirtGuestCloud
 };
 
 return [

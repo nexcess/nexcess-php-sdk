@@ -1,8 +1,8 @@
 <?php
 
 use Nexcess\Sdk\ {
-  Resource\Cloud\Resource as Cloud,
-  Resource\Package\Resource as Package
+  Resource\Cloud\Entity as Cloud,
+  Resource\Package\Entity as Package
 };
 
 return [

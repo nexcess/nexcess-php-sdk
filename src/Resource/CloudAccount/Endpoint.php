@@ -12,7 +12,7 @@ namespace Nexcess\Sdk\Resource\CloudAccount;
 use Nexcess\Sdk\ {
   ApiException,
   Resource\CanCreate,
-  Resource\CloudAccount\Resource,
+  Resource\CloudAccount\Entity,
   Resource\Creatable,
   Resource\Endpoint as BaseEndpoint,
   Util\Util
@@ -31,7 +31,7 @@ class Endpoint extends BaseEndpoint implements Creatable {
   protected const _URI = 'cloud-account';
 
   /** {@inheritDoc} */
-  protected const _MODEL_FQCN = Resource::class;
+  protected const _MODEL_FQCN = Entity::class;
 
   /** {@inheritDoc} */
   protected const _PARAMS = [
@@ -52,34 +52,34 @@ class Endpoint extends BaseEndpoint implements Creatable {
    * and does not delete the cloud account directly.
    * Use this method to cancel a primary cloud account, not a dev account.
    *
-   * @param Resource $resource Cloud Server resource
+   * @param Entity $entity Cloud Server instance
    * @param array $survey Cancellation survey
    * @return Endpoint $this
    */
-  public function cancel(Resource $resource, array $survey) : Endpoint {
-    $resource->get('service')->cancel($survey);
+  public function cancel(Entity $entity, array $survey) : Endpoint {
+    $entity->get('service')->cancel($survey);
     return $this;
   }
 
   /**
    * Switches PHP versions active on an existing cloud account.
    *
-   * @param Resource $resource Cloud server instance
+   * @param Entity $entity Cloud server instance
    * @param string $version Desired PHP version
    * @return Endpoint $this
    * @throws ApiException If request fails
    */
   public function setPhpVersion(
-    Resource $resource,
+    Entity $entity,
     string $version
   ) : Endpoint {
     $this->_client->request(
       'POST',
-      self::_URI . "/{$resource->getId()}",
+      self::_URI . "/{$entity->getId()}",
       ['json' => ['_action' => 'set-php-version', 'php_version' => $version]]
     );
 
-    $this->_wait($this->_waitForPhpVersion($resource, $version));
+    $this->_wait($this->_waitForPhpVersion($entity, $version));
 
     return $this;
   }
@@ -87,17 +87,17 @@ class Endpoint extends BaseEndpoint implements Creatable {
   /**
    * Builds callback to wait() for a cloud account to update php versions.
    *
-   * @param Resource $resource The CloudAccount instance to check
+   * @param Entity $entity The CloudAccount instance to check
    * @param string $version The target php version
    * @return Closure Callback for wait()
    */
   protected function _waitForPhpVersion(
-    Resource $resource,
+    Entity $entity,
     string $version
   ) : Closure {
-    return function (Endpoint $endpoint) use ($resource, $version) {
-      $resource->sync($this->_retrieve($resource->getId()));
-      return $resource->get('php_version') === $version;
+    return function (Endpoint $endpoint) use ($entity, $version) {
+      $entity->sync($this->_retrieve($entity->getId()));
+      return $entity->get('php_version') === $version;
     };
   }
 }

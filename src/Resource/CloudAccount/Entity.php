@@ -10,16 +10,16 @@ declare(strict_types  = 1);
 namespace Nexcess\Sdk\Resource\CloudAccount;
 
 use Nexcess\Sdk\ {
-  Resource\App\Resource as App,
+  Resource\App\Entity as App,
   Resource\Model,
-  Resource\VirtGuestCloud\Resource as Service,
+  Resource\VirtGuestCloud\Entity as Service,
   Util\Util
 };
 
 /**
  * Cloud Account (virtual hosting).
  */
-class Resource extends Model {
+class Entity extends Model {
 
   /** {@inheritDoc} */
   public const MODULE_NAME = 'CloudAccount';
@@ -76,11 +76,11 @@ class Resource extends Model {
    * Switches PHP version on this cloud account.
    *
    * @param string $version Target PHP version
-   * @return Resource $this
+   * @return Entity $this
    * @throws ResourceException If endpoint not available
    * @throws ApiException If request fails
    */
-  public function setPhpVersion(string $version) : Resource {
+  public function setPhpVersion(string $version) : Entity {
     $this->_getEndpoint()->setPhpVersion($this, $version)->wait();
     return $this;
   }

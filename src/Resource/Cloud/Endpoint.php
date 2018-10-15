@@ -10,7 +10,7 @@ declare(strict_types  = 1);
 namespace Nexcess\Sdk\Resource\Cloud;
 
 use Nexcess\Sdk\ {
-  Resource\Cloud\Resource,
+  Resource\Cloud\Entity,
   Resource\Endpoint as ReadableEndpoint
 };
 
@@ -26,5 +26,5 @@ class Endpoint extends ReadableEndpoint {
   protected const _URI = 'virt-cloud';
 
   /** {@inheritDoc} */
-  protected const _MODEL_FQCN = Resource::class;
+  protected const _MODEL_FQCN = Entity::class;
 }
