@@ -84,4 +84,17 @@ class Entity extends Model {
     $this->_getEndpoint()->setPhpVersion($this, $version)->wait();
     return $this;
   }
+
+  /**
+   * Clear Nginx Cache
+   *
+   * @return Entity $this
+   * @throws ResourceException If endpoint not available
+   * @throws ApiException If request fails
+   */
+  public function clearNginxCache() : Entity {
+    $this->_getEndpoint()->clearNginxCache()->wait();
+    return $this;
+  }
+
 }

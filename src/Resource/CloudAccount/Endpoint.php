@@ -100,4 +100,22 @@ class Endpoint extends BaseEndpoint implements Creatable {
       return $entity->get('php_version') === $version;
     };
   }
+
+  /**
+   * Clear Nginx Cache
+   *
+   * @return Entity $this
+   * @throws ResourceException If endpoint not available
+   * @throws ApiException If request fails
+   */
+  public function clearNginxCache() : Entity {
+    $this->_client->request(
+      'POST',
+      self::_URI . "/{$entity->getId()}",
+      ['json' => ['_action' => 'purge-cache']]
+    );
+
+    return $this;
+  }
+
 }
