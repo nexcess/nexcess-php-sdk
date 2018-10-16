@@ -73,6 +73,27 @@ class Entity extends Model {
   ];
 
   /**
+   * Creates a development-mode account based on this cloud account.
+   *
+   * Note, will fail if this cloud account is not a "primary" account.
+   *
+   * @param array $data Map of settings for new dev account:
+   *  - bool "copy_account" (optional, defaults to true) Copy settings/data?
+   *  - int "package_id" (required) Service package id
+   *  - bool "scrub_account" (optional, defaults to true) Obfuscate PII?
+   *  - string "subdomain" (optional, defaults to "dev.") Dev subdomain
+   * @return Entity The new dev account on success
+   * @throws ResourceException If endpoint not available
+   * @throws ApiException If request fails
+   */
+  public function createDevAccount(array $data) : Entity {
+    $endpoint = $this->_getEndpoint();
+    $dev = $endpoint->createDevAccount($this, $data);
+    $endpoint->wait();
+    return $dev;
+  }
+
+  /**
    * Switches PHP version on this cloud account.
    *
    * @param string $version Target PHP version

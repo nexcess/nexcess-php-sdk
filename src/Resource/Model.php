@@ -98,6 +98,34 @@ abstract class Model implements Modelable {
 
   /**
    * {@inheritDoc}
+   * @see https://php.net/__debugInfo
+   */
+  public function __debugInfo() {
+    return [
+      'module' => $this->moduleName(),
+      'has_endpoint' => isset($this->_endpoint),
+      'values' => array_map(
+        function ($value) {
+          if ($value instanceof Model) {
+            return ['entity' => $value->moduleName(), 'id' => $value->getId()];
+          }
+
+          if ($value instanceof Collection) {
+            return [
+              'collection' => $value->of(),
+              'entities' => $value->getIds()
+            ];
+          }
+
+          return $value;
+        },
+        $this->_values
+      )
+    ];
+  }
+
+  /**
+   * {@inheritDoc}
    */
   public function equals(Modelable $other) : bool {
     return ($other instanceof $this) &&
