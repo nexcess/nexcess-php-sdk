@@ -157,7 +157,7 @@ class EndpointTest extends EndpointTestCase {
         ]
       ],
       [
-          'clearNginxCache', []
+        'clearNginxCache', []
       ]
     ];
   }
@@ -206,7 +206,7 @@ class EndpointTest extends EndpointTestCase {
     $handler = function ($request, $options) {
       $actual = Util::jsonDecode((string) $request->getBody());
 
-      $this->assertArrayHasKey('_action',$actual);
+      $this->assertArrayHasKey('_action', $actual);
       $this->assertEquals($actual['_action'], 'purge-cache');
     
       return new GuzzleResponse(
