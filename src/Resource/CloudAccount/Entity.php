@@ -93,7 +93,7 @@ class Entity extends Model {
    * @throws ApiException If request fails
    */
   public function clearNginxCache() : Entity {
-    $this->_getEndpoint()->clearNginxCache($this)->wait();
+    $this->_getEndpoint()->clearNginxCache($this);
     return $this;
   }
 

@@ -42,7 +42,8 @@ class Endpoint extends BaseEndpoint implements Creatable {
       'install_app' => [Util::TYPE_BOOL, false],
       'package_id' => [Util::TYPE_INT]
     ],
-    'setPhpVersion' => ['version' => [Util::TYPE_STRING]]
+    'setPhpVersion' => ['version' => [Util::TYPE_STRING]],
+    'clearNginxCache' => []
   ];
 
   /**
@@ -114,6 +115,8 @@ class Endpoint extends BaseEndpoint implements Creatable {
       self::_URI . "/{$entity->getId()}",
       ['json' => ['_action' => 'purge-cache']]
     );
+
+    $this->_wait(null);
 
     return $this;
   }
