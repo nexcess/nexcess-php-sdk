@@ -157,7 +157,7 @@ class EndpointTest extends EndpointTestCase {
         ]
       ],
       [
-          'clearNginxCache', []
+span class="pl-s1">         'clearNginxCache', []
       ]
     ];
   }
