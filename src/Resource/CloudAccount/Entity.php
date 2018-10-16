@@ -94,6 +94,15 @@ class Entity extends Model {
   }
 
   /**
+   * Gets php versions available for this cloud account to use.
+   *
+   * @return string[] List of available php major.minor versions
+   */
+  public function getAvailablePhpVersions() : array {
+    return $this->_getEndpoint()->getAvailablePhpVersions($this);
+  }
+
+  /**
    * Switches PHP version on this cloud account.
    *
    * @param string $version Target PHP version

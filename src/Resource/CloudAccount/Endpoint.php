@@ -98,6 +98,16 @@ class Endpoint extends BaseEndpoint implements Creatable {
   }
 
   /**
+   * Gets php versions available for a given cloud account to use.
+   *
+   * @param Entity $entity The subject cloud account
+   * @return string[] List of available php major.minor versions
+   */
+  public function getAvailablePhpVersions(Entity $entity) : array {
+    return $entity->get('service')->getAvailablePhpVersions();
+  }
+
+  /**
    * Switches PHP versions active on an existing cloud account.
    *
    * @param Entity $entity Cloud server instance
