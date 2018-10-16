@@ -17,6 +17,7 @@ use Nexcess\Sdk\ {
   Resource\CloudAccount\Endpoint,
   Resource\CloudAccount\Entity,
   Resource\ResourceException,
+  Resource\VirtGuestCloud\Entity as Service,
   Tests\Resource\EndpointTestCase,
   Util\Language,
   Util\Util
@@ -247,18 +248,46 @@ class EndpointTest extends EndpointTestCase {
   }
 
   /**
+   * @covers Endpoint::getAvailablePhpVersions
+   */
+  public function testGetAvailablePhpVersions() {
+    $this->_getSandbox()->play(function ($api, $sandbox) {
+      $versions = ['5.6', '7.0', '7.1', '7.2'];
+
+      $service = $this->createMock(Service::class);
+      $service->expects($this->once())
+        ->method('getAvailablePhpVersions')
+        ->willReturn($versions);
+
+      $entity = Entity::__set_state([
+        '_values' => ['account_id' => 1, 'service' => $service]
+      ]);
+      $this->assertEquals(
+        $versions,
+        $api->getEndpoint(static::_SUBJECT_MODULE)
+          ->getAvailablePhpVersions($entity),
+        'invokes and returns $entity->get(service)->getAvailablePhpVersions()'
+      );
+    });
+  }
+
+  /**
    * @covers Endpoint::setPhpVersion
    */
   public function testSetPhpVersion() {
+    // custom request handler for sandbox
     $handler = function ($request, $options) {
+      // check request path
       $this->assertEquals('cloud-account/1', $request->getUri()->getPath());
 
+      // check request parameters
       $actual = Util::jsonDecode((string) $request->getBody());
       $this->assertArrayHasKey('_action', $actual);
       $this->assertEquals('set-php-version', $actual['_action']);
       $this->assertArrayHasKey('php_version', $actual);
       $this->assertEquals('7.2', $actual['php_version']);
 
+      // assertions passed; return 200 response
       return new GuzzleResponse(
         200,
         ['Content-type' => 'application/json'],
@@ -266,6 +295,7 @@ class EndpointTest extends EndpointTestCase {
       );
     };
 
+    // kick off
     $this->_getSandbox(null, $handler)
       ->play(function ($api, $sandbox) {
         $entity = $api->getModel(static::_SUBJECT_MODULE)->set('id', 1);

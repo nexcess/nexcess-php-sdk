@@ -15,7 +15,7 @@ use GuzzleHttp\ {
 use Nexcess\Sdk\ {
   Resource\VirtGuestCloud\Endpoint,
   Resource\VirtGuestCloud\Entity,
-  Tests\Resource\EndpointTestCase,
+  Tests\Resource\EndpointTestCase
 };
 
 class EndpointTest extends EndpointTestCase {
