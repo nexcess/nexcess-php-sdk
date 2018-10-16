@@ -55,6 +55,12 @@ class ResourceException extends Exception {
   /** @var int Attempt to build a model from an invalid value. */
   const UNMODELABLE = 13;
 
+  /** @var int Invalid parameter for an api call. */
+  const WRONG_PARAM = 14;
+
+  /** @var int Missing parameter for an api call. */
+  const MISSING_PARAM = 15;
+
   /** {@inheritDoc} */
   const INFO = [
     self::NO_SUCH_PROPERTY => ['message' => 'resource.no_such_property'],
@@ -73,6 +79,8 @@ class ResourceException extends Exception {
       ['message' => 'resource.no_endpoint_available'],
     self::UNCOLLECTABLE => ['message' => 'resource.uncollectable'],
     self::UNDATETIMEABLE => ['message' => 'resource.undatetimeable'],
-    self::UNMODELABLE => ['message' => 'resource.unmodelable']
+    self::UNMODELABLE => ['message' => 'resource.unmodelable'],
+    self::WRONG_PARAM => ['message' => 'resource.wrong_param'],
+    self::MISSING_PARAM => ['message' => 'resource.missing_param']
   ];
 }

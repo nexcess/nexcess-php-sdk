@@ -32,6 +32,15 @@
         "install_app": "Should the application be installed? Note, this applies only to installable apps.",
         "package_id": "ID of the service package for the new cloud account. @see VirtGuestCloud::list()."
       },
+      "createDevAccount": {
+        "copy_account": "Copy settings/data from parent cloud account?",
+        "domain": "Domain name to use for the new dev account. Note, the parent account domain will be appended: provide ONLY the desired subdomain.",
+        "package_id": "ID of the service package for the new dev account. @see VirtGuestCloud::list().",
+        "ref_cloud_account_id": "ID of the parent cloud account",
+        "ref_service_id": "ID of the parent cloud account's service",
+        "ref_type": "Must be 'development'.",
+        "scrub_account": "Obfuscate personally identifiable information in data copied from parent cloud account?"
+      },
       "setPhpVersion": {
         "version": "Target PHP version to use on cloud account. @see CloudAccount::getAvailablePhpVersions()."
       }
