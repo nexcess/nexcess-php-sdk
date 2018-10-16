@@ -42,6 +42,15 @@ class Endpoint extends BaseEndpoint implements Creatable {
       'install_app' => [Util::TYPE_BOOL, false],
       'package_id' => [Util::TYPE_INT]
     ],
+    'createDevAccount' => [
+      'copy_account' => [Util::TYPE_BOOL],
+      'domain' => [Util::TYPE_STRING],
+      'package_id' => [Util::TYPE_INT],
+      'ref_cloud_account_id' => [Util::TYPE_INT],
+      'ref_service_id' => [Util::TYPE_INT],
+      'ref_type' => [Util::TYPE_STRING],
+      'scrub_account' => [Util::TYPE_BOOL]
+    ],
     'setPhpVersion' => ['version' => [Util::TYPE_STRING]]
   ];
 
@@ -62,6 +71,35 @@ class Endpoint extends BaseEndpoint implements Creatable {
   }
 
   /**
+   * Creates a development-mode CloudAccount based on given CloudAccount.
+   * Note, the given CloudAccount MUST NOT be a development account itself.
+   *
+   * @param Entity $entity CloudAccount instance
+   * @return Entity The new dev account
+   * @throws ApiException On failure
+   */
+  public function createDevAccount(Entity $entity, array $data) : Entity {
+    $data = [
+      'domain' => ($data['domain'] ?? 'dev') . ".{$entity->get('domain')}",
+      'ref_cloud_account_id' => $entity->getId(),
+      'ref_service_id' => $entity->get('service')->getId(),
+      'ref_type' => 'development'
+    ] + $data
+      + [
+      'copy_account' => true,
+      'scrub_account' => true,
+    ];
+    $this->_validateParams(__FUNCTION__, $data);
+
+    $dev = $this->getModel()->sync(
+      $this->_client->request('POST', static::_URI, ['json' => $data])
+    );
+
+    $this->_wait($this->_waitUntilCreate($dev));
+    return $dev;
+  }
+
+  /**
    * Switches PHP versions active on an existing cloud account.
    *
    * @param Entity $entity Cloud server instance
@@ -79,7 +117,7 @@ class Endpoint extends BaseEndpoint implements Creatable {
       ['json' => ['_action' => 'set-php-version', 'php_version' => $version]]
     );
 
-    $this->_wait($this->_waitForPhpVersion($entity, $version));
+    $this->_wait($this->_waitUntilPhpVersion($entity, $version));
 
     return $this;
   }
@@ -91,7 +129,7 @@ class Endpoint extends BaseEndpoint implements Creatable {
    * @param string $version The target php version
    * @return Closure Callback for wait()
    */
-  protected function _waitForPhpVersion(
+  protected function _waitUntilPhpVersion(
     Entity $entity,
     string $version
   ) : Closure {
