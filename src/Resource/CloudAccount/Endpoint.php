@@ -9,6 +9,7 @@ declare(strict_types  = 1);
 
 namespace Nexcess\Sdk\Resource\CloudAccount;
 
+use Closure;
 use Nexcess\Sdk\ {
   ApiException,
   Resource\CanCreate,

@@ -30,6 +30,9 @@ class EndpointTest extends EndpointTestCase {
   /** @var string Resource name for new dev account responses. */
   protected const _RESOURCE_NEW_DEV = 'POST %2Fcloud-account.json';
 
+  /** @var string Resource name for cloud account #1 json payload. */
+  protected const _RESOURCE_GET_1 = 'GET %2Fcloud-account%2F1.json';
+
   /** @var string Resource name for cloud account instance data. */
   protected const _RESOURCE_CLOUD = 'cloud-account-1.toArray-shallow.php';
 
@@ -48,6 +51,9 @@ class EndpointTest extends EndpointTestCase {
 
   /** {@inheritDoc} */
   protected const _SUBJECT_MODEL_FQCN = Entity::class;
+
+  /** {@inheritDoc} */
+  protected const _SUBJECT_MODULE = 'CloudAccount';
 
   /**
    * {@inheritDoc}
@@ -238,5 +244,33 @@ class EndpointTest extends EndpointTestCase {
         new ResourceException(ResourceException::WRONG_PARAM)
       ]
     ];
+  }
+
+  /**
+   * @covers Endpoint::setPhpVersion
+   */
+  public function testSetPhpVersion() {
+    $handler = function ($request, $options) {
+      $this->assertEquals('cloud-account/1', $request->getUri()->getPath());
+
+      $actual = Util::jsonDecode((string) $request->getBody());
+      $this->assertArrayHasKey('_action', $actual);
+      $this->assertEquals('set-php-version', $actual['_action']);
+      $this->assertArrayHasKey('php_version', $actual);
+      $this->assertEquals('7.2', $actual['php_version']);
+
+      return new GuzzleResponse(
+        200,
+        ['Content-type' => 'application/json'],
+        $this->_getResource(static::_RESOURCE_GET_1, false)
+      );
+    };
+
+    $this->_getSandbox(null, $handler)
+      ->play(function ($api, $sandbox) {
+        $entity = $api->getModel(static::_SUBJECT_MODULE)->set('id', 1);
+        $api->getEndpoint(static::_SUBJECT_MODULE)
+          ->setPhpVersion($entity, '7.2');
+      });
   }
 }
