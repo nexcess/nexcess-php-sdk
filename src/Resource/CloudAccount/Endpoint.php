@@ -85,10 +85,7 @@ class Endpoint extends BaseEndpoint implements Creatable {
       'ref_service_id' => $entity->get('service')->getId(),
       'ref_type' => 'development'
     ] + $data
-      + [
-      'copy_account' => true,
-      'scrub_account' => true,
-    ];
+      + ['copy_account' => true, 'scrub_account' => true];
     $this->_validateParams(__FUNCTION__, $data);
 
     $dev = $this->getModel()->sync(

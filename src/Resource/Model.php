@@ -97,6 +97,7 @@ abstract class Model implements Modelable {
   }
 
   /**
+   * {@inheritDoc}
    * @see https://php.net/__debugInfo
    */
   public function __debugInfo() {
