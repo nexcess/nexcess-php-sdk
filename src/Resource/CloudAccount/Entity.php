@@ -87,7 +87,10 @@ class Entity extends Model {
    * @throws ApiException If request fails
    */
   public function createDevAccount(array $data) : Entity {
-    return $this->_getEndpoint()->createDevAccount($this, $data);
+    $endpoint = $this->_getEndpoint();
+    $dev = $endpoint->createDevAccount($this, $data);
+    $endpoint->wait();
+    return $dev;
   }
 
   /**
