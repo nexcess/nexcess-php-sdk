@@ -17,6 +17,7 @@ use Nexcess\Sdk\ {
   Resource\CloudAccount\Endpoint,
   Resource\CloudAccount\Entity,
   Resource\ResourceException,
+  Resource\VirtGuestCloud\Entity as Service,
   Tests\Resource\EndpointTestCase,
   Util\Language,
   Util\Util
@@ -30,8 +31,14 @@ class EndpointTest extends EndpointTestCase {
   /** @var string Resource name for new dev account responses. */
   protected const _RESOURCE_NEW_DEV = 'POST %2Fcloud-account.json';
 
+  /** @var string Resource name for cloud account #1 json payload. */
+  protected const _RESOURCE_GET_1 = 'GET %2Fcloud-account%2F1.json';
+
   /** @var string Resource name for cloud account instance data. */
   protected const _RESOURCE_CLOUD = 'cloud-account-1.toArray-shallow.php';
+
+  /** @var string Resource name for cloud account #1 json payload. */
+  protected const _RESOURCE_GET_1 = 'GET %2Fcloud-account%2F1.json';
 
   /** {@inheritDoc} */
   protected const _RESOURCE_INSTANCES = [
@@ -48,6 +55,9 @@ class EndpointTest extends EndpointTestCase {
 
   /** {@inheritDoc} */
   protected const _SUBJECT_MODEL_FQCN = Entity::class;
+
+  /** {@inheritDoc} */
+  protected const _SUBJECT_MODULE = 'CloudAccount';
 
   /**
    * {@inheritDoc}
@@ -152,6 +162,9 @@ class EndpointTest extends EndpointTestCase {
               Language::get('resource.CloudAccount.setPhpVersion.version')
           ]
         ]
+      ],
+      [
+        'clearNginxCache', []
       ]
     ];
   }
@@ -190,6 +203,33 @@ class EndpointTest extends EndpointTestCase {
         $api->getEndpoint(static::_SUBJECT_FQCN)
           ->createDevAccount($cloud, $params);
       });
+  }
+
+
+  /**
+   * @covers Endpoint::clearNginxCache
+   */
+  public function testClearNginxCache(){
+    $handler = function ($request, $options) {
+      $actual = Util::jsonDecode((string) $request->getBody());
+
+      $this->assertArrayHasKey('_action', $actual);
+      $this->assertEquals($actual['_action'], 'purge-cache');
+    
+      return new GuzzleResponse(
+        200,
+        ['Content-type' => 'application/json'],
+        $this->_getResource(static::_RESOURCE_GET_1, false)
+      );
+    };
+
+    $this->_getSandbox(null, $handler)
+      ->play(function ($api, $sandbox) {
+        $endpoint = $api->getEndpoint(static::_SUBJECT_FQCN);
+        $entity = $endpoint->getModel()->set('id', 1);
+        $endpoint->clearNginxCache($entity);
+      });
+
   }
 
   /**
@@ -238,5 +278,62 @@ class EndpointTest extends EndpointTestCase {
         new ResourceException(ResourceException::WRONG_PARAM)
       ]
     ];
+  }
+
+  /**
+   * @covers Endpoint::getAvailablePhpVersions
+   */
+  public function testGetAvailablePhpVersions() {
+    $this->_getSandbox()->play(function ($api, $sandbox) {
+      $versions = ['5.6', '7.0', '7.1', '7.2'];
+
+      $service = $this->createMock(Service::class);
+      $service->expects($this->once())
+        ->method('getAvailablePhpVersions')
+        ->willReturn($versions);
+
+      $entity = Entity::__set_state([
+        '_values' => ['account_id' => 1, 'service' => $service]
+      ]);
+      $this->assertEquals(
+        $versions,
+        $api->getEndpoint(static::_SUBJECT_MODULE)
+          ->getAvailablePhpVersions($entity),
+        'invokes and returns $entity->get(service)->getAvailablePhpVersions()'
+      );
+    });
+  }
+
+  /**
+   * @covers Endpoint::setPhpVersion
+   */
+  public function testSetPhpVersion() {
+    // custom request handler for sandbox
+    $handler = function ($request, $options) {
+      // check request path
+      $this->assertEquals('cloud-account/1', $request->getUri()->getPath());
+
+      // check request parameters
+      $actual = Util::jsonDecode((string) $request->getBody());
+      $this->assertArrayHasKey('_action', $actual);
+      $this->assertEquals('set-php-version', $actual['_action']);
+      $this->assertArrayHasKey('php_version', $actual);
+      $this->assertEquals('7.2', $actual['php_version']);
+
+      // assertions passed; return 200 response
+      return new GuzzleResponse(
+        200,
+        ['Content-type' => 'application/json'],
+        $this->_getResource(static::_RESOURCE_GET_1, false)
+      );
+    };
+
+    // kick off
+    $this->_getSandbox(null, $handler)
+      ->play(function ($api, $sandbox) {
+        $entity = $api->getModel(static::_SUBJECT_MODULE)->set('id', 1);
+        $api->getEndpoint(static::_SUBJECT_MODULE)
+          ->setPhpVersion($entity, '7.2');
+      });
   }
 }

@@ -94,6 +94,15 @@ class Entity extends Model {
   }
 
   /**
+   * Gets php versions available for this cloud account to use.
+   *
+   * @return string[] List of available php major.minor versions
+   */
+  public function getAvailablePhpVersions() : array {
+    return $this->_getEndpoint()->getAvailablePhpVersions($this);
+  }
+
+  /**
    * Switches PHP version on this cloud account.
    *
    * @param string $version Target PHP version
@@ -105,4 +114,17 @@ class Entity extends Model {
     $this->_getEndpoint()->setPhpVersion($this, $version)->wait();
     return $this;
   }
+
+  /**
+   * Clear Nginx Cache
+   *
+   * @return Entity $this
+   * @throws ResourceException If endpoint not available
+   * @throws ApiException If request fails
+   */
+  public function clearNginxCache() : Entity {
+    $this->_getEndpoint()->clearNginxCache($this);
+    return $this;
+  }
+
 }

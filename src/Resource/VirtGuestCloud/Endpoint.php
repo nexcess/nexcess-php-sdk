@@ -29,6 +29,18 @@ class Endpoint extends ServiceEndpoint {
   protected const _SERVICE_TYPE = 'virt-guest-cloud';
 
   /**
+   * Gets php versions available for a given cloud account to use.
+   *
+   * @param Entity $entity The subject cloud account
+   * @return string[] List of available php major.minor versions
+   */
+  public function getAvailablePhpVersions(Entity $entity) : array {
+    $this->_wait(null);
+    return $this->_client
+      ->request('GET', static::_URI . "/{$entity->getId()}/get-php-versions");
+  }
+
+  /**
    * Switches PHP versions active on a service's primary cloud account.
    *
    * @param Entity $entity Service instance
@@ -37,6 +49,7 @@ class Endpoint extends ServiceEndpoint {
    * @throws ApiException If request fails
    */
   public function setPhpVersion(Entity $entity, string $version) : Endpoint {
+    $this->_wait(null);
     $entity->get('cloud_account')->setPhpVersion($version);
     return $this;
   }

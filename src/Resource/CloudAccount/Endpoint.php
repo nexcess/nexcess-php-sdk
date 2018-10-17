@@ -9,6 +9,7 @@ declare(strict_types  = 1);
 
 namespace Nexcess\Sdk\Resource\CloudAccount;
 
+use Closure;
 use Nexcess\Sdk\ {
   ApiException,
   Resource\CanCreate,
@@ -36,6 +37,7 @@ class Endpoint extends BaseEndpoint implements Creatable {
 
   /** {@inheritDoc} */
   protected const _PARAMS = [
+    'clearNginxCache' => [],
     'create' => [
       'app_id' => [Util::TYPE_INT],
       'cloud_id' => [Util::TYPE_INT],
@@ -95,6 +97,16 @@ class Endpoint extends BaseEndpoint implements Creatable {
 
     $this->_wait($this->_waitUntilCreate($dev));
     return $dev;
+  }
+
+  /**
+   * Gets php versions available for a given cloud account to use.
+   *
+   * @param Entity $entity The subject cloud account
+   * @return string[] List of available php major.minor versions
+   */
+  public function getAvailablePhpVersions(Entity $entity) : array {
+    return $entity->get('service')->getAvailablePhpVersions();
   }
 
   /**
@@ -256,4 +268,24 @@ class Endpoint extends BaseEndpoint implements Creatable {
 
     return $backups;
   }
+
+  /*
+   * Clear Nginx Cache
+   *
+   * @return Endpoint $this
+   * @throws ResourceException If endpoint not available
+   * @throws ApiException If request fails
+   */
+  public function clearNginxCache(Entity $entity) : Endpoint {
+    $this->_client->request(
+      'POST',
+      self::_URI . "/{$entity->getId()}",
+      ['json' => ['_action' => 'purge-cache']]
+    );
+
+    $this->_wait(null);
+
+    return $this;
+  }
+
 }

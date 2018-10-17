@@ -10,6 +10,7 @@ declare(strict_types  = 1);
 namespace Nexcess\Sdk\Tests\Resource\CloudAccount;
 
 use Nexcess\Sdk\ {
+  Resource\CloudAccount\Endpoint,
   Resource\CloudAccount\Entity,
   Tests\Resource\ModelTestCase
 };
@@ -34,4 +35,44 @@ class EntityTest extends ModelTestCase {
 
   /** {@inheritDoc} */
   protected const _SUBJECT_FQCN = Entity::class;
+
+  /**
+   * @covers Entity::getAvailablePhpVersions
+   */
+  public function testGetAvailablePhpVersions() {
+    $versions = ['5.6', '7.0', '7.1', '7.2'];
+
+    $endpoint = $this->createMock(Endpoint::class);
+    $endpoint->expects($this->once())
+      ->method('getAvailablePhpVersions')
+      ->willReturn($versions);
+
+    $entity = Entity::__set_state(['_endpoint' => $endpoint]);
+    $this->assertEquals(
+      $versions,
+      $entity->getAvailablePhpVersions(),
+      'invokes and returns $endpoint->getAvailablePhpVersions()'
+    );
+  }
+
+  /**
+   * @covers Entity::setPhpVersion
+   */
+  public function testSetPhpVersion() {
+    $entity = $this->_getSubject();
+
+    $endpoint = $this->createMock(Endpoint::class);
+    $endpoint->expects($this->once())
+      ->method('setPhpVersion')
+      ->with($this->equalTo($entity), $this->equalTo('7.2'))
+      ->willReturn($endpoint);
+
+    $entity->setApiEndpoint($endpoint);
+
+    $this->assertEquals(
+      $entity,
+      $entity->setPhpVersion('7.2'),
+      'invokes $endpoint->setPhpversion($entity, 7.2)'
+    );
+  }
 }

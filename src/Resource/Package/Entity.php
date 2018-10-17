@@ -9,7 +9,9 @@ declare(strict_types  = 1);
 
 namespace Nexcess\Sdk\Resource\Package;
 
-use Nexcess\Sdk\Resource\Model;
+use Nexcess\Sdk\ {
+  Resource\Model
+};
 
 /**
  * Represents a service package.
