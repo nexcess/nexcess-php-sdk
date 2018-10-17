@@ -154,7 +154,7 @@ class Endpoint extends BaseEndpoint implements Creatable {
   }
 
   /**
-   * Return a list backup
+   * Return a list of backups
    *
    * @return Backup
    * @throws ApiException If request fails
