@@ -42,7 +42,7 @@ class Backup extends Model {
     'filesize',
     'filesize_bytes',
     'type',
-    'domain_options',
+    'download_url',
     'filedate',
     'complete'
   ];
