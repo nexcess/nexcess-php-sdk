@@ -190,6 +190,35 @@ class Endpoint extends BaseEndpoint implements Creatable {
    * @throws ApiException If request fails
    */
   public function getBackup(string $file_name) : Backup {
+    return $this->_findBackup($file_name);
+  }
+
+  public function downloadBackup(string $file_name, string $path) : bool {
+    $backup = $this->_findBackup($file_name, $backups);
+
+    if (! file_exists($path) or ! is_dir($path)) {
+      throw new Exception('##LG_INVALID_PATH##');
+    }
+
+    $path = trim($path);
+
+    if (substr($path, -1) !== DIRECTORY_SEPERATOR) {
+      $path .= DIRECTORY_SEPERATOR;
+    }
+
+    $save_to = $path . $file_name;
+
+    if (! file_exists($save_to) ) {
+      throw new Exception('##LG_INVALID_PATH##');
+    }
+
+    (new Guzzle(['base_uri' => ($this->_findBackup($file_name))->download_url]))
+      ->request('GET',['sink'=>$save_to]);
+
+    return true;
+  }
+
+  protected function _findBackup(string $file_name) : Backup {
     $this->wait(null);
     $response = $this->_client->request(
       'GET',
@@ -197,10 +226,6 @@ class Endpoint extends BaseEndpoint implements Creatable {
     );
 
     $backups = json_decode($response);
-
-    if (json_last_error()!==JSON_ERROR_NONE) {
-      throw new Exception('##LG_JSON_DECODING_ERROR##');
-    }
 
     foreach ($backups as $backup) {
       if ($backup->filename === $file_name) {
