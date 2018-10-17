@@ -159,7 +159,7 @@ class Endpoint extends BaseEndpoint implements Creatable {
    * @return Backup
    * @throws ApiException If request fails
    */
-  public function getBackups(string $file_name) : Collector {
+  public function getBackups() : Collector {
     $this->wait(null);
     $response = $this->_client->request(
       'GET',
@@ -185,6 +185,7 @@ class Endpoint extends BaseEndpoint implements Creatable {
   /**
    * Return a specific backup
    *
+   * @param string $file_name The unique file name for the backup to retrieve.
    * @return Backup
    * @throws ApiException If request fails
    */
@@ -208,4 +209,5 @@ class Endpoint extends BaseEndpoint implements Creatable {
     }
     throw new Exception('##LG_BACKUP_NOT_FOUND##');
   }
+
 }
