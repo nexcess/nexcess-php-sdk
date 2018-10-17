@@ -135,4 +135,21 @@ class Endpoint extends BaseEndpoint implements Creatable {
       return $entity->get('php_version') === $version;
     };
   }
+
+  /**
+   * Create a backup
+   *
+   * @return Backup
+   * @throws ApiException If request fails
+   */
+  public function createBackup() : Backup {
+    $this->wait(null);
+    $response = $this->_client->request(
+      'POST',
+      self::_URI . "/{$entity->getId()}/backup"
+    );
+
+    return $this->getModel(Backup::class)->sync($response);
+  }
+
 }
