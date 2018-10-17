@@ -168,7 +168,7 @@ class Endpoint extends BaseEndpoint implements Creatable {
 
     $backups = json_decode($response);
 
-    if (json_last_error()!==JSON_ERROR_NONE) {
+    if (json_last_error() !== JSON_ERROR_NONE) {
       throw new Exception('##LG_JSON_DECODING_ERROR##');
     }
 
@@ -190,6 +190,7 @@ class Endpoint extends BaseEndpoint implements Creatable {
    * @throws ApiException If request fails
    */
   public function getBackup(string $file_name) : Backup {
+    $this->wait(null);
     return $this->_findBackup($file_name);
   }
 
@@ -203,6 +204,8 @@ class Endpoint extends BaseEndpoint implements Creatable {
    * @throws Exception
    */
   public function downloadBackup(string $file_name, string $path)  {
+    $this->wait(null);
+
     $backup = $this->_findBackup($file_name, $backups);
 
     if (! file_exists($path) || ! is_dir($path)) {
@@ -237,7 +240,6 @@ class Endpoint extends BaseEndpoint implements Creatable {
    * @throws Exception
    */
   protected function _findBackup(string $file_name) : Backup {
-    $this->wait(null);
     $response = $this->_client->request(
       'GET',
       self::_URI . "/{$entity->getId()}/backup"
