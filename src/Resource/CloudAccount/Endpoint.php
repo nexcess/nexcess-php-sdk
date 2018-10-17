@@ -193,10 +193,19 @@ class Endpoint extends BaseEndpoint implements Creatable {
     return $this->_findBackup($file_name);
   }
 
-  public function downloadBackup(string $file_name, string $path) : bool {
+  /**
+   * Download a specific backup
+   *
+   * @param string $file_name The unique file name for the backup to retrieve.
+   * @param string $path the directory to store the download in.
+   *
+   * @throws ApiException If request fails
+   * @throws Exception
+   */
+  public function downloadBackup(string $file_name, string $path)  {
     $backup = $this->_findBackup($file_name, $backups);
 
-    if (! file_exists($path) or ! is_dir($path)) {
+    if (! file_exists($path) || ! is_dir($path)) {
       throw new Exception('##LG_INVALID_PATH##');
     }
 
@@ -209,15 +218,24 @@ class Endpoint extends BaseEndpoint implements Creatable {
     $save_to = $path . $file_name;
 
     if (! file_exists($save_to) ) {
-      throw new Exception('##LG_INVALID_PATH##');
+      throw new Exception('##LG_FILE_ALREADY_EXISTS##');
     }
 
-    (new Guzzle(['base_uri' => ($this->_findBackup($file_name))->download_url]))
-      ->request('GET',['sink'=>$save_to]);
-
-    return true;
+    $this->_client->request(
+      'GET',
+      $this->_findBackup($file_name))->download_url,
+      ['sink'=>$save_to]
+    );
   }
 
+  /**
+   * Fetch the list of backups and return a specific one.
+   *
+   * @param string $file_name The unique file name for the backup to retrieve.
+   *
+   * @throws ApiException If request fails
+   * @throws Exception
+   */
   protected function _findBackup(string $file_name) : Backup {
     $this->wait(null);
     $response = $this->_client->request(
