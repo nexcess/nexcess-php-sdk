@@ -14,6 +14,7 @@ use Nexcess\Sdk\ {
   Resource\CanCreate,
   Resource\CloudAccount\Entity,
   Resource\Creatable,
+  Resource\Collection,
   Resource\Endpoint as BaseEndpoint,
   Util\Util
 };
@@ -153,6 +154,35 @@ class Endpoint extends BaseEndpoint implements Creatable {
   }
 
   /**
+   * Return a list backup
+   *
+   * @return Backup
+   * @throws ApiException If request fails
+   */
+  public function getBackups(string $file_name) : Collector {
+    $this->wait(null);
+    $response = $this->_client->request(
+      'GET',
+      self::_URI . "/{$entity->getId()}/backup"
+    );
+
+    $backups = json_decode($response);
+
+    if (json_last_error()!==JSON_ERROR_NONE) {
+      throw new Exception('##LG_JSON_DECODING_ERROR##');
+    }
+
+    $collection = new Collection($fqcn);
+
+
+    foreach ($backups as $backup) {
+      $collection->add($this->getModel(Backup::class)->sync($backup));
+    }
+
+    return $collection;
+  }
+
+  /**
    * Return a specific backup
    *
    * @return Backup
@@ -168,12 +198,12 @@ class Endpoint extends BaseEndpoint implements Creatable {
     $backups = json_decode($response);
 
     if (json_last_error()!==JSON_ERROR_NONE) {
-      throw new Exception('##LG_JSON_ENCODING_ERROR##');
+      throw new Exception('##LG_JSON_DECODING_ERROR##');
     }
 
     foreach ($backups as $backup) {
       if ($backup->filename === $file_name) {
-        return $this->getModel(Backup::class)->sync($response);
+        return $this->getModel(Backup::class)->sync($backup);
       }
     }
     throw new Exception('##LG_BACKUP_NOT_FOUND##');
