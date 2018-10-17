@@ -151,7 +151,7 @@ class Endpoint extends BaseEndpoint implements Creatable {
 
     return $this->getModel(Backup::class)->sync($response);
   }
-  
+
   /**
    * Return a specific backup
    *
@@ -168,7 +168,7 @@ class Endpoint extends BaseEndpoint implements Creatable {
     $backups = json_decode($response);
 
     if (json_last_error()!==JSON_ERROR_NONE) {
-      // throw exception
+      throw new Exception('##LG_JSON_ENCODING_ERROR##');
     }
 
     foreach ($backups as $backup) {

@@ -63,4 +63,11 @@ class Backup extends Model {
 
   }
 
+  public function equals() {
+
+  }
+
+  public function isRead() {
+    
+  }
 }
