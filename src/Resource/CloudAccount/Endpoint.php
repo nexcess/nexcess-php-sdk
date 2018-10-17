@@ -35,6 +35,7 @@ class Endpoint extends BaseEndpoint implements Creatable {
 
   /** {@inheritDoc} */
   protected const _PARAMS = [
+    'clearNginxCache' => [],
     'create' => [
       'app_id' => [Util::TYPE_INT],
       'cloud_id' => [Util::TYPE_INT],
@@ -135,4 +136,24 @@ class Endpoint extends BaseEndpoint implements Creatable {
       return $entity->get('php_version') === $version;
     };
   }
+
+  /**
+   * Clear Nginx Cache
+   *
+   * @return Endpoint $this
+   * @throws ResourceException If endpoint not available
+   * @throws ApiException If request fails
+   */
+  public function clearNginxCache(Entity $entity) : Endpoint {
+    $this->_client->request(
+      'POST',
+      self::_URI . "/{$entity->getId()}",
+      ['json' => ['_action' => 'purge-cache']]
+    );
+
+    $this->_wait(null);
+
+    return $this;
+  }
+
 }

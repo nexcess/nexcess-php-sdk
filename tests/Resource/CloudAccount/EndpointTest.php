@@ -33,6 +33,9 @@ class EndpointTest extends EndpointTestCase {
   /** @var string Resource name for cloud account instance data. */
   protected const _RESOURCE_CLOUD = 'cloud-account-1.toArray-shallow.php';
 
+  /** @var string Resource name for cloud account #1 json payload. */
+  protected const _RESOURCE_GET_1 = 'GET %2Fcloud-account%2F1.json';
+
   /** {@inheritDoc} */
   protected const _RESOURCE_INSTANCES = [
     'cloud-account-1.fromArray.json' => 'cloud-account-1.toArray-shallow.php'
@@ -152,6 +155,9 @@ class EndpointTest extends EndpointTestCase {
               Language::get('resource.CloudAccount.setPhpVersion.version')
           ]
         ]
+      ],
+      [
+        'clearNginxCache', []
       ]
     ];
   }
@@ -190,6 +196,33 @@ class EndpointTest extends EndpointTestCase {
         $api->getEndpoint(static::_SUBJECT_FQCN)
           ->createDevAccount($cloud, $params);
       });
+  }
+
+
+  /**
+   * @covers Endpoint::clearNginxCache
+   */
+  public function testClearNginxCache(){
+    $handler = function ($request, $options) {
+      $actual = Util::jsonDecode((string) $request->getBody());
+
+      $this->assertArrayHasKey('_action', $actual);
+      $this->assertEquals($actual['_action'], 'purge-cache');
+    
+      return new GuzzleResponse(
+        200,
+        ['Content-type' => 'application/json'],
+        $this->_getResource(static::_RESOURCE_GET_1, false)
+      );
+    };
+
+    $this->_getSandbox(null, $handler)
+      ->play(function ($api, $sandbox) {
+        $endpoint = $api->getEndpoint(static::_SUBJECT_FQCN);
+        $entity = $endpoint->getModel()->set('id', 1);
+        $endpoint->clearNginxCache($entity);
+      });
+
   }
 
   /**
