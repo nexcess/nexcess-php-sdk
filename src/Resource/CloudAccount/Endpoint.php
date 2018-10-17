@@ -151,5 +151,31 @@ class Endpoint extends BaseEndpoint implements Creatable {
 
     return $this->getModel(Backup::class)->sync($response);
   }
+  
+  /**
+   * Return a specific backup
+   *
+   * @return Backup
+   * @throws ApiException If request fails
+   */
+  public function getBackup(string $file_name) : Backup {
+    $this->wait(null);
+    $response = $this->_client->request(
+      'GET',
+      self::_URI . "/{$entity->getId()}/backup"
+    );
 
+    $backups = json_decode($response);
+
+    if (json_last_error()!==JSON_ERROR_NONE) {
+      // throw exception
+    }
+
+    foreach ($backups as $backup) {
+      if ($backup->filename === $file_name) {
+        return $this->getModel(Backup::class)->sync($response);
+      }
+    }
+    throw new Exception('##LG_BACKUP_NOT_FOUND##');
+  }
 }
