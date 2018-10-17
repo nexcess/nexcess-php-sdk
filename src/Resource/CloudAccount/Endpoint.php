@@ -161,20 +161,8 @@ class Endpoint extends BaseEndpoint implements Creatable {
    */
   public function getBackups() : Collector {
     $this->wait(null);
-    $response = $this->_client->request(
-      'GET',
-      self::_URI . "/{$entity->getId()}/backup"
-    );
-
-    $backups = json_decode($response);
-
-    if (json_last_error() !== JSON_ERROR_NONE) {
-      throw new Exception('##LG_JSON_DECODING_ERROR##');
-    }
-
     $collection = new Collection($fqcn);
-
-
+    
     foreach ($backups as $backup) {
       $collection->add($this->getModel(Backup::class)->sync($backup));
     }
@@ -206,8 +194,6 @@ class Endpoint extends BaseEndpoint implements Creatable {
   public function downloadBackup(string $file_name, string $path)  {
     $this->wait(null);
 
-    $backup = $this->_findBackup($file_name, $backups);
-
     if (! file_exists($path) || ! is_dir($path)) {
       throw new Exception('##LG_INVALID_PATH##');
     }
@@ -232,7 +218,7 @@ class Endpoint extends BaseEndpoint implements Creatable {
   }
 
   /**
-   * Fetch the list of backups and return a specific one.
+   * Find a specific backup from the list.
    *
    * @param string $file_name The unique file name for the backup to retrieve.
    *
@@ -240,14 +226,7 @@ class Endpoint extends BaseEndpoint implements Creatable {
    * @throws Exception
    */
   protected function _findBackup(string $file_name) : Backup {
-    $response = $this->_client->request(
-      'GET',
-      self::_URI . "/{$entity->getId()}/backup"
-    );
-
-    $backups = json_decode($response);
-
-    foreach ($backups as $backup) {
+    foreach ($this->_fetchBackupList() as $backup) {
       if ($backup->filename === $file_name) {
         return $this->getModel(Backup::class)->sync($backup);
       }
@@ -255,4 +234,26 @@ class Endpoint extends BaseEndpoint implements Creatable {
     throw new Exception('##LG_BACKUP_NOT_FOUND##');
   }
 
+  /**
+   * Fetch the list of backups
+   *
+   * @param string $file_name The unique file name for the backup to retrieve.
+   *
+   * @throws ApiException If request fails
+   * @throws Exception
+   */
+  protected function _fetchBackupList() {
+    $response = $this->_client->request(
+      'GET',
+      self::_URI . "/{$entity->getId()}/backup"
+    );
+
+    $backups = json_decode($response);
+
+    if (json_last_error() !== JSON_ERROR_NONE) {
+      throw new Exception('##LG_JSON_DECODING_ERROR##');
+    }
+
+    return $backups;
+  }
 }
