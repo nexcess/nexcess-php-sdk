@@ -59,6 +59,12 @@
     "package": {
       "package_type_required": "A package type must be provided for list queries"
     },
+    "Package": {
+      "list": {
+        "type": "The type of package to list. One of the Package::TYPE_* constants.",
+        "environment_type": "The environment type to filter on for Package::TYPE_CLOUDACCOUNT lists. One of the Package::CLOUD_ACCOUNT_* constants."
+      }
+    },
     "readonly_model": "Cannot create or modify read-only model '{model}'",
     "sync_failed": "Failed to sync {model}:{id} with API response: {__rootMessage__}",
     "wait_timeout_exceeded": "Wait timeout exceeded (waited {timeout} seconds)",
