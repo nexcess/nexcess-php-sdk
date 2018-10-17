@@ -9,6 +9,7 @@ declare(strict_types  = 1);
 
 namespace Nexcess\Sdk\Resource\CloudAccount;
 
+use Closure;
 use Nexcess\Sdk\ {
   ApiException,
   Resource\CanCreate,
@@ -95,6 +96,16 @@ class Endpoint extends BaseEndpoint implements Creatable {
 
     $this->_wait($this->_waitUntilCreate($dev));
     return $dev;
+  }
+
+  /**
+   * Gets php versions available for a given cloud account to use.
+   *
+   * @param Entity $entity The subject cloud account
+   * @return string[] List of available php major.minor versions
+   */
+  public function getAvailablePhpVersions(Entity $entity) : array {
+    return $entity->get('service')->getAvailablePhpVersions();
   }
 
   /**

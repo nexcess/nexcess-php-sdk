@@ -96,6 +96,28 @@ class Entity extends Service {
   ];
 
   /**
+   * Gets php versions available for a given cloud account to use.
+   *
+   * @param Entity $entity The subject cloud account
+   * @return string[] List of available php major.minor versions
+   */
+  public function getAvailablePhpVersions() : array {
+    return $this->_getEndpoint()->getAvailablePhpVersions($this);
+  }
+
+  /**
+   * Switches PHP versions active on this service's primary cloud account.
+   *
+   * @param string $version Desired PHP version
+   * @return Entity $this
+   * @throws ApiException If request fails
+   */
+  public function setPhpVersion(Entity $entity, string $version) : Endpoint {
+    $this->_getEndpoint()->setPhpVersion($this, $version)->wait();
+    return $this;
+  }
+
+  /**
    * {@inheritDoc}
    */
   public function sync(array $data, bool $hard = false) : Modelable {
