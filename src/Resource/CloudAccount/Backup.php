@@ -66,7 +66,7 @@ class Backup extends Model {
       ($other->get('filename') === $this->get('filename'));
   }
 
-  public function isReal() {
-    
+  public function isReal() : bool {
+    return ! empty($this->$this->get('filename'));
   }
 }
