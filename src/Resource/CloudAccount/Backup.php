@@ -70,4 +70,8 @@ class Backup extends Model {
   public function isReal() : bool {
     return ! empty($this->$this->get('filename'));
   }
+
+  public function getId() : int {
+    return 0;
+  }
 }
