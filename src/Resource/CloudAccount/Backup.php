@@ -47,27 +47,25 @@ class Backup extends Model {
     'complete'
   ];
 
-  public function download(string $target_location) : bool {
-
-  }
-
-  public function getStatus() : string {
-
+  public function download(string $path) : bool {
+    if (empty($this->get('filename'))) {
+      throw new Exception('##LG_INVALID_FILENAME##');
+    }
+    return $this->_getEndpoint()->downloadBackup($this->get('filename'), $path);
   }
 
   public function delete() : bool {
-
-  }
-
-  protected static function createFromPayload(string $payload) : Backup {
-
+    if (empty($this->get('filename'))) {
+      throw new Exception('##LG_INVALID_FILENAME##');
+    }
+    return $this->_getEndpoint()->deleteBackup($this->get('filename'));
   }
 
   public function equals() {
 
   }
 
-  public function isRead() {
+  public function isReal() {
     
   }
 }
