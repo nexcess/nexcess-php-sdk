@@ -224,8 +224,23 @@ class Endpoint extends BaseEndpoint implements Creatable {
 
     $this->_client->request(
       'GET',
-      $this->_findBackup($file_name))->download_url,
+      $this->_findBackup($file_name)->download_url,
       ['sink'=>$save_to]
+    );
+  }
+
+  /**
+   * Delete a specific backup
+   *
+   * @param string $file_name The unique file name for the backup to retrieve.
+   * @throws ApiException If request fails
+   */
+  public function deleteBackup(string $file_name)  {
+    $this->wait(null);
+    $file_name = urlencode($file_name);
+    $this->_client->request(
+      'DELETE',
+      self::_URI . "/{$entity->getId()}/backup/$file_name"
     );
   }
 
@@ -247,7 +262,7 @@ class Endpoint extends BaseEndpoint implements Creatable {
   }
 
   /**
-   * Fetch the list of backups
+   * Fetch the list of backups for a given cloud account
    *
    * @param string $file_name The unique file name for the backup to retrieve.
    *
