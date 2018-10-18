@@ -12,6 +12,7 @@ namespace Nexcess\Sdk\Resource\CloudAccount;
 use Nexcess\Sdk\ {
   Resource\App\Entity as App,
   Resource\Model,
+  Resource\Modelable,
   Util\Util
 };
 

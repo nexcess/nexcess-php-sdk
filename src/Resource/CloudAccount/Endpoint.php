@@ -152,10 +152,11 @@ class Endpoint extends BaseEndpoint implements Creatable {
   /**
    * Create a backup
    *
+   * @param Entity An instance of cloud account entity.
    * @return Backup
    * @throws ApiException If request fails
    */
-  public function createBackup() : Backup {
+  public function createBackup(Entity $entity) : Backup {
     $this->wait(null);
     $response = $this->_client->request(
       'POST',
@@ -171,11 +172,11 @@ class Endpoint extends BaseEndpoint implements Creatable {
    * @return Backup
    * @throws ApiException If request fails
    */
-  public function getBackups() : Collector {
+  public function getBackups(Entity $entity) : Collector {
     $this->wait(null);
-    $collection = new Collection($fqcn);
+    $collection = new Collection(Backup::class);
     
-    foreach ($backups as $backup) {
+    foreach ($this->_fetchBackupList($entity) as $backup) {
       $collection->add($this->getModel(Backup::class)->sync($backup));
     }
 
@@ -189,9 +190,9 @@ class Endpoint extends BaseEndpoint implements Creatable {
    * @return Backup
    * @throws ApiException If request fails
    */
-  public function getBackup(string $file_name) : Backup {
+  public function getBackup(Entity $entity, string $file_name) : Backup {
     $this->wait(null);
-    return $this->_findBackup($file_name);
+    return $this->_findBackup($entity, $file_name);
   }
 
   /**
@@ -204,7 +205,7 @@ class Endpoint extends BaseEndpoint implements Creatable {
    * @throws ApiException If request fails
    * @throws Exception
    */
-  public function downloadBackup(string $file_name, string $path) : Promise {
+  public function downloadBackup(Entity $entity, string $file_name, string $path) : Promise {
     $this->wait(null);
 
     if (! file_exists($path) || ! is_dir($path)) {
@@ -224,7 +225,7 @@ class Endpoint extends BaseEndpoint implements Creatable {
     }
 
     return $this->_client->getAsync(
-      $this->_findBackup($file_name)->download_url,
+      $this->_findBackup($entity, $file_name)->download_url,
       ['sink' => $save_to]
     );
   }
@@ -235,7 +236,7 @@ class Endpoint extends BaseEndpoint implements Creatable {
    * @param string $file_name The unique file name for the backup to retrieve.
    * @throws ApiException If request fails
    */
-  public function deleteBackup(string $file_name)  {
+  public function deleteBackup(Entity $entity, string $file_name)  {
     $this->wait(null);
     $file_name = urlencode($file_name);
     $this->_client->request(
@@ -253,9 +254,9 @@ class Endpoint extends BaseEndpoint implements Creatable {
    * @throws ApiException If request fails
    * @throws Exception
    */
-  protected function _findBackup(string $file_name) : Backup {
-    foreach ($this->_fetchBackupList() as $backup) {
-      if ($backup->filename === $file_name) {
+  protected function _findBackup(Entity $entity, string $file_name) : Backup {
+    foreach ($this->_fetchBackupList($entity) as $backup) {
+      if ($backup['filename'] === $file_name) {
         return $this->getModel(Backup::class)->sync($backup);
       }
     }
@@ -269,15 +270,11 @@ class Endpoint extends BaseEndpoint implements Creatable {
    * @throws ApiException If request fails
    * @throws Exception
    */
-  protected function _fetchBackupList() : array {
-    $response = $this->_client->request(
+  protected function _fetchBackupList(Entity $entity) : array {
+    return $this->_client->request(
       'GET',
       self::_URI . "/{$entity->getId()}/backup"
     );
-
-    $backups = Util::jsonDecode($response);
-
-    return $backups;
   }
 
   /**
