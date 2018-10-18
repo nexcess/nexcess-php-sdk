@@ -48,14 +48,14 @@ class Backup extends Model {
   ];
 
   public function download(string $path) : bool {
-    if (empty($this->get('filename'))) {
+    if (! $this->isReal()) {
       throw new Exception('##LG_INVALID_FILENAME##');
     }
     return $this->_getEndpoint()->downloadBackup($this->get('filename'), $path);
   }
 
   public function delete() : bool {
-    if (empty($this->get('filename'))) {
+    if (! $this->isReal()) {
       throw new Exception('##LG_INVALID_FILENAME##');
     }
     return $this->_getEndpoint()->deleteBackup($this->get('filename'));
