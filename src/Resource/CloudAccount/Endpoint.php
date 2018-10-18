@@ -203,7 +203,7 @@ class Endpoint extends BaseEndpoint implements Creatable {
    * @throws ApiException If request fails
    * @throws Exception
    */
-  public function downloadBackup(string $file_name, string $path)  {
+  public function downloadBackup(string $file_name, string $path) : Promise {
     $this->wait(null);
 
     if (! file_exists($path) || ! is_dir($path)) {
@@ -222,8 +222,7 @@ class Endpoint extends BaseEndpoint implements Creatable {
       throw new Exception('##LG_FILE_ALREADY_EXISTS##');
     }
 
-    $this->_client->request(
-      'GET',
+    return $this->_client->getAsync(
       $this->_findBackup($file_name)->download_url,
       ['sink'=>$save_to]
     );
