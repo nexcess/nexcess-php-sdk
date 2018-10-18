@@ -205,7 +205,7 @@ class Collection implements Collector {
    */
   public function remove($model_or_id) : Model {
     foreach ($this->_models as $i => $model) {
-      if ($model->equals($target) || $model->getId() === $target) {
+      if ($model->equals($model_or_id) || $model->getId() === $model_or_id) {
         unset($this->_models[$i]);
         return $model;
       }
@@ -213,7 +213,7 @@ class Collection implements Collector {
 
     throw new ModelException(
       ModelException::MODEL_NOT_FOUND,
-      ['model' => $this->_of, 'id' => $id]
+      ['model' => $this->_of, 'id' => $model_or_id]
     );
   }
 

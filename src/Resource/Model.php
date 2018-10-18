@@ -177,7 +177,7 @@ abstract class Model implements Modelable {
    * {@inheritDoc}
    */
   public function getId() : ?int {
-    return $this->get('id');
+    return $this->_values[static::_PROPERTY_ALIASES['id'] ?? 'id'] ?? null;
   }
 
   /**
