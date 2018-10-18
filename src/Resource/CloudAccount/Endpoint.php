@@ -200,6 +200,7 @@ class Endpoint extends BaseEndpoint implements Creatable {
    * @param string $file_name The unique file name for the backup to retrieve.
    * @param string $path the directory to store the download in.
    *
+   * @return Promise
    * @throws ApiException If request fails
    * @throws Exception
    */
@@ -248,6 +249,7 @@ class Endpoint extends BaseEndpoint implements Creatable {
    *
    * @param string $file_name The unique file name for the backup to retrieve.
    *
+   * @return Backup
    * @throws ApiException If request fails
    * @throws Exception
    */
@@ -263,27 +265,22 @@ class Endpoint extends BaseEndpoint implements Creatable {
   /**
    * Fetch the list of backups for a given cloud account
    *
-   * @param string $file_name The unique file name for the backup to retrieve.
-   *
+   * @return array
    * @throws ApiException If request fails
    * @throws Exception
    */
-  protected function _fetchBackupList() {
+  protected function _fetchBackupList() : array {
     $response = $this->_client->request(
       'GET',
       self::_URI . "/{$entity->getId()}/backup"
     );
 
-    $backups = json_decode($response);
-
-    if (json_last_error() !== JSON_ERROR_NONE) {
-      throw new Exception('##LG_JSON_DECODING_ERROR##');
-    }
+    $backups = Util::jsonDecode($response);
 
     return $backups;
   }
 
-  /*
+  /**
    * Clear Nginx Cache
    *
    * @return Endpoint $this
