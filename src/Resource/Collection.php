@@ -66,7 +66,7 @@ class Collection implements Collector {
       );
     }
 
-    $this->_models[$model->getId()] = $model;
+    $this->_models[] = $model;
 
     return $this;
   }
@@ -147,11 +147,8 @@ class Collection implements Collector {
   /**
    * {@inheritDoc}
    */
-  public function find($criteria) {
-    throw new SdkException(
-      SdkException::NOT_IMPLEMENTED,
-      ['method' => __METHOD__]
-    );
+  public function find($criteria) : ?Model {
+    return $this->filter($criteria)->current();
   }
 
   /**
@@ -207,20 +204,17 @@ class Collection implements Collector {
    * {@inheritDoc}
    */
   public function remove($model_or_id) : Model {
-    $id = $model_or_id;
-    if ($model_or_id instanceof $this->_of) {
-      $id = $model_or_id->get('id');
-    }
-    if (! is_int($id) || ! isset($this->_models[$id])) {
-      throw new ModelException(
-        ModelException::MODEL_NOT_FOUND,
-        ['model' => $this->_of, 'id' => $id]
-      );
+    foreach ($this->_models as $i => $model) {
+      if ($model->equals($target) || $model->getId() === $target) {
+        unset($this->_models[$i]);
+        return $model;
+      }
     }
 
-    $model = $this->_models[$id];
-    unset($this->_models[$id]);
-    return $model;
+    throw new ModelException(
+      ModelException::MODEL_NOT_FOUND,
+      ['model' => $this->_of, 'id' => $id]
+    );
   }
 
   /**
