@@ -61,8 +61,9 @@ class Backup extends Model {
     return $this->_getEndpoint()->deleteBackup($this->get('filename'));
   }
 
-  public function equals() {
-
+  public function equals(Modelable $other) : bool {
+    return ($other instanceof $this) &&
+      ($other->get('filename') === $this->get('filename'));
   }
 
   public function isReal() {
