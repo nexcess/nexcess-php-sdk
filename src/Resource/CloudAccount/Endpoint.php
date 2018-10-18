@@ -218,13 +218,13 @@ class Endpoint extends BaseEndpoint implements Creatable {
 
     $save_to = $path . $file_name;
 
-    if (! file_exists($save_to) ) {
+    if (! file_exists($save_to)) {
       throw new Exception('##LG_FILE_ALREADY_EXISTS##');
     }
 
     return $this->_client->getAsync(
       $this->_findBackup($file_name)->download_url,
-      ['sink'=>$save_to]
+      ['sink' => $save_to]
     );
   }
 
