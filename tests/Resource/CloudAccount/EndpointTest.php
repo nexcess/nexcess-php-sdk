@@ -37,9 +37,6 @@ class EndpointTest extends EndpointTestCase {
   /** @var string Resource name for cloud account instance data. */
   protected const _RESOURCE_CLOUD = 'cloud-account-1.toArray-shallow.php';
 
-  /** @var string Resource name for cloud account #1 json payload. */
-  protected const _RESOURCE_GET_1 = 'GET %2Fcloud-account%2F1.json';
-
   /** {@inheritDoc} */
   protected const _RESOURCE_INSTANCES = [
     'cloud-account-1.fromArray.json' => 'cloud-account-1.toArray-shallow.php'
@@ -215,7 +212,7 @@ class EndpointTest extends EndpointTestCase {
 
       $this->assertArrayHasKey('_action', $actual);
       $this->assertEquals($actual['_action'], 'purge-cache');
-    
+
       return new GuzzleResponse(
         200,
         ['Content-type' => 'application/json'],

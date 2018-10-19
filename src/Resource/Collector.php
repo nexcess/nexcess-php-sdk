@@ -87,7 +87,7 @@ interface Collector extends Countable, Iterator, JsonSerializable {
    * @return Model|null A matching item, if any found; null otherwise
    * @throws SdkException If criteria callback errors
    */
-  public function find($criteria);
+  public function find($criteria) : ?Model;
 
   /**
    * Gets list of ids of items in this collection.
