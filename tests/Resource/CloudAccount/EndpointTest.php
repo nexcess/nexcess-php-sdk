@@ -212,7 +212,7 @@ class EndpointTest extends EndpointTestCase {
 
       $this->assertArrayHasKey('_action', $actual);
       $this->assertEquals($actual['_action'], 'purge-cache');
-    
+
       return new GuzzleResponse(
         200,
         ['Content-type' => 'application/json'],
