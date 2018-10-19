@@ -225,12 +225,14 @@ class Endpoint extends BaseEndpoint implements Creatable {
       throw new Exception('##LG_FILE_ALREADY_EXISTS##');
     }
 
+    $stream = fopen($save_to,'w');
+
     $this->_client->request(
       'GET',
       $this->_findBackup($entity, $file_name)->get('download_url'),
       [
         'cookies' => (new CookieJar()),
-        'sink' => $save_to,
+        'sink' => $stream,
         'verify' => false
       ]
     );
