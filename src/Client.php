@@ -290,6 +290,7 @@ class Client {
       $guzzle_response = $this->_client->request($method, $endpoint, $params);
       $content_type = $guzzle_response->getHeader('Content-type');
       $body = (string) $guzzle_response->getBody();
+      $body = ($body === 'null') ? '[]' : $body;
 
       return (reset($content_type) === 'application/json') ?
         Util::jsonDecode($body) :
