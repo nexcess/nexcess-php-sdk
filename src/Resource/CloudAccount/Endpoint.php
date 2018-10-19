@@ -20,6 +20,8 @@ use Nexcess\Sdk\ {
   Util\Util
 };
 
+use GuzzleHttp\Cookie\CookieJar;
+
 /**
  * API endpoint for Cloud Accounts (virtual hosting).
  */
@@ -172,7 +174,7 @@ class Endpoint extends BaseEndpoint implements Creatable {
    * @return Backup
    * @throws ApiException If request fails
    */
-  public function getBackups(Entity $entity) : Collector {
+  public function getBackups(Entity $entity) : Collection {
     $this->wait(null);
     $collection = new Collection(Backup::class);
     
@@ -205,7 +207,7 @@ class Endpoint extends BaseEndpoint implements Creatable {
    * @throws ApiException If request fails
    * @throws Exception
    */
-  public function downloadBackup(Entity $entity, string $file_name, string $path) : Promise {
+  public function downloadBackup(Entity $entity, string $file_name, string $path) {
     $this->wait(null);
 
     if (! file_exists($path) || ! is_dir($path)) {
@@ -213,20 +215,24 @@ class Endpoint extends BaseEndpoint implements Creatable {
     }
 
     $path = trim($path);
-
-    if (substr($path, -1) !== DIRECTORY_SEPERATOR) {
-      $path .= DIRECTORY_SEPERATOR;
+    if (substr($path, -1) !== DIRECTORY_SEPARATOR) {
+      $path .= DIRECTORY_SEPARATOR;
     }
 
     $save_to = $path . $file_name;
 
-    if (! file_exists($save_to)) {
+    if (file_exists($save_to)) {
       throw new Exception('##LG_FILE_ALREADY_EXISTS##');
     }
 
-    return $this->_client->getAsync(
-      $this->_findBackup($entity, $file_name)->download_url,
-      ['sink' => $save_to]
+    $this->_client->request(
+      'GET',
+      $this->_findBackup($entity, $file_name)->get('download_url'),
+      [
+        'cookies' => (new CookieJar()),
+        'sink' => $save_to,
+        'verify' => false
+      ]
     );
   }
 
@@ -237,12 +243,11 @@ class Endpoint extends BaseEndpoint implements Creatable {
    * @throws ApiException If request fails
    */
   public function deleteBackup(Entity $entity, string $file_name)  {
-    $this->wait(null);
-    $file_name = urlencode($file_name);
+    $this->_wait(null);
     $this->_client->request(
       'DELETE',
       self::_URI . "/{$entity->getId()}/backup/$file_name"
-    );
+    ));
   }
 
   /**

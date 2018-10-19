@@ -71,7 +71,4 @@ class Backup extends Model {
     return ! empty($this->$this->get('filename'));
   }
 
-  public function getId() : int {
-    return 0;
-  }
 }
