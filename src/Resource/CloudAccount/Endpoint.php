@@ -247,7 +247,7 @@ class Endpoint extends BaseEndpoint implements Creatable {
     $this->_client->request(
       'DELETE',
       self::_URI . "/{$entity->getId()}/backup/$file_name"
-    ));
+    );
   }
 
   /**
