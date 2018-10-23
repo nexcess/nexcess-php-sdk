@@ -1,6 +1,6 @@
 {
   "name": "nexcess/nexcess-php-sdk",
-  "version": "0.1-alpha181023",
+  "version": "0.1-alpha",
   "description": "SDK for interacting with the nexcess.net / thermo.io client APIs",
   "type": "library",
   "homepage": "https://github.com/nexcess/nexcess-php-sdk",
