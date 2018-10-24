@@ -46,6 +46,9 @@ abstract class Model implements Modelable {
   /** @var Endpoint The Endpoint associated with this Model. */
   protected $_endpoint;
 
+  /** @var bool Has this model been hydrated? */
+  protected $_hydrated = false;
+
   /** @var array Map of instance property:value pairs. */
   protected $_values = [];
 
@@ -374,11 +377,11 @@ abstract class Model implements Modelable {
         Util::kSortRecursive($value);
       }
       if ($recurse) {
-        if ($value instanceof Modelable || $value instanceof Collector) {
-          $value = $value->toArray($recurse);
-        }
-
-        if ($value instanceof DateTime) {
+        if ($value instanceof Modelable) {
+          $value = $value->toCollapsedArray();
+        } elseif ($value instanceof Collector) {
+          $value = $value->toArray(true);
+        } elseif ($value instanceof DateTime) {
           $value = $value->format('U');
         }
       }
@@ -569,10 +572,11 @@ abstract class Model implements Modelable {
    * Attempts to retrieve missing property values from the API.
    *
    * This method is a non-op if the model endpoint is empty,
+   * if the model has already been hydrated,
    * or if the model has no id.
    */
   protected function _tryToHydrate() {
-    if ($this->_hasEndpoint() && $this->isReal()) {
+    if ($this->_hasEndpoint() && $this->isReal() && ! $this->_hydrated) {
       $model = $this->_getEndpoint()->retrieve($this->getId());
       $this->_values += $model->_values;
       foreach ($this->_values as $property => $value) {
@@ -582,6 +586,8 @@ abstract class Model implements Modelable {
 
         $this->_values[$property] = $model->_values[$property];
       }
+
+      $this->_hydrated = true;
     }
   }
 }

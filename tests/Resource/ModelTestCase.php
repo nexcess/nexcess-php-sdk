@@ -9,8 +9,8 @@ declare(strict_types  = 1);
 
 namespace Nexcess\Sdk\Tests\Resource;
 
-use Throwable;
-
+use DateTimeInterface as DateTime,
+  Throwable;
 use Nexcess\Sdk\ {
   Resource\Collection,
   Resource\Endpoint,
@@ -36,35 +36,31 @@ abstract class ModelTestCase extends TestCase {
   protected const _RESOURCE_TOCOLLAPSEDARRAY = '';
 
   /**
-   * @covers Modelable::fromArray
    * @covers Modelable::toArray
    * @covers Modelable::toCollapsedArray
    * @dataProvider toArrayProvider
    *
    * @param array $data Raw data to hydrate model
-   * @param array $expected Expected toArray() result
+   * @param array $expected Expected toArray(false) result
    * @param array $collapsed Expected toCollapsedArray() result
    */
   public function testArray(array $data, array $expected, array $collapsed) {
     $model = $this->_getSubject()->sync($data);
 
-    // expected array result
-    foreach ($expected as $property => $value) {
-      $actual = $model->get($property);
+    // expected "shallow" array result
+    $this->assertEquals($expected, $model->toArray(false));
 
+    // expected recursive array result
+    foreach ($expected as $key => $value) {
       if ($value instanceof Model) {
-        $this->assertTrue($value->equals($actual));
-        continue;
-      }
-
-      if ($value instanceof Collection) {
-        $this->assertEquals($value->of(), $actual->of());
-
-        $value->sort();
-        $actual->sort();
-        $this->assertEquals($value->getIds(), $actual->getIds());
+        $expected[$key] = $value->toCollapsedArray();
+      } elseif ($value instanceof Collection) {
+        $expected[$key] = $value->toArray(true);
+      } elseif ($value instanceof DateTime) {
+        $expected[$key] = $value->format('U');
       }
     }
+    $this->assertEquals($expected, $model->toArray(true));
 
     // expected collapsed array result
     $this->assertEquals($collapsed, $model->toCollapsedArray());
