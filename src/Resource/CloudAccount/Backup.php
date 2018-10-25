@@ -11,6 +11,7 @@ namespace Nexcess\Sdk\Resource\CloudAccount;
 
 use Nexcess\Sdk\ {
   Resource\App\Entity as App,
+  Resource\CloudAccount\CloudAccountException,
   Resource\Model,
   Resource\Modelable,
   Util\Util
@@ -50,14 +51,20 @@ class Backup extends Model {
 
   public function download(string $path) : bool {
     if (! $this->isReal()) {
-      throw new Exception('##LG_INVALID_FILENAME##');
+      throw new CloudAccountException(
+        CloudAccountException::INVALID_BACKUP,
+        ['action' => __METHOD__]
+      );
     }
     return $this->_getEndpoint()->downloadBackup($this->get('filename'), $path);
   }
 
   public function delete() : bool {
     if (! $this->isReal()) {
-      throw new Exception('##LG_INVALID_FILENAME##');
+      throw new CloudAccountException(
+        CloudAccountException::INVALID_BACKUP,
+        ['action' => __METHOD__]
+      );
     }
     return $this->_getEndpoint()->deleteBackup($this->get('filename'));
   }
@@ -68,7 +75,7 @@ class Backup extends Model {
   }
 
   public function isReal() : bool {
-    return ! empty($this->$this->get('filename'));
+    return ! empty($this->_values['filename']);
   }
 
 }

@@ -13,6 +13,7 @@ use Closure;
 use Nexcess\Sdk\ {
   ApiException,
   Resource\CanCreate,
+  Resource\CloudAccount\CloudAccountException,
   Resource\CloudAccount\Entity,
   Resource\Creatable,
   Resource\Collection,
@@ -177,7 +178,7 @@ class Endpoint extends BaseEndpoint implements Creatable {
   public function getBackups(Entity $entity) : Collection {
     $this->wait(null);
     $collection = new Collection(Backup::class);
-    
+
     foreach ($this->_fetchBackupList($entity) as $backup) {
       $collection->add($this->getModel(Backup::class)->sync($backup));
     }
@@ -211,7 +212,10 @@ class Endpoint extends BaseEndpoint implements Creatable {
     $this->wait(null);
 
     if (! file_exists($path) || ! is_dir($path)) {
-      throw new Exception('##LG_INVALID_PATH##');
+      throw new CloudAccountException(
+        CloudAccountException::INVALID_PATH,
+        ['filepath' => $path]
+      );
     }
 
     $path = trim($path);
@@ -220,9 +224,11 @@ class Endpoint extends BaseEndpoint implements Creatable {
     }
 
     $save_to = $path . $file_name;
-
     if (file_exists($save_to)) {
-      throw new Exception('##LG_FILE_ALREADY_EXISTS##');
+      throw new CloudAccountException(
+        CloudAccountException::FILE_EXISTS,
+        ['filename' => $save_to]
+      );
     }
 
     $stream = fopen($save_to,'w');
@@ -267,7 +273,11 @@ class Endpoint extends BaseEndpoint implements Creatable {
         return $this->getModel(Backup::class)->sync($backup);
       }
     }
-    throw new Exception('##LG_BACKUP_NOT_FOUND##');
+
+    throw new CloudAccountException(
+      CloudAccountException::BACKUP_NOT_FOUND,
+      ['name' => $file_name]
+    );
   }
 
   /**
