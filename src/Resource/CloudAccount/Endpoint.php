@@ -241,15 +241,21 @@ class Endpoint extends BaseEndpoint implements Creatable {
 
     }
 
-    $this->_client->request(
-      'GET',
-      $this->_findBackup($entity, $file_name)->get('download_url'),
-      [
-        'cookies' => (new CookieJar()),
-        'sink' => $stream,
-        'verify' => false
-      ]
-    );
+    try {
+      $this->_client->request(
+        'GET',
+        $this->_findBackup($entity, $file_name)->get('download_url'),
+        [
+          'cookies' => (new CookieJar()),
+          'sink' => $stream,
+          'verify' => false
+        ]
+      );
+    } catch (\Exception $e) {
+      fclose($stream);
+      unlink($save_to);
+      throw new CloudAccountException($e);
+    }
   }
 
   /**
