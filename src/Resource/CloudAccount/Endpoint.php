@@ -159,7 +159,7 @@ class Endpoint extends BaseEndpoint implements Creatable {
    * @throws ApiException If request fails
    */
   public function createBackup(Entity $entity) : Backup {
-    $this->wait(null);
+    $this->_wait(null);
     $response = $this->_client->request(
       'POST',
       self::_URI . "/{$entity->getId()}/backup"
@@ -175,7 +175,7 @@ class Endpoint extends BaseEndpoint implements Creatable {
    * @throws ApiException If request fails
    */
   public function getBackups(Entity $entity) : Collection {
-    $this->wait(null);
+    $this->_wait(null);
     $collection = new Collection(Backup::class);
     
     foreach ($this->_fetchBackupList($entity) as $backup) {
@@ -193,7 +193,7 @@ class Endpoint extends BaseEndpoint implements Creatable {
    * @throws ApiException If request fails
    */
   public function getBackup(Entity $entity, string $file_name) : Backup {
-    $this->wait(null);
+    $this->_wait(null);
     return $this->_findBackup($entity, $file_name);
   }
 
@@ -208,7 +208,7 @@ class Endpoint extends BaseEndpoint implements Creatable {
    * @throws Exception
    */
   public function downloadBackup(Entity $entity, string $file_name, string $path) {
-    $this->wait(null);
+    $this->_wait(null);
 
     if (! file_exists($path) || ! is_dir($path)) {
       throw new Exception('##LG_INVALID_PATH##');
