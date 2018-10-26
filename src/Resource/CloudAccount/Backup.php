@@ -49,6 +49,13 @@ class Backup extends Model {
     'complete'
   ];
 
+  /**
+   * Download this backup
+   *
+   * @param string $path Where to save the file to
+   * @throws CloudAccountException
+   * @return Promise A Guzzle Promise
+   */
   public function download(string $path) : bool {
     if (! $this->isReal()) {
       throw new CloudAccountException(
@@ -59,6 +66,12 @@ class Backup extends Model {
     return $this->_getEndpoint()->downloadBackup($this->get('filename'), $path);
   }
 
+  /**
+   * Delete this backup
+   *
+   * @throws CloudAccountException
+   * @return Promise A Guzzle Promise
+   */
   public function delete() : bool {
     if (! $this->isReal()) {
       throw new CloudAccountException(
@@ -69,11 +82,22 @@ class Backup extends Model {
     return $this->_getEndpoint()->deleteBackup($this->get('filename'));
   }
 
+  /**
+   * Compare a Backup object to this one
+   *
+   * @param Modelable $other The other object to compare
+   * @return bool true if the file names match
+   */
   public function equals(Modelable $other) : bool {
     return ($other instanceof $this) &&
       ($other->get('filename') === $this->get('filename'));
   }
 
+  /**
+   * Check to see if this is a complete object
+   *
+   * @return bool true if it has a non-empty file name
+   */
   public function isReal() : bool {
     return ! empty($this->_values['filename']);
   }
