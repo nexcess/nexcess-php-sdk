@@ -208,7 +208,11 @@ class Endpoint extends BaseEndpoint implements Creatable {
    * @throws ApiException If request fails
    * @throws Exception
    */
-  public function downloadBackup(Entity $entity, string $file_name, string $path) {
+  public function downloadBackup(
+    Entity $entity,
+    string $file_name,
+    string $path
+  ) {
     $this->_wait(null);
 
     if (! file_exists($path) || ! is_dir($path)) {
@@ -231,14 +235,13 @@ class Endpoint extends BaseEndpoint implements Creatable {
       );
     }
 
-    $stream = @fopen($save_to,'w');
+    $stream = @fopen($save_to, 'w');
     
     if (! is_resource($stream)) {
       throw new CloudAccountException(
         CloudAccountException::INVALID_STREAM,
         ['filename' => $save_to]
       );
-
     }
 
     try {
