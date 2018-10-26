@@ -28,6 +28,9 @@ class CloudAccountException extends Exception {
   /** @var int Attempt to access/operate on an invalid backup instance. */
   const INVALID_BACKUP = 4;
 
+  /** @var int backup file failed to open */
+  const INVALID_STREAM = 5;
+
   /** {@inheritDoc} */
   const INFO = [
     self::INVALID_PATH =>

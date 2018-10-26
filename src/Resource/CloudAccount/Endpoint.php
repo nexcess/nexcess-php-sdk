@@ -231,7 +231,15 @@ class Endpoint extends BaseEndpoint implements Creatable {
       );
     }
 
-    $stream = fopen($save_to,'w');
+    $stream = @fopen($save_to,'w');
+    
+    if (! is_resource($stream)) {
+      throw new CloudAccountException(
+        CloudAccountException::INVALID_STREAM,
+        ['filename' => $save_to]
+      );
+
+    }
 
     $this->_client->request(
       'GET',
