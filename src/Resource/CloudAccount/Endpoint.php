@@ -172,7 +172,7 @@ class Endpoint extends BaseEndpoint implements Creatable {
   /**
    * Return a list of backups
    *
-   * @return Backup
+   * @return Collection
    * @throws ApiException If request fails
    */
   public function getBackups(Entity $entity) : Collection {
