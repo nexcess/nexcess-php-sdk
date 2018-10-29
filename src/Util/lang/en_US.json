@@ -46,7 +46,7 @@
         "file_exists": "The target download file '{filename}' already exists; not overwriting",
         "invalid_backup": "{action}() failed: invalid Backup object (filename is empty)",
         "invalid_path": "The target download directory '{filename}' does not exist or is not writable",
-        "invalid_stream": "The backup file could not be opened for writing."
+        "invalid_stream": "The target backup file '{filename}' could not be opened for writing."
       },
       "setPhpVersion": {
         "version": "Target PHP version to use on cloud account. @see CloudAccount::getAvailablePhpVersions()."
