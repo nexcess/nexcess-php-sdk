@@ -13,11 +13,15 @@ use Closure;
 use Nexcess\Sdk\ {
   ApiException,
   Resource\CanCreate,
+  Resource\CloudAccount\CloudAccountException,
   Resource\CloudAccount\Entity,
   Resource\Creatable,
+  Resource\Collection,
   Resource\Endpoint as BaseEndpoint,
   Util\Util
 };
+
+use GuzzleHttp\Cookie\CookieJar;
 
 /**
  * API endpoint for Cloud Accounts (virtual hosting).
@@ -146,6 +150,165 @@ class Endpoint extends BaseEndpoint implements Creatable {
       $entity->sync($this->_retrieve($entity->getId()));
       return $entity->get('php_version') === $version;
     };
+  }
+
+  /**
+   * Create a backup
+   *
+   * @param Entity An instance of cloud account entity.
+   * @return Backup
+   * @throws ApiException If request fails
+   */
+  public function createBackup(Entity $entity) : Backup {
+    $this->_wait(null);
+    $response = $this->_client->request(
+      'POST',
+      self::_URI . "/{$entity->getId()}/backup"
+    );
+
+    return $this->getModel(Backup::class)->sync($response);
+  }
+
+  /**
+   * Return a list of backups
+   *
+   * @return Collection
+   * @throws ApiException If request fails
+   */
+  public function getBackups(Entity $entity) : Collection {
+    $this->_wait(null);
+    $collection = new Collection(Backup::class);
+
+    foreach ($this->_fetchBackupList($entity) as $backup) {
+      $collection->add($this->getModel(Backup::class)->sync($backup));
+    }
+
+    return $collection;
+  }
+
+  /**
+   * Return a specific backup
+   *
+   * @param string $file_name The unique file name for the backup to retrieve.
+   * @return Backup
+   * @throws ApiException If request fails
+   */
+  public function getBackup(Entity $entity, string $file_name) : Backup {
+    $this->_wait(null);
+    return $this->_findBackup($entity, $file_name);
+  }
+
+  /**
+   * Download a specific backup
+   *
+   * @param string $file_name The unique file name for the backup to retrieve.
+   * @param string $path the directory to store the download in.
+   *
+   * @return Promise
+   * @throws ApiException If request fails
+   * @throws Exception
+   */
+  public function downloadBackup(
+    Entity $entity,
+    string $file_name,
+    string $path
+  ) {
+    $this->_wait(null);
+
+    if (! file_exists($path) || ! is_dir($path)) {
+      throw new CloudAccountException(
+        CloudAccountException::INVALID_PATH,
+        ['filepath' => $path]
+      );
+    }
+
+    $path = trim($path);
+    if (substr($path, -1) !== DIRECTORY_SEPARATOR) {
+      $path .= DIRECTORY_SEPARATOR;
+    }
+
+    $save_to = $path . $file_name;
+    if (file_exists($save_to)) {
+      throw new CloudAccountException(
+        CloudAccountException::FILE_EXISTS,
+        ['filename' => $save_to]
+      );
+    }
+
+    $stream = @fopen($save_to, 'w');
+    
+    if (! is_resource($stream)) {
+      throw new CloudAccountException(
+        CloudAccountException::INVALID_STREAM,
+        ['filename' => $save_to]
+      );
+    }
+
+    try {
+      $this->_client->request(
+        'GET',
+        $this->_findBackup($entity, $file_name)->get('download_url'),
+        [
+          'cookies' => (new CookieJar()),
+          'sink' => $stream,
+          'verify' => false
+        ]
+      );
+    } catch (\Exception $e) {
+      fclose($stream);
+      unlink($save_to);
+      throw $e;
+    }
+  }
+
+  /**
+   * Delete a specific backup
+   *
+   * @param string $file_name The unique file name for the backup to retrieve.
+   * @throws ApiException If request fails
+   */
+  public function deleteBackup(Entity $entity, string $file_name)  {
+    $this->_wait(null);
+    $this->_client->request(
+      'DELETE',
+      self::_URI . "/{$entity->getId()}/backup/$file_name"
+    );
+  }
+
+  /**
+   * Find a specific backup from the list.
+   *
+   * @param string $file_name The unique file name for the backup to retrieve.
+   *
+   * @return Backup
+   * @throws ApiException If request fails
+   * @throws Exception
+   */
+  protected function _findBackup(Entity $entity, string $file_name) : Backup {
+    foreach ($this->_fetchBackupList($entity) as $backup) {
+      if ($backup['filename'] === $file_name) {
+        return $this->getModel(Backup::class)->sync($backup);
+      }
+    }
+
+    throw new CloudAccountException(
+      CloudAccountException::BACKUP_NOT_FOUND,
+      ['name' => $file_name]
+    );
+  }
+
+  /**
+   * Fetch the list of backups for a given cloud account
+   *
+   * @return array
+   * @throws ApiException If request fails
+   * @throws Exception
+   */
+  protected function _fetchBackupList(Entity $entity) : array {
+    return $this->_client->request(
+      'GET',
+      self::_URI . "/{$entity->getId()}/backup"
+    );
   }
 
   /**

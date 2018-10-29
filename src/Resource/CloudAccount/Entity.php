@@ -127,4 +127,40 @@ class Entity extends Model {
     return $this;
   }
 
+  /**
+   * Get a list of backups for a cloud account
+   *
+   * @return Collection
+   */
+  public function getBackups() : Collection {
+    return $this->_getEndpoint()->getBackups($this);
+  }
+
+  /**
+   * Get a list of backups for a cloud account
+   *
+   * @return Backup
+   */
+  public function getBackup(string $filename) : Backup {
+    return $this->_getEndpoint()->getBackup($this, $filename);
+  }
+
+  /**
+   * Download a backup
+   *
+   * @return Backup
+   */
+  public function downloadBackup(string $filename, string $path)  {
+    $this->_getEndpoint()->downloadBackup($this, $filename, $path);
+  }
+
+  /**
+   * Delete a backup
+   *
+   * @return Backup
+   */
+  public function deleteBackup(string $filename) {
+    $this->_getEndpoint()->downloadBackup($this, $filename);
+  }
+  
 }
