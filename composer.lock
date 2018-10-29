@@ -1,10 +1,10 @@
 {
     "_readme": [
         "This file locks the dependencies of your project to a known state",
-        "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#composer-lock-the-lock-file",
+        "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "0243668a1b8871a21c6b2a18f3502dd3",
+    "content-hash": "28f7b0b67bf318386ad6d717f4750fea",
     "packages": [
         {
             "name": "guzzlehttp/guzzle",
@@ -189,16 +189,16 @@
         },
         {
             "name": "php-enspired/exceptable",
-            "version": "v1.2.1",
+            "version": "1.2.2",
             "source": {
                 "type": "git",
                 "url": "https://github.com/php-enspired/exceptable.git",
-                "reference": "90a9ab03bfb6cddf90f87276dc762a15c98f7488"
+                "reference": "bbed81cc58e1b2ad71bd0b6441d491b88e49f695"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/php-enspired/exceptable/zipball/90a9ab03bfb6cddf90f87276dc762a15c98f7488",
-                "reference": "90a9ab03bfb6cddf90f87276dc762a15c98f7488",
+                "url": "https://api.github.com/repos/php-enspired/exceptable/zipball/bbed81cc58e1b2ad71bd0b6441d491b88e49f695",
+                "reference": "bbed81cc58e1b2ad71bd0b6441d491b88e49f695",
                 "shasum": ""
             },
             "require": {
@@ -226,7 +226,7 @@
             ],
             "description": "Augmented features for exceptions and exception handling.",
             "homepage": "http://php.enspi.red",
-            "time": "2018-05-16T14:25:58+00:00"
+            "time": "2018-10-25T01:23:08+00:00"
         },
         {
             "name": "psr/http-message",
