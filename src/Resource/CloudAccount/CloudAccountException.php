@@ -40,6 +40,8 @@ class CloudAccountException extends Exception {
     self::BACKUP_NOT_FOUND =>
       ['message' => 'resource.CloudAccount.Exception.backup_not_found'],
     self::INVALID_BACKUP =>
-      ['message' => 'resource.CloudAccount.Exception.invalid_backup']
+      ['message' => 'resource.CloudAccount.Exception.invalid_backup'],
+    self::INVALID_STREAM =>
+      ['message' => 'resource.CloudAccount.Exception.invalid_stream']
   ];
 }
