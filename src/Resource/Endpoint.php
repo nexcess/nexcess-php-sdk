@@ -19,7 +19,6 @@ use GuzzleHttp\ {
   Exception\ServerException,
   Exception\TransferException
 };
-use GuzzleHttp\Promise\Promise;
 
 use Nexcess\Sdk\ {
   ApiException,
