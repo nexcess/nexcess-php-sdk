@@ -257,7 +257,7 @@ class Endpoint extends BaseEndpoint implements Creatable {
     } catch (\Exception $e) {
       fclose($stream);
       unlink($save_to);
-      throw new CloudAccountException($e);
+      throw $e;
     }
   }
 
