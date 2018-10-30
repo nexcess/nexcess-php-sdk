@@ -87,16 +87,15 @@ class Entity extends Model {
    * @throws ApiException If request fails
    */
   public function createDevAccount(array $data) : Entity {
-    $endpoint = $this->_getEndpoint();
-    $dev = $endpoint->createDevAccount($this, $data);
-    $endpoint->wait();
-    return $dev;
+    return $this->_getEndpoint()->createDevAccount($this, $data)->wait();
   }
 
   /**
    * Gets php versions available for this cloud account to use.
    *
    * @return string[] List of available php major.minor versions
+   * @throws ResourceException If endpoint not available
+   * @throws ApiException If request fails
    */
   public function getAvailablePhpVersions() : array {
     return $this->_getEndpoint()->getAvailablePhpVersions($this);
@@ -111,8 +110,7 @@ class Entity extends Model {
    * @throws ApiException If request fails
    */
   public function setPhpVersion(string $version) : Entity {
-    $this->_getEndpoint()->setPhpVersion($this, $version)->wait();
-    return $this;
+    return $this->_getEndpoint()->setPhpVersion($this, $version)->wait();
   }
 
   /**
@@ -123,8 +121,7 @@ class Entity extends Model {
    * @throws ApiException If request fails
    */
   public function clearNginxCache() : Entity {
-    $this->_getEndpoint()->clearNginxCache($this);
-    return $this;
+    return $this->_getEndpoint()->clearNginxCache($this)->wait();
   }
 
   /**
@@ -133,16 +130,16 @@ class Entity extends Model {
    * @return Collection
    */
   public function getBackups() : Collection {
-    return $this->_getEndpoint()->getBackups($this);
+    return $this->_getEndpoint()->getBackups($this)->wait();
   }
 
   /**
-   * Get a list of backups for a cloud account
+   * Get an individual backup
    *
    * @return Backup
    */
   public function getBackup(string $filename) : Backup {
-    return $this->_getEndpoint()->getBackup($this, $filename);
+    return $this->_getEndpoint()->getBackup($this, $filename)->wait();
   }
 
   /**
@@ -151,7 +148,7 @@ class Entity extends Model {
    * @return Backup
    */
   public function downloadBackup(string $filename, string $path)  {
-    $this->_getEndpoint()->downloadBackup($this, $filename, $path);
+    $this->_getEndpoint()->downloadBackup($this, $filename, $path)->wait();
   }
 
   /**
@@ -160,7 +157,6 @@ class Entity extends Model {
    * @return Backup
    */
   public function deleteBackup(string $filename) {
-    $this->_getEndpoint()->downloadBackup($this, $filename);
+    $this->_getEndpoint()->downloadBackup($this, $filename)->wait();
   }
-  
 }

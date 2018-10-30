@@ -12,6 +12,7 @@ namespace Nexcess\Sdk\Resource;
 use Nexcess\Sdk\ {
   ApiException,
   Resource\Modelable,
+  Resource\PromisedResource,
   Resource\Updatable
 };
 
@@ -24,7 +25,10 @@ trait CanUpdate {
   /**
    * {@inheritDoc}
    */
-  public function update(Modelable $model, array $data = []) : Updatable {
+  public function update(
+    Modelable $model,
+    array $data = []
+  ) : PromisedResource {
     $this->_checkModelType($model);
 
     $id = $model->getId();
@@ -52,12 +56,11 @@ trait CanUpdate {
 
     if (! empty($update)) {
       $model->sync(
-        $this->_client
-          ->request('PATCH', static::_URI . "/{$id}/edit", $update),
+        $this->_patch(static::_URI . "/{$id}", $update),
         true
       );
     }
-    $this->_wait(null);
-    return $this;
+
+    return $this->_buildPromise($model);
   }
 }

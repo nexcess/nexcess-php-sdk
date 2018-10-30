@@ -12,6 +12,7 @@ namespace Nexcess\Sdk\Resource;
 use Nexcess\Sdk\ {
   ApiException,
   Resource\Modelable,
+  Resource\PromisedResource,
   Resource\ResourceException,
   Util\Util
 };
@@ -29,30 +30,36 @@ trait CanCreate {
     $this->_validateParams(__FUNCTION__, $data);
 
     $model = $this->getModel()->sync(
-      $this->_client->request('POST', static::_URI . '/new', ['json' => $data])
+      Util::decodeResponse(
+        $this->_post(static::_URI . '/new', ['json' => $data])
+      )
     );
 
-    $this->_wait($this->_waitUntilCreate($model));
-    return $model;
+    return $this->_buildPromise($model)
+      ->waitUntil($this->_waitUntilCreate());
   }
 
   /**
    * Checks for a CREATE to finish and then syncs the associated Model.
    *
-   * By default, assumes creation is already complete and simply syncs model.
+   * Creation is usually already complete;
+   * this simply syncs model if there's no id.
    * Override this method to provide custom checks if needed.
    *
-   * @param Model $model
-   * @return callable @see wait() $until
+   * @return callable @see PromisedResource::waitUntil() $done
    */
-  protected function _waitUntilCreate(Model $model) : callable {
-    return function ($endpoint) use ($model) {
+  protected function _waitUntilCreate() : callable {
+    return function ($model) {
       try {
-        $endpoint->sync($model, true);
+        if ($model->isReal()) {
+          return true;
+        }
+
+        $this->sync($model);
         return $model->isReal();
       } catch (ApiException $e) {
         if ($e->getCode() === ApiException::NOT_FOUND) {
-          throw new ApiException(ApiException::CREATE_FAILED);
+          throw new ApiException(ApiException::CREATE_FAILED, $e);
         }
 
         throw $e;

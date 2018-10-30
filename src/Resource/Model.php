@@ -104,8 +104,15 @@ abstract class Model implements Modelable {
    * @see https://php.net/__debugInfo
    */
   public function __debugInfo() {
+    $module = $this->moduleName();
+    $name = basename(__CLASS__);
+    if ($name === 'Entity') {
+      $name = $module;
+    }
+
     return [
-      'module' => $this->moduleName(),
+      'entity' => $name,
+      'module' => $module,
       'has_endpoint' => isset($this->_endpoint),
       'values' => array_map(
         function ($value) {
@@ -296,7 +303,9 @@ abstract class Model implements Modelable {
       $prior = $this->_values;
 
       if ($hard) {
+        // clear state
         $this->_values = array_fill_keys(self::_PROPERTY_NAMES, null);
+        $this->_hydrated = false;
       }
 
       foreach ($data as $key => $value) {

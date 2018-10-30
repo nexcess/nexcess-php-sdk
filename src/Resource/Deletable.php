@@ -11,6 +11,7 @@ namespace Nexcess\Sdk\Resource;
 
 use Nexcess\Sdk\ {
   Resource\Modelable as Model,
+  Resource\PromisedResource,
   Resource\Readable
 };
 
@@ -23,8 +24,8 @@ interface Deletable extends Readable {
    * Deletes an existing item.
    *
    * @param Model|int $model_or_id Model or item id to delete
-   * @return Deletable $this
+   * @return PromisedResource A promise wrapping the deleted model
    * @throws ApiException If request fails
    */
-  public function delete($model_or_id) : Deletable;
+  public function delete($model_or_id) : PromisedResource;
 }
