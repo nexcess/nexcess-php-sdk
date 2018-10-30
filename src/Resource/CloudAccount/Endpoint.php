@@ -143,7 +143,7 @@ class Endpoint extends BaseEndpoint implements Creatable {
    * @return Backup
    * @throws ApiException If request fails
    */
-  public function createBackup(Entity $entity) : Backup {
+  public function createBackup(Entity $entity) : PromisedResource {
     $response = $this->_post(
       self::_URI . "/{$entity->getId()}/backup"
     );
@@ -164,12 +164,10 @@ class Endpoint extends BaseEndpoint implements Creatable {
   public function getBackups(Entity $entity) : Collection {
     $collection = new Collection(Backup::class);
 
-    foreach (
-      $this->_buildPromise($this->_fetchBackupList($entity))->wait() as $backup
-    ) {
+    foreach ($this->_fetchBackupList($entity) as $backup) {
       $collection->add(
         $this->getModel(Backup::class)
-        ->sync(Util::decodeResponse($backup))
+        ->sync($backup)
       );
     }
 
@@ -183,7 +181,7 @@ class Endpoint extends BaseEndpoint implements Creatable {
    * @return Backup
    * @throws ApiException If request fails
    */
-  public function getBackup(Entity $entity, string $file_name) : Backup {
+  public function getBackup(Entity $entity, string $file_name) : PromisedResource {
     return $this->_buildPromise($this->_findBackup($entity, $file_name));
   }
 
@@ -274,7 +272,7 @@ class Endpoint extends BaseEndpoint implements Creatable {
     foreach ($this->_fetchBackupList($entity) as $backup) {
       if ($backup['filename'] === $file_name) {
         return $this->getModel(Backup::class)
-          ->sync(Util::decodeResponse($backup));
+          ->sync($backup);
       }
     }
 
@@ -292,9 +290,9 @@ class Endpoint extends BaseEndpoint implements Creatable {
    * @throws Exception
    */
   protected function _fetchBackupList(Entity $entity) : array {
-    return $this->_get(
+    return Util::decoderesponse($this->_get(
       self::_URI . "/{$entity->getId()}/backup"
-    );
+    ));
   }
 
   /**
