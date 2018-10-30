@@ -255,7 +255,6 @@ class Endpoint extends BaseEndpoint implements Creatable {
    * @throws ApiException If request fails
    */
   public function deleteBackup(Entity $entity, string $file_name)  {
-    $this->_wait(null);
     $this->_delete(
       self::_URI . "/{$entity->getId()}/backup/$file_name"
     );
