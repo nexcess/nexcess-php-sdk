@@ -144,13 +144,14 @@ class Endpoint extends BaseEndpoint implements Creatable {
    * @throws ApiException If request fails
    */
   public function createBackup(Entity $entity) : Backup {
-    $response = $this->_client->request(
-      'POST',
+    $response = $this->_post(
       self::_URI . "/{$entity->getId()}/backup"
     );
 
     return $this->_buildPromise(
-      $this->getModel(Backup::class)->sync($response)
+      $this->getModel(Backup::class)->sync(
+        Util::decodeResponse($response)
+      )
     );
   }
 
@@ -166,7 +167,10 @@ class Endpoint extends BaseEndpoint implements Creatable {
     foreach (
       $this->_buildPromise($this->_fetchBackupList($entity))->wait() as $backup
     ) {
-      $collection->add($this->getModel(Backup::class)->sync($backup));
+      $collection->add(
+        $this->getModel(Backup::class)
+        ->sync(Util::decodeResponse($backup))
+      );
     }
 
     return $collection;
@@ -198,7 +202,6 @@ class Endpoint extends BaseEndpoint implements Creatable {
     string $file_name,
     string $path
   ) {
-    $this->_wait(null);
 
     if (! file_exists($path) || ! is_dir($path)) {
       throw new CloudAccountException(
@@ -230,8 +233,7 @@ class Endpoint extends BaseEndpoint implements Creatable {
     }
 
     try {
-      $this->_client->request(
-        'GET',
+      $this->_get(
         $this->_findBackup($entity, $file_name)->get('download_url'),
         [
           'cookies' => (new CookieJar()),
@@ -254,8 +256,7 @@ class Endpoint extends BaseEndpoint implements Creatable {
    */
   public function deleteBackup(Entity $entity, string $file_name)  {
     $this->_wait(null);
-    $this->_client->request(
-      'DELETE',
+    $this->_delete(
       self::_URI . "/{$entity->getId()}/backup/$file_name"
     );
   }
@@ -272,7 +273,8 @@ class Endpoint extends BaseEndpoint implements Creatable {
   protected function _findBackup(Entity $entity, string $file_name) : Backup {
     foreach ($this->_fetchBackupList($entity) as $backup) {
       if ($backup['filename'] === $file_name) {
-        return $this->getModel(Backup::class)->sync($backup);
+        return $this->getModel(Backup::class)
+          ->sync(Util::decodeResponse($backup));
       }
     }
 
@@ -290,8 +292,7 @@ class Endpoint extends BaseEndpoint implements Creatable {
    * @throws Exception
    */
   protected function _fetchBackupList(Entity $entity) : array {
-    return $this->_client->request(
-      'GET',
+    return $this->_get(
       self::_URI . "/{$entity->getId()}/backup"
     );
   }
