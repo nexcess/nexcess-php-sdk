@@ -55,7 +55,7 @@ class Backup extends Model {
    * @param string $path Where to save the file to
    * @throws CloudAccountException
    */
-  public function download(string $path) {
+  public function download(string $path) : void {
     if (! $this->isReal()) {
       throw new CloudAccountException(
         CloudAccountException::INVALID_BACKUP,
@@ -72,16 +72,16 @@ class Backup extends Model {
    * Delete this backup
    *
    * @throws CloudAccountException
-   * @return Promise A Guzzle Promise
    */
-  public function delete() : PromisedResource {
+  public function delete() : void {
     if (! $this->isReal()) {
       throw new CloudAccountException(
         CloudAccountException::INVALID_BACKUP,
         ['action' => __METHOD__]
       );
     }
-    return $this->_getEndpoint()->deleteBackup($this->get('filename'))->wait();
+
+    $this->_getEndpoint()->deleteBackup($this->get('filename'));
   }
 
   /**
@@ -92,6 +92,7 @@ class Backup extends Model {
    */
   public function equals(Modelable $other) : bool {
     return ($other instanceof $this) &&
+      $this->isReal() &&
       ($other->get('filename') === $this->get('filename'));
   }
 
@@ -103,5 +104,4 @@ class Backup extends Model {
   public function isReal() : bool {
     return ! empty($this->_values['filename']);
   }
-
 }
