@@ -144,13 +144,12 @@ class Endpoint extends BaseEndpoint implements Creatable {
    * @throws ApiException If request fails
    */
   public function createBackup(Entity $entity) : Backup {
-    $this->_wait(null);
     $response = $this->_client->request(
       'POST',
       self::_URI . "/{$entity->getId()}/backup"
     );
 
-    return $this->getModel(Backup::class)->sync($response);
+    return $this->_buildPromise($this->getModel(Backup::class)->sync($response));
   }
 
   /**
@@ -160,10 +159,9 @@ class Endpoint extends BaseEndpoint implements Creatable {
    * @throws ApiException If request fails
    */
   public function getBackups(Entity $entity) : Collection {
-    $this->_wait(null);
     $collection = new Collection(Backup::class);
 
-    foreach ($this->_fetchBackupList($entity) as $backup) {
+    foreach ($this->_buildPromise($this->_fetchBackupList($entity))->wait() as $backup) {
       $collection->add($this->getModel(Backup::class)->sync($backup));
     }
 
@@ -178,8 +176,7 @@ class Endpoint extends BaseEndpoint implements Creatable {
    * @throws ApiException If request fails
    */
   public function getBackup(Entity $entity, string $file_name) : Backup {
-    $this->_wait(null);
-    return $this->_findBackup($entity, $file_name);
+    return $this->_buildPromise($this->_findBackup($entity, $file_name));
   }
 
   /**

@@ -63,7 +63,7 @@ class Backup extends Model {
         ['action' => __METHOD__]
       );
     }
-    return $this->_getEndpoint()->downloadBackup($this->get('filename'), $path);
+    return $this->_getEndpoint()->downloadBackup($this->get('filename'), $path)->wait();
   }
 
   /**
@@ -79,7 +79,7 @@ class Backup extends Model {
         ['action' => __METHOD__]
       );
     }
-    return $this->_getEndpoint()->deleteBackup($this->get('filename'));
+    return $this->_getEndpoint()->deleteBackup($this->get('filename'))->wait();
   }
 
   /**
