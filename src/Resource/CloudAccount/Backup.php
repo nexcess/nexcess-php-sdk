@@ -63,7 +63,9 @@ class Backup extends Model {
         ['action' => __METHOD__]
       );
     }
-    return $this->_getEndpoint()->downloadBackup($this->get('filename'), $path)->wait();
+    return $this->_getEndpoint()
+      ->downloadBackup($this->get('filename'), $path)
+      ->wait();
   }
 
   /**
