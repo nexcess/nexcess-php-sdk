@@ -251,6 +251,7 @@ class Endpoint extends BaseEndpoint implements Creatable {
   /**
    * Delete a specific backup
    *
+   * @param Entity $entity The entity representing the backup
    * @param string $file_name The unique file name for the backup to retrieve.
    * @throws ApiException If request fails
    */

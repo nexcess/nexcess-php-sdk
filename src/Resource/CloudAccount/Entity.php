@@ -134,7 +134,7 @@ class Entity extends Model {
   }
 
   /**
-   * Get a list of backups for a cloud account
+   * Get an individual backup
    *
    * @return Backup
    */
