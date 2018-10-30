@@ -149,7 +149,9 @@ class Endpoint extends BaseEndpoint implements Creatable {
       self::_URI . "/{$entity->getId()}/backup"
     );
 
-    return $this->_buildPromise($this->getModel(Backup::class)->sync($response));
+    return $this->_buildPromise(
+      $this->getModel(Backup::class)->sync($response)
+    );
   }
 
   /**
@@ -161,7 +163,9 @@ class Endpoint extends BaseEndpoint implements Creatable {
   public function getBackups(Entity $entity) : Collection {
     $collection = new Collection(Backup::class);
 
-    foreach ($this->_buildPromise($this->_fetchBackupList($entity))->wait() as $backup) {
+    foreach (
+      $this->_buildPromise($this->_fetchBackupList($entity))->wait() as $backup
+    ) {
       $collection->add($this->getModel(Backup::class)->sync($backup));
     }
 
