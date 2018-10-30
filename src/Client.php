@@ -290,15 +290,6 @@ class Client {
         ($params['headers'] ?? []) + $this->_getDefaultHeaders();
 
       return $this->_client->request($method, $endpoint, $params);
-
-      $guzzle_response = $this->_client->request($method, $endpoint, $params);
-      $content_type = $guzzle_response->getHeader('Content-type');
-      $body = (string) $guzzle_response->getBody();
-      $body = ($body === 'null') ? '[]' : $body;
-
-      return (reset($content_type) === 'application/json') ?
-        Util::jsonDecode($body) :
-        ['response' => $body];
     } catch (ConnectException $e) {
       throw new ApiException(ApiException::CANNOT_CONNECT, $e);
     } catch (ClientException $e) {

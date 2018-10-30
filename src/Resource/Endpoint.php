@@ -163,7 +163,7 @@ abstract class Endpoint implements Readable {
   public function sync(Model $model) : Model {
     $id = $model->getId();
     $this->_retrieved[$id] = Util::decodeResponse(
-      $this->_client->request('GET', static::_URI . "/{$id}")
+      $this->_get(static::_URI . "/{$id}")
     );
 
     $model->sync($this->_retrieved[$id]);
