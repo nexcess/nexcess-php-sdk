@@ -70,7 +70,7 @@ class Endpoint extends BaseEndpoint implements Creatable {
    *
    * @param Entity $entity Cloud Server instance
    * @param array $survey Cancellation survey
-   * @return PromisedResource $this
+   * @return PromisedResource
    */
   public function cancel(Entity $entity, array $survey) : PromisedResource {
     return $entity->get('service')->cancel($survey);
@@ -140,7 +140,7 @@ class Endpoint extends BaseEndpoint implements Creatable {
    * Create a backup
    *
    * @param Entity An instance of cloud account entity.
-   * @return Backup
+   * @return PromisedResource
    * @throws ApiException If request fails
    */
   public function createBackup(Entity $entity) : PromisedResource {
@@ -178,10 +178,13 @@ class Endpoint extends BaseEndpoint implements Creatable {
    * Return a specific backup
    *
    * @param string $file_name The unique file name for the backup to retrieve.
-   * @return Backup
+   * @return PromisedResource
    * @throws ApiException If request fails
    */
-  public function getBackup(Entity $entity, string $file_name) : PromisedResource {
+  public function getBackup(
+    Entity $entity,
+    string $file_name
+  ) : PromisedResource {
     return $this->_buildPromise($this->_findBackup($entity, $file_name));
   }
 
@@ -191,7 +194,6 @@ class Endpoint extends BaseEndpoint implements Creatable {
    * @param string $file_name The unique file name for the backup to retrieve.
    * @param string $path the directory to store the download in.
    *
-   * @return Promise
    * @throws ApiException If request fails
    * @throws Exception
    */
