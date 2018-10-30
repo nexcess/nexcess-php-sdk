@@ -87,16 +87,15 @@ class Entity extends Model {
    * @throws ApiException If request fails
    */
   public function createDevAccount(array $data) : Entity {
-    $endpoint = $this->_getEndpoint();
-    $dev = $endpoint->createDevAccount($this, $data);
-    $endpoint->wait();
-    return $dev;
+    return $this->_getEndpoint()->createDevAccount($this, $data)->wait();
   }
 
   /**
    * Gets php versions available for this cloud account to use.
    *
    * @return string[] List of available php major.minor versions
+   * @throws ResourceException If endpoint not available
+   * @throws ApiException If request fails
    */
   public function getAvailablePhpVersions() : array {
     return $this->_getEndpoint()->getAvailablePhpVersions($this);
@@ -111,8 +110,7 @@ class Entity extends Model {
    * @throws ApiException If request fails
    */
   public function setPhpVersion(string $version) : Entity {
-    $this->_getEndpoint()->setPhpVersion($this, $version)->wait();
-    return $this;
+    return $this->_getEndpoint()->setPhpVersion($this, $version)->wait();
   }
 
   /**
@@ -123,8 +121,7 @@ class Entity extends Model {
    * @throws ApiException If request fails
    */
   public function clearNginxCache() : Entity {
-    $this->_getEndpoint()->clearNginxCache($this);
-    return $this;
+    return $this->_getEndpoint()->clearNginxCache($this)->wait();
   }
 
   /**
@@ -162,5 +159,4 @@ class Entity extends Model {
   public function deleteBackup(string $filename) {
     $this->_getEndpoint()->downloadBackup($this, $filename);
   }
-  
 }

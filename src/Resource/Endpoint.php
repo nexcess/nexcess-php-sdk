@@ -17,7 +17,8 @@ use GuzzleHttp\ {
   Exception\ConnectException,
   Exception\RequestException,
   Exception\ServerException,
-  Exception\TransferException
+  Exception\TransferException,
+  Psr7\Response as GuzzleResponse
 };
 
 use Nexcess\Sdk\ {
@@ -27,7 +28,9 @@ use Nexcess\Sdk\ {
   Resource\Collection,
   Resource\Collector,
   Resource\Modelable as Model,
+  Resource\PromisedResource,
   Resource\Readable,
+  Resource\ResourceException,
   Util\Config,
   Util\Language,
   Util\Util
@@ -61,18 +64,6 @@ abstract class Endpoint implements Readable {
 
   /** @var array[] Map of action name:parameter info pairs. */
   protected const _PARAMS = [];
-
-  /** @var int Key for wait() $opts interval. */
-  public const OPT_WAIT_INTERVAL = 0;
-
-  /** @var int Key for wait() $opts timeout. */
-  public const OPT_WAIT_TIMEOUT = 1;
-
-  /** @var int Default wait interval. */
-  protected const _DEFAULT_WAIT_INTERVAL = 1;
-
-  /** @var int Default timeout before waiting fails. */
-  protected const _DEFAULT_WAIT_TIMEOUT = 30;
 
   /** @var Guzzle The Sdk Client. */
   protected $_client;
@@ -169,60 +160,14 @@ abstract class Endpoint implements Readable {
   /**
    * {@inheritDoc}
    */
-  public function sync(Model $model, bool $hard = false) : Model {
+  public function sync(Model $model) : Model {
     $id = $model->getId();
-    return $model->sync(
-      ($hard || empty($this->_retrieved[$id])) ?
-        $this->_retrieve($id) :
-        $this->_retrieved[$id]
+    $this->_retrieved[$id] = Util::decodeResponse(
+      $this->_client->request('GET', static::_URI . "/{$id}")
     );
-  }
 
-  /**
-   * {@inheritDoc}
-   */
-  public function wait(callable $until = null, array $opts = []) : Readable {
-    $config = $this->_config;
-
-    $until = $until ??
-      $this->_wait_until ??
-      function () {
-        return true;
-      };
-    $this->_wait_until = null;
-
-    $tick = $config->get('wait.tick_function');
-
-    $wait = $opts[self::OPT_WAIT_INTERVAL] ??
-      $config->get('wait.interval') ??
-      self::_DEFAULT_WAIT_INTERVAL;
-
-    $timeout = $opts[self::OPT_WAIT_TIMEOUT] ??
-      $config->get('wait.timeout') ??
-      self::_DEFAULT_WAIT_TIMEOUT;
-    $deadline = time() + $timeout;
-
-    try {
-      while ($until($this) !== true) {
-        if (time() > $deadline) {
-          throw new SdkException(
-            SdkException::WAIT_TIMEOUT_EXCEEDED,
-            ['timeout' => $timeout]
-          );
-        }
-
-        if ($tick) {
-          $tick($this);
-        }
-        sleep($wait);
-      }
-
-      return $this;
-    } catch (ApiException $e) {
-      throw $e;
-    } catch (Throwable $e) {
-      throw new SdkException(SdkException::CALLBACK_ERROR, $e);
-    }
+    $model->sync($this->_retrieved[$id]);
+    return $model;
   }
 
   /**
@@ -241,14 +186,28 @@ abstract class Endpoint implements Readable {
   }
 
   /**
+   * Builds a Promise that will resolve with the given model,
+   * optionally waiting until a given condition is met first.
+   *
+   * All Endpoint actions which would return a model must use this method.
+   * This normalizes expected return values,
+   * and allows us to poll for queued actions to complete when needed.
+   *
+   * @param Modelable $model The model to resolve the promise with
+   * @param callable $wait_until The condition to wait for
+   */
+  protected function _buildPromise(Modelable $model) : PromisedResource {
+    return new PromisedResource($this->_client->getConfig(), $model);
+  }
+
+  /**
    * Checks that a provided model is of the correct type for this endpoint.
    *
    * @param Model $model The model to check
    * @throws ApiException If the model is of the wrong class
    */
   protected function _checkModelType(Model $model) {
-    $fqcn = static::_MODEL_FQCN;
-    if (! $model instanceof $fqcn) {
+    if ($model->moduleName() !== $this->moduleName()) {
       throw new ApiException(
         ApiException::WRONG_MODEL_FOR_URI,
         [
@@ -258,6 +217,58 @@ abstract class Endpoint implements Readable {
         ]
       );
     }
+  }
+
+  /**
+   * Makes a DELETE request to the Api.
+   *
+   * @param string $uri The URI to request
+   * @param array $params Http client parameters
+   * @return GuzzleResponse Api response
+   * @throws ApiException On http error (4xx, 5xx, network issues, etc.)
+   * @throws SdkException On any other error
+   */
+  protected function _delete(string $uri, array $params = []) : GuzzleResponse {
+    return $this->_client->request('DELETE', $uri, $params);
+  }
+
+  /**
+   * Makes a GET request to the Api.
+   *
+   * @param string $uri The URI to request
+   * @param array $params Http client parameters
+   * @return GuzzleResponse Api response
+   * @throws ApiException On http error (4xx, 5xx, network issues, etc.)
+   * @throws SdkException On any other error
+   */
+  protected function _get(string $uri, array $params = []) : GuzzleResponse {
+    return $this->_client->request('GET', $uri, $params);
+  }
+
+  /**
+   * Makes a PATCH request to the Api.
+   *
+   * @param string $uri The URI to request
+   * @param array $params Http client parameters
+   * @return GuzzleResponse Api response
+   * @throws ApiException On http error (4xx, 5xx, network issues, etc.)
+   * @throws SdkException On any other error
+   */
+  protected function _patch(string $uri, array $params = []) : GuzzleResponse {
+    return $this->_client->request('PATCH', $uri, $params);
+  }
+
+  /**
+   * Makes a POST request to the Api.
+   *
+   * @param string $uri The URI to request
+   * @param array $params Http client parameters
+   * @return GuzzleResponse Api response
+   * @throws ApiException On http error (4xx, 5xx, network issues, etc.)
+   * @throws SdkException On any other error
+   */
+  protected function _post(string $uri, array $params = []) : GuzzleResponse {
+    return $this->_client->request('POST', $uri, $params);
   }
 
   /**
@@ -315,19 +326,6 @@ abstract class Endpoint implements Readable {
           ]
         );
       }
-    }
-  }
-
-  /**
-   * Queues or invokes a wait callback based on config options.
-   *
-   * @param callable|null $until
-   */
-  protected function _wait(callable $until = null) {
-    $this->_wait_until = $until;
-    if ($until !== null && $this->_config->get('wait.always')) {
-      $this->wait($until);
-      return;
     }
   }
 }

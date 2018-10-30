@@ -12,7 +12,8 @@ namespace Nexcess\Sdk\Resource;
 use Nexcess\Sdk\ {
   ApiException,
   Resource\Deletable,
-  Resource\Model
+  Resource\Model,
+  Resource\PromisedResource
 };
 
 /**
@@ -40,8 +41,9 @@ trait CanDelete {
       );
     }
 
-    $this->_client->request('DELETE', static::_URI . "/{$id}");
-    $this->_wait($this->_waitUntilDelete($model));
+    $this->_delete(static::_URI . "/{$id}");
+    return $this->_buildPromise($model)
+      ->waitUntil($this->_waitUntilDelete());
 
     return $this;
   }
@@ -49,13 +51,12 @@ trait CanDelete {
   /**
    * Checks for a DELETE to finish and then syncs the associated Model.
    *
-   * @param Model $model
-   * @return callable @see wait() $until
+   * @return callable @see PromisedResource::waitUntil() $done
    */
-  protected function _waitUntilDelete(Model $model) : callable {
-    return function ($endpoint) use ($model) {
+  protected function _waitUntilDelete() : callable {
+    return function ($model) {
       try {
-        $endpoint->retrieve($model->getId());
+        $this->retrieve($model->getId());
       } catch (ApiException $e) {
         if ($e->getCode() === ApiException::NOT_FOUND) {
           $model->unset('id');

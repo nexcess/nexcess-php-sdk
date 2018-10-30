@@ -112,9 +112,8 @@ class Entity extends Service {
    * @return Entity $this
    * @throws ApiException If request fails
    */
-  public function setPhpVersion(Entity $entity, string $version) : Endpoint {
-    $this->_getEndpoint()->setPhpVersion($this, $version)->wait();
-    return $this;
+  public function setPhpVersion(Entity $entity, string $version) : Entity {
+    return $this->_getEndpoint()->setPhpVersion($this, $version)->wait();
   }
 
   /**

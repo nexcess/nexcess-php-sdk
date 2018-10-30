@@ -61,6 +61,9 @@ class ApiException extends Exception {
   /** @var int Create request failed. */
   const CREATE_FAILED = 16;
 
+  /** @var int Tried to decode an invalid or not-json response. */
+  const NOT_DECODABLE = 17;
+
   /** {@inheritDoc} */
   const INFO = [
     self::CANNOT_CONNECT => ['message' => 'api.cannot_connect'],
@@ -78,6 +81,7 @@ class ApiException extends Exception {
     self::NO_SUCH_ENDPOINT => ['message' => 'api.no_such_endpoint'],
     self::GOT_MALFORMED_LIST => ['message' => 'api.got_malformed_list'],
     self::NOT_CREATABLE => ['message' => 'api.not_creatable'],
-    self::CREATE_FAILED => ['message' => 'api.create_failed']
+    self::CREATE_FAILED => ['message' => 'api.create_failed'],
+    self::NOT_DECODABLE => ['message' => 'api.not_decodable']
   ];
 }

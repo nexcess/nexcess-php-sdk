@@ -11,7 +11,8 @@ namespace Nexcess\Sdk\Resource\VirtGuestCloud;
 
 use Nexcess\Sdk\ {
   Resource\Service\Endpoint as ServiceEndpoint,
-  Resource\VirtGuestCloud\Entity
+  Resource\VirtGuestCloud\Entity,
+  Util\Util
 };
 
 /**
@@ -35,9 +36,9 @@ class Endpoint extends ServiceEndpoint {
    * @return string[] List of available php major.minor versions
    */
   public function getAvailablePhpVersions(Entity $entity) : array {
-    $this->_wait(null);
-    return $this->_client
-      ->request('GET', static::_URI . "/{$entity->getId()}/get-php-versions");
+    return Util::decodeResponse(
+      $this->_get(static::_URI . "/{$entity->getId()}/get-php-versions")
+    );
   }
 
   /**
@@ -45,12 +46,14 @@ class Endpoint extends ServiceEndpoint {
    *
    * @param Entity $entity Service instance
    * @param string $version Desired PHP version
-   * @return Endpoint $this
+   * @return PromisedResource Promise that resolves to updated entity
    * @throws ApiException If request fails
    */
-  public function setPhpVersion(Entity $entity, string $version) : Endpoint {
-    $this->_wait(null);
+  public function setPhpVersion(
+    Entity $entity,
+    string $version
+  ) : PromisedResource {
     $entity->get('cloud_account')->setPhpVersion($version);
-    return $this;
+    return $this->_buildPromise($entity);
   }
 }

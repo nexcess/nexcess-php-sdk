@@ -11,6 +11,7 @@ namespace Nexcess\Sdk\Util;
 
 use JsonSerializable,
   stdClass;
+use GuzzleHttp\Psr7\Response as GuzzleResponse;
 use Nexcess\Sdk\Util\UtilException;
 
 /**
@@ -26,6 +27,9 @@ class Util {
 
   /** @var int Validate as integer. */
   public const FILTER_INT = FILTER_VALIDATE_INT;
+
+  /** @var int Validate as string. */
+  public const FILTER_STRING = FILTER_UNSAFE_RAW;
 
   /** @var int Default options for jsonDecode(). */
   public const JSON_DECODE_DEFAULT_OPTS = JSON_BIGINT_AS_STRING;
@@ -66,6 +70,26 @@ class Util {
 
   /** @var array Map of gettype => TYPE_* replacements. */
   protected const _TYPE_TR = ['double' => 'float', 'NULL' => 'null'];
+
+  /**
+   * Gets an array of data from an Api response.
+   *
+   * @param GuzzleResponse $response The api response to decode
+   * @return array Decoded data
+   * @throws ApiException If response cannot be decoded
+   */
+  public static function decodeResponse(GuzzleResponse $response) : array {
+    $content_type = $response->getHeader('Content-type')[0];
+    $body = Util::filter($response->getBody(), Util::FILTER_STRING);
+    if ($content_type === 'application/json') {
+      $data = Util::jsonDecode($body);
+      if (is_array($data)) {
+        return $data;
+      }
+    }
+
+    throw new ApiException(ApiException::NOT_DECODABLE, ['body' => $body]);
+  }
 
   /**
    * Looks up a value at given path in an array-like subject.
@@ -159,13 +183,13 @@ class Util {
    *
    * @param string $json To be decoded
    * @param int $opts Bitmask of decoding options
-   * @return array Data on success
+   * @return mixed Data on success
    * @throws UtilException On failure
    */
   public static function jsonDecode(
     string $json,
     int $opts = self::JSON_DECODE_DEFAULT_OPTS
-  ) : array {
+  ) {
     $data = json_decode($json, true, 512, $opts);
     if (json_last_error() === JSON_ERROR_NONE) {
       return $data;

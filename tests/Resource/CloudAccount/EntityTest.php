@@ -12,7 +12,9 @@ namespace Nexcess\Sdk\Tests\Resource\CloudAccount;
 use Nexcess\Sdk\ {
   Resource\CloudAccount\Endpoint,
   Resource\CloudAccount\Entity,
-  Tests\Resource\ModelTestCase
+  Resource\PromisedResource,
+  Tests\Resource\ModelTestCase,
+  Util\Config
 };
 
 /**
@@ -65,7 +67,7 @@ class EntityTest extends ModelTestCase {
     $endpoint->expects($this->once())
       ->method('setPhpVersion')
       ->with($this->equalTo($entity), $this->equalTo('7.2'))
-      ->willReturn($endpoint);
+      ->willReturn(new PromisedResource(new Config(), $entity));
 
     $entity->setApiEndpoint($endpoint);
 

@@ -18,6 +18,7 @@ use Nexcess\Sdk\ {
   Resource\Creatable,
   Resource\Collection,
   Resource\Endpoint as BaseEndpoint,
+  Resource\PromisedResource,
   Util\Util
 };
 
@@ -69,11 +70,10 @@ class Endpoint extends BaseEndpoint implements Creatable {
    *
    * @param Entity $entity Cloud Server instance
    * @param array $survey Cancellation survey
-   * @return Endpoint $this
+   * @return PromisedResource $this
    */
-  public function cancel(Entity $entity, array $survey) : Endpoint {
-    $entity->get('service')->cancel($survey);
-    return $this;
+  public function cancel(Entity $entity, array $survey) : PromisedResource {
+    return $entity->get('service')->cancel($survey);
   }
 
   /**
@@ -81,10 +81,13 @@ class Endpoint extends BaseEndpoint implements Creatable {
    * Note, the given CloudAccount MUST NOT be a development account itself.
    *
    * @param Entity $entity CloudAccount instance
-   * @return Entity The new dev account
+   * @return PromisedResource Promise resolving to new dev account
    * @throws ApiException On failure
    */
-  public function createDevAccount(Entity $entity, array $data) : Entity {
+  public function createDevAccount(
+    Entity $entity,
+    array $data
+  ) : PromisedResource {
     $data = [
       'domain' => ($data['domain'] ?? 'dev') . ".{$entity->get('domain')}",
       'ref_cloud_account_id' => $entity->getId(),
@@ -94,12 +97,12 @@ class Endpoint extends BaseEndpoint implements Creatable {
       + ['copy_account' => true, 'scrub_account' => true];
     $this->_validateParams(__FUNCTION__, $data);
 
-    $dev = $this->getModel()->sync(
-      $this->_client->request('POST', static::_URI, ['json' => $data])
+    // sync; no waiting
+    return $this->_buildPromise(
+      $this->getModel()->sync(
+        Util::decodeResponse($this->_post(static::_URI, ['json' => $data]))
+      )
     );
-
-    $this->_wait($this->_waitUntilCreate($dev));
-    return $dev;
   }
 
   /**
@@ -117,39 +120,20 @@ class Endpoint extends BaseEndpoint implements Creatable {
    *
    * @param Entity $entity Cloud server instance
    * @param string $version Desired PHP version
-   * @return Endpoint $this
+   * @return PromisedResource A promise resolving to the updated entity
    * @throws ApiException If request fails
    */
   public function setPhpVersion(
     Entity $entity,
     string $version
-  ) : Endpoint {
-    $this->_client->request(
-      'POST',
+  ) : PromisedResource {
+    $r = $this->_post(
       self::_URI . "/{$entity->getId()}",
       ['json' => ['_action' => 'set-php-version', 'php_version' => $version]]
     );
 
-    $this->_wait($this->_waitUntilPhpVersion($entity, $version));
-
-    return $this;
-  }
-
-  /**
-   * Builds callback to wait() for a cloud account to update php versions.
-   *
-   * @param Entity $entity The CloudAccount instance to check
-   * @param string $version The target php version
-   * @return Closure Callback for wait()
-   */
-  protected function _waitUntilPhpVersion(
-    Entity $entity,
-    string $version
-  ) : Closure {
-    return function (Endpoint $endpoint) use ($entity, $version) {
-      $entity->sync($this->_retrieve($entity->getId()));
-      return $entity->get('php_version') === $version;
-    };
+    // sync; no waiting
+    return $this->_buildPromise($entity);
   }
 
   /**
@@ -314,20 +298,17 @@ class Endpoint extends BaseEndpoint implements Creatable {
   /**
    * Clear Nginx Cache
    *
-   * @return Endpoint $this
+   * @return PromisedResource Promise resolving to the given entity
    * @throws ResourceException If endpoint not available
    * @throws ApiException If request fails
    */
-  public function clearNginxCache(Entity $entity) : Endpoint {
-    $this->_client->request(
-      'POST',
+  public function clearNginxCache(Entity $entity) : PromisedResource {
+    $this->_post(
       self::_URI . "/{$entity->getId()}",
       ['json' => ['_action' => 'purge-cache']]
     );
 
-    $this->_wait(null);
-
-    return $this;
+    // sync; no waiting
+    return $this->_buildPromise($entity);
   }
-
 }

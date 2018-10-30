@@ -18,7 +18,8 @@ use GuzzleHttp\ {
   Exception\RequestException,
   Exception\ServerException,
   HandlerStack as GuzzleHandlerStack,
-  Middleware as GuzzleMiddleware
+  Middleware as GuzzleMiddleware,
+  Psr7\Response as GuzzleResponse
 };
 
 use function GuzzleHttp\default_user_agent as guzzle_user_agent;
@@ -28,13 +29,14 @@ use Nexcess\Sdk\ {
   Resource\Creatable,
   Resource\Modelable as Model,
   Resource\Readable as Endpoint,
-  Resource\Response,
   Resource\Updatable,
   SdkException,
   Util\Config,
   Util\Language,
   Util\Util
 };
+
+use Psr7\Http\Message\ResponseInterface as Response;
 
 /**
  * API client for nexcess.net / thermo.io
@@ -274,7 +276,7 @@ class Client {
    * @param string $method The http method to use
    * @param string $endpoint The API endpoint to request
    * @param array $params Http client parameters
-   * @return array Response data
+   * @return GuzzleResponse Api response
    * @throws ApiException On http error (4xx, 5xx, network issues, etc.)
    * @throws SdkException On any other error
    */
@@ -282,10 +284,12 @@ class Client {
     string $method,
     string $endpoint,
     array $params = []
-  ) : array {
+  ) : GuzzleResponse {
     try {
       $params['headers'] =
         ($params['headers'] ?? []) + $this->_getDefaultHeaders();
+
+      return $this->_client->request($method, $endpoint, $params);
 
       $guzzle_response = $this->_client->request($method, $endpoint, $params);
       $content_type = $guzzle_response->getHeader('Content-type');
