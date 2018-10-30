@@ -11,6 +11,7 @@ namespace Nexcess\Sdk\Resource;
 
 use Nexcess\Sdk\ {
   Resource\Modelable as Model,
+  Resource\PromisedResource,
   Resource\Readable
 };
 
@@ -28,8 +29,8 @@ interface Updatable extends Readable {
    *
    * @param int $id Item id
    * @param array|null $data Map of properties:values to set before update
-   * @return Updatable $this
+   * @return PromisedResource A promise wrapping the updated resource
    * @throws ApiException If request fails
    */
-  public function update(Model $model, array $data = []) : Updatable;
+  public function update(Model $model, array $data = []) : PromisedResource;
 }
