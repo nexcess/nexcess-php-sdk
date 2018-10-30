@@ -133,7 +133,7 @@ class Entity extends Model {
    * @return Collection
    */
   public function getBackups() : Collection {
-    return $this->_getEndpoint()->getBackups($this);
+    return $this->_getEndpoint()->getBackups($this)->wait();
   }
 
   /**
@@ -142,7 +142,7 @@ class Entity extends Model {
    * @return Backup
    */
   public function getBackup(string $filename) : Backup {
-    return $this->_getEndpoint()->getBackup($this, $filename);
+    return $this->_getEndpoint()->getBackup($this, $filename)->wait();
   }
 
   /**
@@ -151,7 +151,7 @@ class Entity extends Model {
    * @return Backup
    */
   public function downloadBackup(string $filename, string $path)  {
-    $this->_getEndpoint()->downloadBackup($this, $filename, $path);
+    $this->_getEndpoint()->downloadBackup($this, $filename, $path)->wait();
   }
 
   /**
@@ -160,7 +160,7 @@ class Entity extends Model {
    * @return Backup
    */
   public function deleteBackup(string $filename) {
-    $this->_getEndpoint()->downloadBackup($this, $filename);
+    $this->_getEndpoint()->downloadBackup($this, $filename)->wait();
   }
   
 }
