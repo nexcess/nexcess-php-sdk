@@ -29,10 +29,10 @@ class EndpointTest extends EndpointTestCase {
   protected const _RESOURCE_PATH = __DIR__ . '/resources';
 
   /** @var string Resource name for new dev account responses. */
-  protected const _RESOURCE_NEW_DEV = 'POST %2Fcloud-account.json';
+  protected const _RESOURCE_NEW_DEV = 'POST-%2Fcloud-account.json';
 
   /** @var string Resource name for cloud account #1 json payload. */
-  protected const _RESOURCE_GET_1 = 'GET %2Fcloud-account%2F1.json';
+  protected const _RESOURCE_GET_1 = 'GET-%2Fcloud-account%2F1.json';
 
   /** @var string Resource name for cloud account instance data. */
   protected const _RESOURCE_CLOUD = 'cloud-account-1.toArray-shallow.php';
@@ -44,7 +44,7 @@ class EndpointTest extends EndpointTestCase {
 
   /** {@inheritDoc} */
   protected const _RESOURCE_LISTS = [
-    'GET %2Fcloud-account%3F.json' => []
+    'GET-%2Fcloud-account%3F.json' => []
   ];
 
   /** {@inheritDoc} */

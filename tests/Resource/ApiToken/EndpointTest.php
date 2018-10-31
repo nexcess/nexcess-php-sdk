@@ -29,7 +29,7 @@ class EndpointTest extends EndpointTestCase {
 
   /** {@inheritDoc} */
   protected const _RESOURCE_LISTS = [
-    'GET %2Fapi-token%3F.json' => []
+    'GET-%2Fapi-token%3F.json' => []
   ];
 
   /** {@inheritDoc} */
