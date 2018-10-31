@@ -86,8 +86,8 @@ class ResourceHandler {
     $uri = $request->getUri();
     $method = $request->getMethod();
     $path = $uri->getPath();
-    $key_path = "{$method} " . urlencode($path);
-    $key_full = "{$method} " . urlencode("{$path}?{$uri->getQuery()}");
+    $key_path = "{$method}-" . urlencode($path);
+    $key_full = "{$method}-" . urlencode("{$path}?{$uri->getQuery()}");
 
     $partials = [];
     foreach ($this->_paths as $path) {
