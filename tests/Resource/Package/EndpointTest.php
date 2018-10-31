@@ -34,9 +34,9 @@ class EndpointTest extends EndpointTestCase {
 
   /** {@inheritDoc} */
   protected const _RESOURCE_LISTS = [
-    'GET %2fpackage%3Ftype%3Dapp.json' => ['type' => 'app'],
-    'GET %2fpackage%3Ftype%3Dvirt-guest.json' => ['type' => 'virt-guest'],
-    'GET %2fpackage%3Ftype%3Dvirt-guest-cloud.json' =>
+    'GET-%2fpackage%3Ftype%3Dapp.json' => ['type' => 'app'],
+    'GET-%2fpackage%3Ftype%3Dvirt-guest.json' => ['type' => 'virt-guest'],
+    'GET-%2fpackage%3Ftype%3Dvirt-guest-cloud.json' =>
       ['type' => 'virt-guest-cloud']
   ];
 
