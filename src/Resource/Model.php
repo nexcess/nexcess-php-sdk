@@ -139,6 +139,7 @@ abstract class Model implements Modelable {
    */
   public function equals(Modelable $other) : bool {
     return ($other instanceof $this) &&
+      $this->isReal() &&
       ($other->getId() === $this->getId());
   }
 

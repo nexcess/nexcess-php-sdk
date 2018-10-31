@@ -9,20 +9,24 @@ declare(strict_types  = 1);
 
 namespace Nexcess\Sdk\Resource\CloudAccount;
 
-use Closure;
+use Closure,
+  Throwable;
+
+use GuzzleHttp\Cookie\CookieJar;
+
 use Nexcess\Sdk\ {
   ApiException,
   Resource\CanCreate,
+  Resource\CloudAccount\Backup,
   Resource\CloudAccount\CloudAccountException,
   Resource\CloudAccount\Entity,
   Resource\Creatable,
   Resource\Collection,
   Resource\Endpoint as BaseEndpoint,
+  Resource\Modelable,
   Resource\PromisedResource,
   Util\Util
 };
-
-use GuzzleHttp\Cookie\CookieJar;
 
 /**
  * API endpoint for Cloud Accounts (virtual hosting).
@@ -137,20 +141,34 @@ class Endpoint extends BaseEndpoint implements Creatable {
   }
 
   /**
+   * {@inheritDoc}
+   * Overridden to handle both Entity and secondary Entities (Backup).
+   */
+  public function sync(Modelable $model) : Modelable {
+    if ($model instanceof Backup) {
+      // @todo https://nexcess.atlassian.net/browse/NSD-12396
+      //  because backups currently have no reference to their cloud,
+      //  we cannot retrieve them given only the model.
+      //  fortunately they don't change so syncing is a no-op anyway
+      return $model;
+    }
+
+    return parent::sync($model);
+  }
+
+  /**
    * Create a backup
    *
    * @param Entity An instance of cloud account entity.
-   * @return PromisedResource
+   * @return PromisedResource Resolves to Backup
    * @throws ApiException If request fails
    */
   public function createBackup(Entity $entity) : PromisedResource {
-    $response = $this->_post(
-      self::_URI . "/{$entity->getId()}/backup"
-    );
-
     return $this->_buildPromise(
       $this->getModel(Backup::class)->sync(
-        Util::decodeResponse($response)
+        Util::decodeResponse(
+          $this->_post(self::_URI . "/{$entity->getId()}/backup")
+        )
       )
     );
   }
@@ -158,17 +176,14 @@ class Endpoint extends BaseEndpoint implements Creatable {
   /**
    * Return a list of backups
    *
-   * @return Collection
+   * @return Collection Of Backups
    * @throws ApiException If request fails
    */
   public function getBackups(Entity $entity) : Collection {
     $collection = new Collection(Backup::class);
 
     foreach ($this->_fetchBackupList($entity) as $backup) {
-      $collection->add(
-        $this->getModel(Backup::class)
-        ->sync($backup)
-      );
+      $collection->add($this->getModel(Backup::class)->sync($backup));
     }
 
     return $collection;
@@ -193,7 +208,6 @@ class Endpoint extends BaseEndpoint implements Creatable {
    *
    * @param string $file_name The unique file name for the backup to retrieve.
    * @param string $path the directory to store the download in.
-   *
    * @throws ApiException If request fails
    * @throws Exception
    */
@@ -224,7 +238,6 @@ class Endpoint extends BaseEndpoint implements Creatable {
     }
 
     $stream = @fopen($save_to, 'w');
-    
     if (! is_resource($stream)) {
       throw new CloudAccountException(
         CloudAccountException::INVALID_STREAM,
@@ -241,7 +254,7 @@ class Endpoint extends BaseEndpoint implements Creatable {
           'verify' => false
         ]
       );
-    } catch (\Exception $e) {
+    } catch (Throwable $e) {
       fclose($stream);
       unlink($save_to);
       throw $e;
@@ -256,9 +269,7 @@ class Endpoint extends BaseEndpoint implements Creatable {
    * @throws ApiException If request fails
    */
   public function deleteBackup(Entity $entity, string $file_name)  {
-    $this->_delete(
-      self::_URI . "/{$entity->getId()}/backup/$file_name"
-    );
+    $this->_delete(self::_URI . "/{$entity->getId()}/backup/{$file_name}");
   }
 
   /**
@@ -268,7 +279,7 @@ class Endpoint extends BaseEndpoint implements Creatable {
    *
    * @return Backup
    * @throws ApiException If request fails
-   * @throws Exception
+   * @throws CloudAccountException If backup not found
    */
   protected function _findBackup(Entity $entity, string $file_name) : Backup {
     foreach ($this->_fetchBackupList($entity) as $backup) {
@@ -289,12 +300,11 @@ class Endpoint extends BaseEndpoint implements Creatable {
    *
    * @return array
    * @throws ApiException If request fails
-   * @throws Exception
    */
   protected function _fetchBackupList(Entity $entity) : array {
-    return Util::decoderesponse($this->_get(
-      self::_URI . "/{$entity->getId()}/backup"
-    ));
+    return Util::decodeResponse(
+      $this->_get(self::_URI . "/{$entity->getId()}/backup")
+    );
   }
 
   /**

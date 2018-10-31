@@ -27,7 +27,7 @@ trait CanDelete {
    */
   public function delete($model_or_id) : PromisedResource {
     $model = is_int($model_or_id) ?
-      $this->getModel($model_or_id) :
+      $this->getModel()->set('id', $model_or_id) :
       $model_or_id;
     // throws if wrong model
     $this->_checkModelType($model);

@@ -8,6 +8,7 @@
     "got_malformed_list": "Unexpected API response from 'GET /{uri}'\n  (expected array of arrays; check your request parameters?)",
     "missing_id": "Cannot read {model}: no ID provided",
     "not_creatable": "The Create action is not allowed on this endpoint",
+    "not_decodable": "Api response payload could not be decoded (invalid json or not an array): '{body}'",
     "not_found": "{method} /{endpoint} not found",
     "request_failed": "API request failed: {__rootMessage__}",
     "server_error": "API host failed to handle request: {__rootMessage__}",
