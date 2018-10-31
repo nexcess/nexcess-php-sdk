@@ -134,7 +134,7 @@ abstract class Endpoint implements Readable {
       static::_URI . "?{$this->_buildListQuery($filter)}"
     );
     $collection = new Collection(static::_MODEL_FQCN);
-    foreach ($response as $data) {
+    foreach (Util::decodeResponse($response) as $data) {
       if (! is_array($data)) {
         throw new ApiException(
           ApiException::GOT_MALFORMED_LIST,
