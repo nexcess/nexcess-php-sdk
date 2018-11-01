@@ -10,7 +10,7 @@ declare(strict_types  = 1);
 namespace Nexcess\Sdk\Util;
 
 use Nexcess\Sdk\ {
-  Exception\SdkException,
+  SdkException,
   Util\Language,
   Util\Util
 };

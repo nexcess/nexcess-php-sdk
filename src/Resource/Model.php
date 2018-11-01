@@ -392,7 +392,7 @@ abstract class Model implements Modelable {
         } elseif ($value instanceof Collector) {
           $value = $value->toArray(true);
         } elseif ($value instanceof DateTime) {
-          $value = $value->format('U');
+          $value = Util::filter($value->format('U'), Util::FILTER_INT);
         }
       }
       $array[$property] = $value;
@@ -410,7 +410,7 @@ abstract class Model implements Modelable {
       $property = static::_PROPERTY_ALIASES[$property] ?? $property;
 
       if ($value instanceof DateTime) {
-        $value = $value->format('U');
+        $value = Util::filter($value->format('U'), Util::FILTER_INT);
       }
 
       if (is_scalar($value) && in_array($property, static::_PROPERTY_NAMES)) {
@@ -586,8 +586,9 @@ abstract class Model implements Modelable {
    * or if the model has no id.
    */
   protected function _tryToHydrate() {
-    if ($this->_hasEndpoint() && $this->isReal() && ! $this->_hydrated) {
-      $model = $this->_getEndpoint()->retrieve($this->getId());
+    $id = $this->getId();
+    if ($this->_hasEndpoint() && ($id > 0) && ! $this->_hydrated) {
+      $model = $this->_getEndpoint()->retrieve($id);
       $this->_values += $model->_values;
       foreach ($this->_values as $property => $value) {
         if (isset($value)) {

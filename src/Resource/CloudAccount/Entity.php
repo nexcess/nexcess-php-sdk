@@ -30,8 +30,7 @@ class Entity extends Model {
     'id' => 'account_id',
     'location' => 'service.location',
     'php_version' => 'environment.software.php.version',
-    'software' => 'environment.software',
-    'status' => 'service.status'
+    'software' => 'environment.software'
   ];
 
   /** {@inheritDoc} */
