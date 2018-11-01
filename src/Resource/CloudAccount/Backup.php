@@ -153,7 +153,8 @@ class Backup extends Model {
       ! $this->_hydrated
     ) {
       $model = $this->_getEndpoint()
-        ->getBackup($this->getCloudAccount(), $this->get('filename'));
+        ->getBackup($this->getCloudAccount(), $this->get('filename'))
+        ->wait();
       $this->_values += $model->_values;
       foreach ($this->_values as $property => $value) {
         if (isset($value)) {
