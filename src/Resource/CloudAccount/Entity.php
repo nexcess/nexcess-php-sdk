@@ -12,6 +12,7 @@ namespace Nexcess\Sdk\Resource\CloudAccount;
 use Nexcess\Sdk\ {
   Resource\App\Entity as App,
   Resource\Model,
+  Resource\PromisedResource,
   Resource\VirtGuestCloud\Entity as Service,
   Util\Util
 };
@@ -122,6 +123,15 @@ class Entity extends Model {
    */
   public function clearNginxCache() : Entity {
     return $this->_getEndpoint()->clearNginxCache($this)->wait();
+  }
+
+  /**
+   * Creates a backup of this cloud account.
+   *
+   * @return PromisedResource Backup
+   */
+  public function backup() : PromisedResource {
+    return $this->_getEndpoint()->createBackup($this);
   }
 
   /**

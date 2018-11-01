@@ -147,7 +147,8 @@ class Endpoint extends BaseEndpoint implements Creatable {
   public function sync(Modelable $model) : Modelable {
     if ($model instanceof Backup) {
       return $model->sync(
-        $this->_getBackup($model->getCloudAccount(), $model->get('filename'))
+        $this->getBackup($model->getCloudAccount(), $model->get('filename'))
+          ->wait()
           ->toArray()
       );
     }
