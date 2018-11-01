@@ -12,6 +12,7 @@ namespace Nexcess\Sdk\Resource\CloudAccount;
 use Nexcess\Sdk\ {
   Resource\App\Entity as App,
   Resource\CloudAccount\CloudAccountException,
+  Resource\CloudAccount\Entity as CloudAccount,
   Resource\Model,
   Resource\Modelable,
   Util\Util
@@ -49,6 +50,9 @@ class Backup extends Model {
     'complete'
   ];
 
+  /** @var CloudAccount The cloud account that "owns" this backup. */
+  protected $_cloud_account;
+
   /**
    * Download this backup
    *
@@ -63,9 +67,11 @@ class Backup extends Model {
       );
     }
 
-    $this->_getEndpoint()
-      ->downloadBackup($this->get('filename'), $path)
-      ->wait();
+    $this->_getEndpoint()->downloadBackup(
+      $this->getCloudAccount(),
+      $this->get('filename'),
+      $path
+    );
   }
 
   /**
@@ -97,11 +103,67 @@ class Backup extends Model {
   }
 
   /**
+   * Gets the cloud account that "owns" this backup.
+   *
+   * @return CloudAccount
+   */
+  public function getCloudAccount() : CloudAccount {
+    if (empty($this->_cloud_account)) {
+      throw new CloudAccountException(
+        CloudAccountException::OWNER_UNKNOWN,
+        ['filename' => $this->get('filename')]
+      );
+    }
+
+    return $this->_cloud_account;
+  }
+
+  /**
+   * Sets the cloud account that "owns" this backup.
+   *
+   * Note, this method is intended primarily for internal use by Endpoints.
+   * It is important to be sure that this Backup actually "belongs"
+   * to the given cloud account, or things will break.
+   *
+   * @param CloudAccount $cloud_account The "owner" cloud account
+   * @return Backup $this
+   */
+  public function setCloudAccount(CloudAccount $cloud_account) : Backup {
+    $this->_cloud_account = $cloud_account;
+    return $this;
+  }
+
+  /**
    * Check to see if this is a complete object
    *
    * @return bool true if it has a non-empty file name
    */
   public function isReal() : bool {
     return ! empty($this->_values['filename']);
+  }
+
+  /**
+   * {@inheritDoc}
+   * Overridden to handle special retrieve case.
+   */
+  protected function _tryToHydrate() {
+    if (
+      $this->_hasEndpoint() &&
+      isset($this->_cloud_account, $this->_values['filename']) &&
+      ! $this->_hydrated
+    ) {
+      $model = $this->_getEndpoint()
+        ->getBackup($this->getCloudAccount(), $this->get('filename'));
+      $this->_values += $model->_values;
+      foreach ($this->_values as $property => $value) {
+        if (isset($value)) {
+          continue;
+        }
+
+        $this->_values[$property] = $model->_values[$property];
+      }
+
+      $this->_hydrated = true;
+    }
   }
 }

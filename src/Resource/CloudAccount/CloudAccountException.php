@@ -28,8 +28,11 @@ class CloudAccountException extends Exception {
   /** @var int Attempt to access/operate on an invalid backup instance. */
   const INVALID_BACKUP = 4;
 
-  /** @var int backup file failed to open */
+  /** @var int Backup file failed to open. */
   const INVALID_STREAM = 5;
+
+  /** @var int No cloud account associated with backup instance. */
+  const OWNER_UNKNOWN = 6;
 
   /** {@inheritDoc} */
   const INFO = [
@@ -42,6 +45,8 @@ class CloudAccountException extends Exception {
     self::INVALID_BACKUP =>
       ['message' => 'resource.CloudAccount.Exception.invalid_backup'],
     self::INVALID_STREAM =>
-      ['message' => 'resource.CloudAccount.Exception.invalid_stream']
+      ['message' => 'resource.CloudAccount.Exception.invalid_stream'],
+    self::OWNER_UNKNOWN =>
+      ['message' => 'resource.CloudAccount.Exception.owner_unknown']
   ];
 }

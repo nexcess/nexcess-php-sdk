@@ -146,11 +146,10 @@ class Endpoint extends BaseEndpoint implements Creatable {
    */
   public function sync(Modelable $model) : Modelable {
     if ($model instanceof Backup) {
-      // @todo https://nexcess.atlassian.net/browse/NSD-12396
-      //  because backups currently have no reference to their cloud,
-      //  we cannot retrieve them given only the model.
-      //  fortunately they don't change so syncing is a no-op anyway
-      return $model;
+      return $model->sync(
+        $this->_getBackup($model->getCloudAccount(), $model->get('filename'))
+          ->toArray()
+      );
     }
 
     return parent::sync($model);
@@ -165,12 +164,26 @@ class Endpoint extends BaseEndpoint implements Creatable {
    */
   public function createBackup(Entity $entity) : PromisedResource {
     return $this->_buildPromise(
-      $this->getModel(Backup::class)->sync(
-        Util::decodeResponse(
-          $this->_post(self::_URI . "/{$entity->getId()}/backup")
+      $this->getModel(Backup::class)
+        ->setCloudAccount($entity)
+        ->sync(
+          Util::decodeResponse(
+            $this->_post(self::_URI . "/{$entity->getId()}/backup")
+          )
         )
-      )
-    );
+    )->waitUntil($this->_waitUntilBackupComplete());
+  }
+
+  /**
+   * Waits for a backup to be complete.
+   *
+   * @return Closure
+   */
+  protected function _waitUntilBackupComplete() : Closure {
+    return function ($backup) {
+      $this->sync($backup);
+      return $backup->get('complete');
+    };
   }
 
   /**
@@ -183,7 +196,9 @@ class Endpoint extends BaseEndpoint implements Creatable {
     $collection = new Collection(Backup::class);
 
     foreach ($this->_fetchBackupList($entity) as $backup) {
-      $collection->add($this->getModel(Backup::class)->sync($backup));
+      $collection->add(
+        $this->getModel(Backup::class)->setCloudAccount($entity)->sync($backup)
+      );
     }
 
     return $collection;
@@ -285,6 +300,7 @@ class Endpoint extends BaseEndpoint implements Creatable {
     foreach ($this->_fetchBackupList($entity) as $backup) {
       if ($backup['filename'] === $file_name) {
         return $this->getModel(Backup::class)
+          ->setCloudAccount($entity)
           ->sync($backup);
       }
     }
