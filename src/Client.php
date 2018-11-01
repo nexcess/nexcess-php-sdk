@@ -210,6 +210,17 @@ class Client {
   }
 
   /**
+   * Sends a debug message to any registered listeners.
+   *
+   * @param string $message Debug message to send
+   */
+  public function debug(string $message) : void {
+    foreach ($this->_debug_listeners as $listen) {
+      $listen($message);
+    }
+  }
+
+  /**
    * Gets the client config object.
    *
    * @return Config
@@ -377,17 +388,6 @@ class Client {
   }
 
   /**
-   * Sends a debug message to any registered listeners.
-   *
-   * @param string $message Debug message to send
-   */
-  protected function _debug(string $message) : void {
-    foreach ($this->_debug_listeners as $listen) {
-      $listen($message);
-    }
-  }
-
-  /**
    * "Streams" the request/response as they are sent/received for debugging.
    *
    * @return Closure Guzzle middleware handler
@@ -395,14 +395,14 @@ class Client {
   protected function _debugStreamer() : Closure {
     return function (callable $handler) {
       return function (GuzzleRequest $request, array $options) use ($handler) {
-        $this->_debug(
+        $this->debug(
           (new GuzzleFormatter(self::_DEBUG_REQUEST_FORMAT))
             ->format($request, new GuzzleResponse())
         );
         $promised_response = $handler($request, $options);
         return $promised_response->then(
           function (GuzzleResponse $response) use ($request) {
-            $this->_debug(
+            $this->debug(
               (new GuzzleFormatter(self::_DEBUG_RESPONSE_FORMAT))
                 ->format($request, $response)
             );
