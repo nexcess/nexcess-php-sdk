@@ -9,7 +9,8 @@ declare(strict_types  = 1);
 
 namespace Nexcess\Sdk;
 
-use Throwable;
+use Closure,
+  Throwable;
 
 use GuzzleHttp\ {
   Client as Guzzle,
@@ -18,7 +19,9 @@ use GuzzleHttp\ {
   Exception\RequestException,
   Exception\ServerException,
   HandlerStack as GuzzleHandlerStack,
+  MessageFormatter as GuzzleFormatter,
   Middleware as GuzzleMiddleware,
+  Psr7\Request as GuzzleRequest,
   Psr7\Response as GuzzleResponse
 };
 
@@ -72,11 +75,20 @@ class Client {
   /** @var string Sdk version. */
   public const SDK_VERSION = '0.1-alpha';
 
+  /** @var string Format for request debug messages. */
+  protected const _DEBUG_REQUEST_FORMAT = "----------\n{request}";
+
+  /** @var string Format for response debug messages. */
+  protected const _DEBUG_RESPONSE_FORMAT = "{response}\n----------";
+
   /** @var Config Client configuration object. */
   protected $_config;
 
   /** @var Guzzle Http client. */
   protected $_client;
+
+  /** @var callable[] List of debug listeners. */
+  protected $_debug_listeners = [];
 
   /** @var Endpoint[] Cache of Endpoint instances. */
   protected $_endpoints = [];
@@ -183,6 +195,32 @@ class Client {
   }
 
   /**
+   * Adds a debug listener.
+   * Note, listeners will only be called in debug mode.
+   *
+   * The listener signature is like
+   *  void $listener(string $message)
+   *
+   * @param callable $listener
+   * @return Client $this
+   */
+  public function addDebugListener(callable $listener) : Client {
+    $this->_debug_listeners[] = $listener;
+    return $this;
+  }
+
+  /**
+   * Sends a debug message to any registered listeners.
+   *
+   * @param string $message Debug message to send
+   */
+  public function debug(string $message) : void {
+    foreach ($this->_debug_listeners as $listen) {
+      $listen($message);
+    }
+  }
+
+  /**
    * Gets the client config object.
    *
    * @return Config
@@ -253,7 +291,7 @@ class Client {
    * Gets a log of API requests performed by this client.
    *
    * @return array[] Info about API request, categorized by endpoint
-   * @throws If request logging is disabled
+   * @throws SdkException If request logging is disabled
    */
   public function getRequestLog() : array {
     $config = $this->_config;
@@ -350,6 +388,32 @@ class Client {
   }
 
   /**
+   * "Streams" the request/response as they are sent/received for debugging.
+   *
+   * @return Closure Guzzle middleware handler
+   */
+  protected function _debugStreamer() : Closure {
+    return function (callable $handler) {
+      return function (GuzzleRequest $request, array $options) use ($handler) {
+        $this->debug(
+          (new GuzzleFormatter(self::_DEBUG_REQUEST_FORMAT))
+            ->format($request, new GuzzleResponse())
+        );
+        $promised_response = $handler($request, $options);
+        return $promised_response->then(
+          function (GuzzleResponse $response) use ($request) {
+            $this->debug(
+              (new GuzzleFormatter(self::_DEBUG_RESPONSE_FORMAT))
+                ->format($request, $response)
+            );
+            return $response;
+          }
+        );
+      };
+    };
+  }
+
+  /**
    * Gets default headers for API requests.
    *
    * @return array Map of http headers
@@ -380,7 +444,10 @@ class Client {
     $defaults = $config->get('guzzle_defaults') ?? [];
 
     $handler = $defaults['handler'] ?? GuzzleHandlerStack::create();
-    if ($config->get('debug') || $config->get('request.log')) {
+    if ($config->get('debug')) {
+      $handler->push($this->_debugStreamer());
+    }
+    if ($config->get('request.log')) {
       $handler->push(GuzzleMiddleware::history($this->_request_log));
     }
 
