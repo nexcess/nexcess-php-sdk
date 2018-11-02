@@ -38,7 +38,7 @@ return [
     'type' => 'monthly',
     'years' => 0
   ],
-  'cancellable_override_expire_date' => 0,
+  'cancellable_override_expire_date' => null,
   'can_change_root_password' => false,
   'child_cloud_accounts' => Collection::__set_state([
     '_models' => [],
@@ -86,7 +86,8 @@ return [
           'nxcache_varnish_static' => false,
           'nxcache_varnish_ttl' => 120
         ]
-      ]
+      ],
+      'status' => 'used'
     ]
   ]),
   'cloud_id' => 3,

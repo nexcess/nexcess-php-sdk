@@ -86,6 +86,7 @@ return [
               'autoscale_enabled' => true,
             ],
           ],
+          'status' => 'used'
         ],
       ]),
       'location' => Cloud::__set_state([

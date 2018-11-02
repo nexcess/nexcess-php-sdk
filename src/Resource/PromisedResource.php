@@ -50,6 +50,25 @@ class PromisedResource extends Promise {
   }
 
   /**
+   * Gets the promised entity.
+   *
+   * This method is intended for use when the user returns a value other than
+   * the promised entity from a then() callback,
+   * thus making it ultimately unavailable after wait() is done.
+   *
+   * Note, if this method is called _before_ wait() is invoked,
+   * the action being waited for may not be complete,
+   * and the entity might not be in the expected state.
+   *
+   * Returning the entity through the promise chain is highly preferred.
+   *
+   * @return Modelable The promised entity
+   */
+  public function getResource() : Modelable {
+    return $this->_resource;
+  }
+
+  /**
    * Sets the callback to determine when we're ready to resolve.
    *
    * The callback signature is like
@@ -97,7 +116,9 @@ class PromisedResource extends Promise {
       self::_DEFAULT_WAIT_INTERVAL;
     $this->_timeout = $this->_config->get('wait.timeout') ??
       self::_DEFAULT_WAIT_TIMEOUT;
-    $this->_deadline = time() + $this->_timeout;
+    $this->_deadline = ($this->_timeout > 0) ?
+      time() + $this->_timeout :
+      null;
   }
 
   /**
@@ -108,7 +129,7 @@ class PromisedResource extends Promise {
       ($this->_tick)();
     }
 
-    if (time() > $this->_deadline) {
+    if ($this->_deadline && (time() > $this->_deadline)) {
       throw new ResourceException(
         ResourceException::WAIT_TIMEOUT_EXCEEDED,
         ['timeout' => $this->_timeout]
