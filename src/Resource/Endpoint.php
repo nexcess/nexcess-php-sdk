@@ -171,6 +171,29 @@ abstract class Endpoint implements Readable {
   }
 
   /**
+   * Wraps an entity in a Promise, to resolve when a given condition is met.
+   *
+   * @param Modelable $resource @see Promise::__construct $resource
+   * @param callable $done @see Promise::__construct $done
+   * @param array $options @see Promise::__construct $options
+   * @return Promise
+   */
+  public function waitFor(
+    Modelable $resource,
+    callable $done,
+    array $options = []
+  ) : Promise {
+    $config = $this->_client->getConfig();
+    $options += [
+      Promise::OPT_INTERVAL => $config->get('wait.interval'),
+      Promise::OPT_TICK_FN => $config->get('wait.tick_function'),
+      Promise::OPT_TIMEOUT => $config->get('wait.timeout')
+    ];
+
+    return new Promise($this, $done, $options);
+  }
+
+  /**
    * Builds a query string for list requests.
    *
    * @param array $filter Map of query string parameters
