@@ -114,6 +114,7 @@ return [
               'autoscale_enabled' => true,
             ],
           ],
+          'status' => 'used'
         ],
       ]),
       'location' => Cloud::__set_state([
@@ -155,8 +156,9 @@ return [
     ],
   ]),
   'state' => 'stable',
-  'status' => 'enabled',
+  'status' => 'used',
   'temp_domain' => 'example.nxcli.net',
   'unix_username' => 'abcd1234',
-  'php_version' => '7.1'
+  'php_version' => '7.1',
+  'service.status' => 'enabled'
 ];
