@@ -127,9 +127,9 @@ class Entity extends Model {
   /**
    * Creates a backup of this cloud account.
    *
-   * @return PromisedResource Backup
+   * @return Backup
    */
-  public function backup() : PromisedResource {
+  public function backup() : Backup {
     return $this->_getEndpoint()->createBackup($this);
   }
 

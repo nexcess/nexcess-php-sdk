@@ -28,7 +28,7 @@ use Nexcess\Sdk\ {
   Resource\Collection,
   Resource\Collector,
   Resource\Modelable as Model,
-  Resource\PromisedResource,
+  Resource\Promise,
   Resource\Readable,
   Resource\ResourceException,
   Util\Config,
@@ -73,9 +73,6 @@ abstract class Endpoint implements Readable {
 
   /** @var array Map of last fetched property:value pairs. */
   protected $_retrieved = [];
-
-  /** @var callable Queued callback for wait(). */
-  protected $_wait_until;
 
   /**
    * {@inheritDoc}
@@ -151,6 +148,29 @@ abstract class Endpoint implements Readable {
   }
 
   /**
+   * Wraps an entity in a Promise, to resolve when a given condition is met.
+   *
+   * @param Modelable $resource @see Promise::__construct $resource
+   * @param callable $done @see Promise::__construct $done
+   * @param array $options @see Promise::__construct $options
+   * @return Promise
+   */
+  public function promise(
+    Modelable $resource,
+    callable $done,
+    array $options = []
+  ) : Promise {
+    $config = $this->_client->getConfig();
+    $options += [
+      Promise::OPT_INTERVAL => $config->get('wait.interval'),
+      Promise::OPT_TICK_FN => $config->get('wait.tick_function'),
+      Promise::OPT_TIMEOUT => $config->get('wait.timeout')
+    ];
+
+    return new Promise($resource, $done, $options);
+  }
+
+  /**
    * {@inheritDoc}
    */
   public function retrieve(int $id) : Model {
@@ -171,29 +191,6 @@ abstract class Endpoint implements Readable {
   }
 
   /**
-   * Wraps an entity in a Promise, to resolve when a given condition is met.
-   *
-   * @param Modelable $resource @see Promise::__construct $resource
-   * @param callable $done @see Promise::__construct $done
-   * @param array $options @see Promise::__construct $options
-   * @return Promise
-   */
-  public function waitFor(
-    Modelable $resource,
-    callable $done,
-    array $options = []
-  ) : Promise {
-    $config = $this->_client->getConfig();
-    $options += [
-      Promise::OPT_INTERVAL => $config->get('wait.interval'),
-      Promise::OPT_TICK_FN => $config->get('wait.tick_function'),
-      Promise::OPT_TIMEOUT => $config->get('wait.timeout')
-    ];
-
-    return new Promise($this, $done, $options);
-  }
-
-  /**
    * Builds a query string for list requests.
    *
    * @param array $filter Map of query string parameters
@@ -206,21 +203,6 @@ abstract class Endpoint implements Readable {
     }
 
     return http_build_query($filter + static::_BASE_LIST_FILTER);
-  }
-
-  /**
-   * Builds a Promise that will resolve with the given model,
-   * optionally waiting until a given condition is met first.
-   *
-   * All Endpoint actions which would return a model must use this method.
-   * This normalizes expected return values,
-   * and allows us to poll for queued actions to complete when needed.
-   *
-   * @param Modelable $model The model to resolve the promise with
-   * @param callable $wait_until The condition to wait for
-   */
-  protected function _buildPromise(Modelable $model) : PromisedResource {
-    return new PromisedResource($this->_client->getConfig(), $model);
   }
 
   /**
