@@ -11,8 +11,8 @@ namespace Nexcess\Sdk\Resource;
 
 use Nexcess\Sdk\ {
   ApiException,
-  Resource\Modelable,
-  Resource\PromisedResource,
+  Resource\Model,
+  Resource\Promise,
   Resource\Updatable
 };
 
@@ -25,22 +25,14 @@ trait CanUpdate {
   /**
    * {@inheritDoc}
    */
-  public function update(
-    Modelable $model,
-    array $data = []
-  ) : PromisedResource {
+  public function update(Model $model) : Model {
     $this->_checkModelType($model);
-
     $id = $model->getId();
     if (! $id) {
       throw new ApiException(
         ApiException::MISSING_ID,
         ['model' => static::_MODEL_FQCN]
       );
-    }
-
-    foreach ($data as $key => $value) {
-      $model->set($key, $value);
     }
 
     $update = isset($this->_retrieved[$id]) ?
@@ -52,15 +44,13 @@ trait CanUpdate {
         }
       ) :
       $model->toCollapsedArray();
-
-
     if (! empty($update)) {
       $model->sync(
-        $this->_patch(static::_URI . "/{$id}", $update),
+        $this->_client->patch(static::_URI . "/{$id}", $update),
         true
       );
     }
 
-    return $this->_buildPromise($model);
+    return $model;
   }
 }

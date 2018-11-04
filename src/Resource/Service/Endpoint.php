@@ -111,7 +111,7 @@ abstract class Endpoint extends BaseEndpoint {
 
     $survey['service_id'] = $service->getId();
     return $this->getModel(ServiceCancellation::class)->sync(
-      $this->_post(static::_URI_CANCEL, $survey)
+      $this->_client->post(static::_URI_CANCEL, $survey)
     );
   }
 

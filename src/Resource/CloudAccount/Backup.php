@@ -147,19 +147,11 @@ class Backup extends Model {
   /**
    * Resolves when this Backup is complete.
    *
-   * @return Promise
+   * @param array $options Promise options
+   * @return Promise Backup[complete] = true
    */
   public function whenComplete(array $options = []) : Promise {
-    $endpoint = $this->_getEndpoint();
-
-    return $endpoint->promise(
-      $this,
-      function ($backup) use ($endpoint) {
-        $endpoint->sync($backup);
-        return $backup->get('complete');
-      },
-      $options
-    );
+    return $this->_getEndpoint()->whenBackupComplete($this, $options);
   }
 
   /**
@@ -173,8 +165,7 @@ class Backup extends Model {
       ! $this->_hydrated
     ) {
       $model = $this->_getEndpoint()
-        ->getBackup($this->getCloudAccount(), $this->get('filename'))
-        ->wait();
+        ->getBackup($this->getCloudAccount(), $this->get('filename'));
       $this->_values += $model->_values;
       foreach ($this->_values as $property => $value) {
         if (isset($value)) {

@@ -67,7 +67,7 @@ class EntityTest extends ModelTestCase {
     $endpoint->expects($this->once())
       ->method('setPhpVersion')
       ->with($this->equalTo($entity), $this->equalTo('7.2'))
-      ->willReturn(new PromisedResource(new Config(), $entity));
+      ->willReturn($entity);
 
     $entity->setApiEndpoint($endpoint);
 
