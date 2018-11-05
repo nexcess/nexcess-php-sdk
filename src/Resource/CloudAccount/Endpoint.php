@@ -24,7 +24,7 @@ use Nexcess\Sdk\ {
   Resource\Collection,
   Resource\Endpoint as BaseEndpoint,
   Resource\Modelable,
-  Resource\PromisedResource,
+  Resource\Promise,
   Util\Util
 };
 
@@ -74,9 +74,9 @@ class Endpoint extends BaseEndpoint implements Creatable {
    *
    * @param Entity $entity Cloud Server instance
    * @param array $survey Cancellation survey
-   * @return PromisedResource
+   * @return Entity
    */
-  public function cancel(Entity $entity, array $survey) : PromisedResource {
+  public function cancel(Entity $entity, array $survey) : Entity {
     return $entity->get('service')->cancel($survey);
   }
 
@@ -85,13 +85,10 @@ class Endpoint extends BaseEndpoint implements Creatable {
    * Note, the given CloudAccount MUST NOT be a development account itself.
    *
    * @param Entity $entity CloudAccount instance
-   * @return PromisedResource Promise resolving to new dev account
+   * @return Entity New dev account
    * @throws ApiException On failure
    */
-  public function createDevAccount(
-    Entity $entity,
-    array $data
-  ) : PromisedResource {
+  public function createDevAccount(Entity $entity, array $data) : Entity {
     $data = [
       'domain' => ($data['domain'] ?? 'dev') . ".{$entity->get('domain')}",
       'ref_cloud_account_id' => $entity->getId(),
@@ -101,10 +98,9 @@ class Endpoint extends BaseEndpoint implements Creatable {
       + ['copy_account' => true, 'scrub_account' => true];
     $this->_validateParams(__FUNCTION__, $data);
 
-    // sync; no waiting
-    return $this->_buildPromise(
-      $this->getModel()->sync(
-        Util::decodeResponse($this->_post(static::_URI, ['json' => $data]))
+    return $this->getModel()->sync(
+      Util::decodeResponse(
+        $this->_client->post(static::_URI, ['json' => $data])
       )
     );
   }
@@ -124,20 +120,16 @@ class Endpoint extends BaseEndpoint implements Creatable {
    *
    * @param Entity $entity Cloud server instance
    * @param string $version Desired PHP version
-   * @return PromisedResource A promise resolving to the updated entity
+   * @return Entity
    * @throws ApiException If request fails
    */
-  public function setPhpVersion(
-    Entity $entity,
-    string $version
-  ) : PromisedResource {
-    $r = $this->_post(
+  public function setPhpVersion(Entity $entity, string $version) : Entity {
+    $r = $this->_client->post(
       self::_URI . "/{$entity->getId()}",
       ['json' => ['_action' => 'set-php-version', 'php_version' => $version]]
     );
 
-    // sync; no waiting
-    return $this->_buildPromise($entity);
+    return $entity;
   }
 
   /**
@@ -148,7 +140,6 @@ class Endpoint extends BaseEndpoint implements Creatable {
     if ($model instanceof Backup) {
       return $model->sync(
         $this->getBackup($model->getCloudAccount(), $model->get('filename'))
-          ->wait()
           ->toArray()
       );
     }
@@ -159,32 +150,18 @@ class Endpoint extends BaseEndpoint implements Creatable {
   /**
    * Create a backup
    *
-   * @param Entity An instance of cloud account entity.
-   * @return PromisedResource Resolves to Backup
+   * @param Entity Cloud account to back up.
+   * @return Backup
    * @throws ApiException If request fails
    */
-  public function createBackup(Entity $entity) : PromisedResource {
-    return $this->_buildPromise(
-      $this->getModel(Backup::class)
-        ->setCloudAccount($entity)
-        ->sync(
-          Util::decodeResponse(
-            $this->_post(self::_URI . "/{$entity->getId()}/backup")
-          )
+  public function createBackup(Entity $entity) : Backup {
+    return $this->getModel(Backup::class)
+      ->setCloudAccount($entity)
+      ->sync(
+        Util::decodeResponse(
+          $this->_client->post(self::_URI . "/{$entity->getId()}/backup")
         )
-    )->waitUntil($this->_waitUntilBackupComplete());
-  }
-
-  /**
-   * Waits for a backup to be complete.
-   *
-   * @return Closure
-   */
-  protected function _waitUntilBackupComplete() : Closure {
-    return function ($backup) {
-      $this->sync($backup);
-      return $backup->get('complete');
-    };
+      );
   }
 
   /**
@@ -209,14 +186,11 @@ class Endpoint extends BaseEndpoint implements Creatable {
    * Return a specific backup
    *
    * @param string $file_name The unique file name for the backup to retrieve.
-   * @return PromisedResource
+   * @return Backup
    * @throws ApiException If request fails
    */
-  public function getBackup(
-    Entity $entity,
-    string $file_name
-  ) : PromisedResource {
-    return $this->_buildPromise($this->_findBackup($entity, $file_name));
+  public function getBackup(Entity $entity, string $file_name) : Backup {
+    return $this->_findBackup($entity, $file_name);
   }
 
   /**
@@ -231,8 +205,7 @@ class Endpoint extends BaseEndpoint implements Creatable {
     Entity $entity,
     string $file_name,
     string $path
-  ) {
-
+  ) : void {
     if (! file_exists($path) || ! is_dir($path)) {
       throw new CloudAccountException(
         CloudAccountException::INVALID_PATH,
@@ -262,7 +235,7 @@ class Endpoint extends BaseEndpoint implements Creatable {
     }
 
     try {
-      $this->_get(
+      $this->_client->get(
         $this->_findBackup($entity, $file_name)->get('download_url'),
         [
           'cookies' => (new CookieJar()),
@@ -285,7 +258,29 @@ class Endpoint extends BaseEndpoint implements Creatable {
    * @throws ApiException If request fails
    */
   public function deleteBackup(Entity $entity, string $file_name)  {
-    $this->_delete(self::_URI . "/{$entity->getId()}/backup/{$file_name}");
+    $this->_client
+      ->delete(self::_URI . "/{$entity->getId()}/backup/{$file_name}");
+  }
+
+  /**
+   * Resolves when the given Backup is complete.
+   *
+   * @param Backup $backup The backup to wait for
+   * @param array $options Promise options
+   * @return Promise Backup[complete] = true
+   */
+  public function whenBackupComplete(
+    Backup $backup,
+    array $options = []
+  ) : Promise {
+    return $this->_promise(
+      $backup,
+      function ($backup) {
+        $this->sync($backup);
+        return $backup->get('complete');
+      },
+      $options
+    );
   }
 
   /**
@@ -320,24 +315,23 @@ class Endpoint extends BaseEndpoint implements Creatable {
    */
   protected function _fetchBackupList(Entity $entity) : array {
     return Util::decodeResponse(
-      $this->_get(self::_URI . "/{$entity->getId()}/backup")
+      $this->_client->get(self::_URI . "/{$entity->getId()}/backup")
     );
   }
 
   /**
    * Clear Nginx Cache
    *
-   * @return PromisedResource Promise resolving to the given entity
+   * @return Entity
    * @throws ResourceException If endpoint not available
    * @throws ApiException If request fails
    */
-  public function clearNginxCache(Entity $entity) : PromisedResource {
-    $this->_post(
+  public function clearNginxCache(Entity $entity) : Entity {
+    $this->_client->post(
       self::_URI . "/{$entity->getId()}",
       ['json' => ['_action' => 'purge-cache']]
     );
 
-    // sync; no waiting
-    return $this->_buildPromise($entity);
+    return $entity;
   }
 }

@@ -9,6 +9,8 @@ declare(strict_types  = 1);
 
 namespace Nexcess\Sdk\Resource\CloudAccount;
 
+use GuzzleHttp\Promise\Promise;
+
 use Nexcess\Sdk\ {
   Resource\App\Entity as App,
   Resource\CloudAccount\CloudAccountException,
@@ -54,6 +56,22 @@ class Backup extends Model {
   protected $_cloud_account;
 
   /**
+   * Delete this backup
+   *
+   * @throws CloudAccountException
+   */
+  public function delete() : void {
+    if (! $this->isReal()) {
+      throw new CloudAccountException(
+        CloudAccountException::INVALID_BACKUP,
+        ['action' => __METHOD__]
+      );
+    }
+
+    $this->_getEndpoint()->deleteBackup($this->get('filename'));
+  }
+
+  /**
    * Download this backup
    *
    * @param string $path Where to save the file to
@@ -72,22 +90,6 @@ class Backup extends Model {
       $this->get('filename'),
       $path
     );
-  }
-
-  /**
-   * Delete this backup
-   *
-   * @throws CloudAccountException
-   */
-  public function delete() : void {
-    if (! $this->isReal()) {
-      throw new CloudAccountException(
-        CloudAccountException::INVALID_BACKUP,
-        ['action' => __METHOD__]
-      );
-    }
-
-    $this->_getEndpoint()->deleteBackup($this->get('filename'));
   }
 
   /**
@@ -119,6 +121,15 @@ class Backup extends Model {
   }
 
   /**
+   * Check to see if this is a complete object
+   *
+   * @return bool true if it has a non-empty file name
+   */
+  public function isReal() : bool {
+    return ! empty($this->_values['filename']);
+  }
+
+  /**
    * Sets the cloud account that "owns" this backup.
    *
    * Note, this method is intended primarily for internal use by Endpoints.
@@ -134,12 +145,13 @@ class Backup extends Model {
   }
 
   /**
-   * Check to see if this is a complete object
+   * Resolves when this Backup is complete.
    *
-   * @return bool true if it has a non-empty file name
+   * @param array $options Promise options
+   * @return Promise Backup[complete] = true
    */
-  public function isReal() : bool {
-    return ! empty($this->_values['filename']);
+  public function whenComplete(array $options = []) : Promise {
+    return $this->_getEndpoint()->whenBackupComplete($this, $options);
   }
 
   /**
@@ -153,8 +165,7 @@ class Backup extends Model {
       ! $this->_hydrated
     ) {
       $model = $this->_getEndpoint()
-        ->getBackup($this->getCloudAccount(), $this->get('filename'))
-        ->wait();
+        ->getBackup($this->getCloudAccount(), $this->get('filename'));
       $this->_values += $model->_values;
       foreach ($this->_values as $property => $value) {
         if (isset($value)) {

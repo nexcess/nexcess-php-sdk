@@ -27,8 +27,8 @@ use Nexcess\Sdk\ {
   SdkException,
   Resource\Collection,
   Resource\Collector,
-  Resource\Modelable as Model,
-  Resource\PromisedResource,
+  Resource\Modelable,
+  Resource\Promise,
   Resource\Readable,
   Resource\ResourceException,
   Util\Config,
@@ -74,9 +74,6 @@ abstract class Endpoint implements Readable {
   /** @var array Map of last fetched property:value pairs. */
   protected $_retrieved = [];
 
-  /** @var callable Queued callback for wait(). */
-  protected $_wait_until;
-
   /**
    * {@inheritDoc}
    */
@@ -96,7 +93,7 @@ abstract class Endpoint implements Readable {
   /**
    * {@inheritDoc}
    */
-  public function getModel(string $name = null) : Model {
+  public function getModel(string $name = null) : Modelable {
     return $this->_client->getModel($name ?? static::_MODEL_FQCN);
   }
 
@@ -153,17 +150,17 @@ abstract class Endpoint implements Readable {
   /**
    * {@inheritDoc}
    */
-  public function retrieve(int $id) : Model {
+  public function retrieve(int $id) : Modelable {
     return $this->sync($this->getModel()->set('id', $id), true);
   }
 
   /**
    * {@inheritDoc}
    */
-  public function sync(Model $model) : Model {
+  public function sync(Modelable $model) : Modelable {
     $id = $model->getId();
     $this->_retrieved[$id] = Util::decodeResponse(
-      $this->_get(static::_URI . "/{$id}")
+      $this->_client->get(static::_URI . "/{$id}")
     );
 
     $model->sync($this->_retrieved[$id]);
@@ -186,27 +183,12 @@ abstract class Endpoint implements Readable {
   }
 
   /**
-   * Builds a Promise that will resolve with the given model,
-   * optionally waiting until a given condition is met first.
-   *
-   * All Endpoint actions which would return a model must use this method.
-   * This normalizes expected return values,
-   * and allows us to poll for queued actions to complete when needed.
-   *
-   * @param Modelable $model The model to resolve the promise with
-   * @param callable $wait_until The condition to wait for
-   */
-  protected function _buildPromise(Modelable $model) : PromisedResource {
-    return new PromisedResource($this->_client->getConfig(), $model);
-  }
-
-  /**
    * Checks that a provided model is of the correct type for this endpoint.
    *
-   * @param Model $model The model to check
+   * @param Modelable $model The model to check
    * @throws ApiException If the model is of the wrong class
    */
-  protected function _checkModelType(Model $model) {
+  protected function _checkModelType(Modelable $model) {
     if ($model->moduleName() !== $this->moduleName()) {
       throw new ApiException(
         ApiException::WRONG_MODEL_FOR_URI,
@@ -220,69 +202,26 @@ abstract class Endpoint implements Readable {
   }
 
   /**
-   * Makes a DELETE request to the Api.
+   * Wraps an entity in a Promise, to resolve when a given condition is met.
    *
-   * @param string $uri The URI to request
-   * @param array $params Http client parameters
-   * @return GuzzleResponse Api response
-   * @throws ApiException On http error (4xx, 5xx, network issues, etc.)
-   * @throws SdkException On any other error
+   * @param Modelable $resource @see Promise::__construct $resource
+   * @param callable $done @see Promise::__construct $done
+   * @param array $options @see Promise::__construct $options
+   * @return Promise
    */
-  protected function _delete(string $uri, array $params = []) : GuzzleResponse {
-    return $this->_client->request('DELETE', $uri, $params);
-  }
+  protected function _promise(
+    Modelable $resource,
+    callable $done,
+    array $options = []
+  ) : Promise {
+    $config = $this->_client->getConfig();
+    $options += [
+      Promise::OPT_INTERVAL => $config->get('wait.interval'),
+      Promise::OPT_TICK_FN => $config->get('wait.tick_function'),
+      Promise::OPT_TIMEOUT => $config->get('wait.timeout')
+    ];
 
-  /**
-   * Makes a GET request to the Api.
-   *
-   * @param string $uri The URI to request
-   * @param array $params Http client parameters
-   * @return GuzzleResponse Api response
-   * @throws ApiException On http error (4xx, 5xx, network issues, etc.)
-   * @throws SdkException On any other error
-   */
-  protected function _get(string $uri, array $params = []) : GuzzleResponse {
-    return $this->_client->request('GET', $uri, $params);
-  }
-
-  /**
-   * Makes a PATCH request to the Api.
-   *
-   * @param string $uri The URI to request
-   * @param array $params Http client parameters
-   * @return GuzzleResponse Api response
-   * @throws ApiException On http error (4xx, 5xx, network issues, etc.)
-   * @throws SdkException On any other error
-   */
-  protected function _patch(string $uri, array $params = []) : GuzzleResponse {
-    return $this->_client->request('PATCH', $uri, $params);
-  }
-
-  /**
-   * Makes a POST request to the Api.
-   *
-   * @param string $uri The URI to request
-   * @param array $params Http client parameters
-   * @return GuzzleResponse Api response
-   * @throws ApiException On http error (4xx, 5xx, network issues, etc.)
-   * @throws SdkException On any other error
-   */
-  protected function _post(string $uri, array $params = []) : GuzzleResponse {
-    return $this->_client->request('POST', $uri, $params);
-  }
-
-  /**
-   * Reads an item from the API and returns its response data as an array.
-   *
-   * @param int $id Item id
-   * @return array Data returned from API request
-   * @throws ApiException If API request fails
-   */
-  protected function _retrieve(int $id) : array {
-    $this->_retrieved[$id] =
-      $this->_client->request('GET', static::_URI . "/{$id}");
-
-    return $this->_retrieved[$id];
+    return new Promise($resource, $done, $options);
   }
 
   /**

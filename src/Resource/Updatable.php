@@ -10,8 +10,7 @@ declare(strict_types  = 1);
 namespace Nexcess\Sdk\Resource;
 
 use Nexcess\Sdk\ {
-  Resource\Modelable as Model,
-  Resource\PromisedResource,
+  Resource\Model,
   Resource\Readable
 };
 
@@ -27,10 +26,9 @@ interface Updatable extends Readable {
    * (e.g., aliases and readonly properties are not updatable).
    * In such cases, check for Endpoint methods that do the update you want.
    *
-   * @param int $id Item id
-   * @param array|null $data Map of properties:values to set before update
-   * @return PromisedResource A promise wrapping the updated resource
+   * @param Model $model The model with updated properties
+   * @return Model The updated model
    * @throws ApiException If request fails
    */
-  public function update(Model $model, array $data = []) : PromisedResource;
+  public function update(Model $model) : Model;
 }

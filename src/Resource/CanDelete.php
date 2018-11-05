@@ -13,7 +13,7 @@ use Nexcess\Sdk\ {
   ApiException,
   Resource\Deletable,
   Resource\Model,
-  Resource\PromisedResource
+  Resource\Promise
 };
 
 /**
@@ -25,14 +25,8 @@ trait CanDelete {
   /**
    * {@inheritDoc}
    */
-  public function delete($model_or_id) : PromisedResource {
-    $model = is_int($model_or_id) ?
-      $this->getModel()->set('id', $model_or_id) :
-      $model_or_id;
-    // throws if wrong model
+  public function delete(Model $model) : Model {
     $this->_checkModelType($model);
-
-    // can't delete if doesn't exist yet
     $id = $model->getId();
     if (! is_int($id)) {
       throw new ApiException(
@@ -41,28 +35,7 @@ trait CanDelete {
       );
     }
 
-    $this->_delete(static::_URI . "/{$id}");
-    return $this->_buildPromise($model)
-      ->waitUntil($this->_waitUntilDelete());
-  }
-
-  /**
-   * Checks for a DELETE to finish and then syncs the associated Model.
-   *
-   * @return callable @see PromisedResource::waitUntil() $done
-   */
-  protected function _waitUntilDelete() : callable {
-    return function ($model) {
-      try {
-        $this->retrieve($model->getId());
-      } catch (ApiException $e) {
-        if ($e->getCode() === ApiException::NOT_FOUND) {
-          $model->unset('id');
-          return true;
-        }
-
-        throw $e;
-      }
-    };
+    $this->_client->delete(static::_URI . "/{$id}");
+    return $model;
   }
 }

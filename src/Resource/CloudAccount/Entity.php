@@ -12,7 +12,6 @@ namespace Nexcess\Sdk\Resource\CloudAccount;
 use Nexcess\Sdk\ {
   Resource\App\Entity as App,
   Resource\Model,
-  Resource\PromisedResource,
   Resource\VirtGuestCloud\Entity as Service,
   Util\Util
 };
@@ -87,7 +86,7 @@ class Entity extends Model {
    * @throws ApiException If request fails
    */
   public function createDevAccount(array $data) : Entity {
-    return $this->_getEndpoint()->createDevAccount($this, $data)->wait();
+    return $this->_getEndpoint()->createDevAccount($this, $data);
   }
 
   /**
@@ -110,7 +109,7 @@ class Entity extends Model {
    * @throws ApiException If request fails
    */
   public function setPhpVersion(string $version) : Entity {
-    return $this->_getEndpoint()->setPhpVersion($this, $version)->wait();
+    return $this->_getEndpoint()->setPhpVersion($this, $version);
   }
 
   /**
@@ -121,15 +120,15 @@ class Entity extends Model {
    * @throws ApiException If request fails
    */
   public function clearNginxCache() : Entity {
-    return $this->_getEndpoint()->clearNginxCache($this)->wait();
+    return $this->_getEndpoint()->clearNginxCache($this);
   }
 
   /**
    * Creates a backup of this cloud account.
    *
-   * @return PromisedResource Backup
+   * @return Backup
    */
-  public function backup() : PromisedResource {
+  public function backup() : Backup {
     return $this->_getEndpoint()->createBackup($this);
   }
 
@@ -139,7 +138,7 @@ class Entity extends Model {
    * @return Collection
    */
   public function getBackups() : Collection {
-    return $this->_getEndpoint()->getBackups($this)->wait();
+    return $this->_getEndpoint()->getBackups($this);
   }
 
   /**
@@ -148,24 +147,6 @@ class Entity extends Model {
    * @return Backup
    */
   public function getBackup(string $filename) : Backup {
-    return $this->_getEndpoint()->getBackup($this, $filename)->wait();
-  }
-
-  /**
-   * Download a backup
-   *
-   * @return Backup
-   */
-  public function downloadBackup(string $filename, string $path)  {
-    $this->_getEndpoint()->downloadBackup($this, $filename, $path)->wait();
-  }
-
-  /**
-   * Delete a backup
-   *
-   * @return Backup
-   */
-  public function deleteBackup(string $filename) {
-    $this->_getEndpoint()->downloadBackup($this, $filename)->wait();
+    return $this->_getEndpoint()->getBackup($this, $filename);
   }
 }

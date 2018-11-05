@@ -11,7 +11,6 @@ namespace Nexcess\Sdk\Resource\CloudServer;
 
 use Nexcess\Sdk\ {
   Resource\CloudServer\Entity,
-  Resource\PromisedResource,
   Resource\Service\Endpoint as ServiceEndpoint
 };
 
@@ -33,17 +32,16 @@ class Endpoint extends ServiceEndpoint {
    * Reboots an existing cloud server.
    *
    * @param Entity $entity Cloud Server model
-   * @return Endpoint $this
+   * @return Entity
    * @throws ApiException If request fails
    */
-  public function reboot(Entity $entity) : PromisedResource {
-    $this->_post(
+  public function reboot(Entity $entity) : Entity {
+    $this->_client->post(
       self::_URI . "/{$entity->getId()}",
       ['json' => ['_action' => 'reboot']]
     );
 
-    return $this->_buildPromise($entity)
-      ->waitUntil($this->_waitForStart());
+    return $entity;
   }
 
   /**
@@ -51,53 +49,50 @@ class Endpoint extends ServiceEndpoint {
    *
    * @param Entity $entity Cloud Server model
    * @param int $package_id Desired package id
-   * @return Endpoint $this
+   * @return Entity
    * @throws ApiException If request fails
    */
-  public function resize(Entity $entity, int $package_id) : PromisedResource {
-    $this->_post(
+  public function resize(Entity $entity, int $package_id) : Entity {
+    $this->_client->post(
       self::_URI . "/{$entity->getId()}",
       ['json' => ['_action' => 'resize', 'package_id' => $package_id]]
     );
 
-    return $this->_buildPromise($entity)
-      ->waitUntil($this->_waitForResize());
+    return $entity;
   }
 
   /**
    * Starts an existing cloud server.
    *
    * @param Entity $entity Cloud Server model
-   * @return Endpoint $this
+   * @return Entity
    * @throws ApiException If request fails
    */
-  public function start(Entity $entity) : PromisedResource {
-    $this->_post(
+  public function start(Entity $entity) : Entity {
+    $this->_client->post(
       self::_URI . "/{$entity->getId()}",
       ['json' => ['_action' => 'start']]
     );
 
 
-    return $this->_buildPromise($entity)
-      ->waitUntil($this->_waitForStart());
+    return $entity;
   }
 
   /**
    * Stops an existing cloud server.
    *
    * @param Entity $entity Cloud Server model
-   * @return Endpoint $this
+   * @return Entity
    * @throws ApiException If request fails
    */
-  public function stop(Entity $entity) : PromisedResource {
-    $this->_post(
+  public function stop(Entity $entity) : Entity {
+    $this->_client->post(
       self::_URI . "/{$entity->getId()}",
       ['json' => ['_action' => 'stop']]
     );
 
 
-    return $this->_buildPromise($entity)
-      ->waitUntil($this->_waitForStop());
+    return $entity;
   }
 
   /**
@@ -111,7 +106,7 @@ class Endpoint extends ServiceEndpoint {
     return explode(
       "\n",
       Util::filter(
-        $this->_post(
+        $this->_client->post(
           self::_URI . "/{$entity->getId()}",
           ['_action' => 'console-log']
         )->getBody(),
@@ -121,40 +116,62 @@ class Endpoint extends ServiceEndpoint {
   }
 
   /**
-   * Builds callback to wait() for a cloud server to turn on.
+   * Resolves when given cloud server is turned on.
    *
-   * @return Closure Callback for wait()
+   * @param Entity The cloud server to wait for
+   * @param array $options Promise options
+   * @return Promise Entity[power_status] = on
    */
-  protected function _waitForStart() : Closure {
-    return function ($entity) {
-      $this->sync($entity);
-      return $entity->get('power_status') === 'on';
-    };
+  public function whenStarted(Entity $entity, array $options = []) : Promise {
+    return $this->_promise(
+      $entity,
+      function ($entity) {
+        $this->sync($entity);
+        return $entity->get('power_status') === 'on';
+      },
+      $options
+    );
   }
 
   /**
-   * Builds callback to wait() for a cloud server to turn off.
+   * Resolves when given cloud server is turned off.
    *
-   * @return Closure Callback for wait()
+   * @param Entity The cloud server to wait for
+   * @param array $options Promise options
+   * @return Promise Entity[power_status] = off
    */
-  protected function _waitForStop() : Closure {
-    return function ($entity) {
-      $this->sync($entity);
-      return $entity->get('power_status') === 'off';
-    };
+  public function whenStopped(Entity $entity, array $options = []) : Promise {
+    return $this->_promise(
+      $entity,
+      function ($entity) {
+        $this->sync($entity);
+        return $entity->get('power_status') === 'off';
+      },
+      $options
+    );
   }
 
   /**
    * Builds callback to wait() for a cloud server to be resized.
    *
+   * @param Entity The cloud server to wait for
    * @param int $package_id The resized package id
-   * @return Closure Callback for wait()
+   * @param array $options Promise options
+   * @return Promise Entity[package_id] = $package_id
    */
-  protected function _waitForResize(int $package_id) : Closure {
-    return function ($entity) use ($package_id) {
-      $this->sync($entity);
-      return $entity->get('package_id') === $package_id &&
-        $entity->get('state') === 'stable';
-    };
+  protected function whenResized(
+    Entity $entity,
+    int $package_id,
+    array $options = []
+  ) : Closure {
+    return $this->_promise(
+      $entity,
+      function ($entity) use ($package_id) {
+        $this->sync($entity);
+        return $entity->get('package_id') === $package_id &&
+          $entity->get('state') === 'stable';
+      },
+      $options
+    );
   }
 }

@@ -77,7 +77,7 @@ abstract class Model implements Modelable {
 
   /**
    * Prefer using the SDK Client and Endpoints
-   * (e.g., `$client->getEndpoint($name)->retrieve($id)`)
+   * (e.g., `$client->getEndpoint($module)->retrieve($id)`)
    * over instantiating models directly in your code.
    *
    * Note that models without endpoints cannot proxy api actions,

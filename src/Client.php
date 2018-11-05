@@ -221,6 +221,32 @@ class Client {
   }
 
   /**
+   * Makes a DELETE request to the Api.
+   *
+   * @param string $uri The URI to request
+   * @param array $params Http client parameters
+   * @return GuzzleResponse Api response
+   * @throws ApiException On http error (4xx, 5xx, network issues, etc.)
+   * @throws SdkException On any other error
+   */
+  public function delete(string $uri, array $params = []) : GuzzleResponse {
+    return $this->request('DELETE', $uri, $params);
+  }
+
+  /**
+   * Makes a GET request to the Api.
+   *
+   * @param string $uri The URI to request
+   * @param array $params Http client parameters
+   * @return GuzzleResponse Api response
+   * @throws ApiException On http error (4xx, 5xx, network issues, etc.)
+   * @throws SdkException On any other error
+   */
+  public function get(string $uri, array $params = []) : GuzzleResponse {
+    return $this->request('GET', $uri, $params);
+  }
+
+  /**
    * Gets the client config object.
    *
    * @return Config
@@ -300,6 +326,32 @@ class Client {
     }
 
     return $this->_request_log;
+  }
+
+  /**
+   * Makes a PATCH request to the Api.
+   *
+   * @param string $uri The URI to request
+   * @param array $params Http client parameters
+   * @return GuzzleResponse Api response
+   * @throws ApiException On http error (4xx, 5xx, network issues, etc.)
+   * @throws SdkException On any other error
+   */
+  public function patch(string $uri, array $params = []) : GuzzleResponse {
+    return $this->request('PATCH', $uri, $params);
+  }
+
+  /**
+   * Makes a POST request to the Api.
+   *
+   * @param string $uri The URI to request
+   * @param array $params Http client parameters
+   * @return GuzzleResponse Api response
+   * @throws ApiException On http error (4xx, 5xx, network issues, etc.)
+   * @throws SdkException On any other error
+   */
+  public function post(string $uri, array $params = []) : GuzzleResponse {
+    return $this->request('POST', $uri, $params);
   }
 
   /**

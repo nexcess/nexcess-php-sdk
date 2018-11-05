@@ -37,7 +37,8 @@ class Endpoint extends ServiceEndpoint {
    */
   public function getAvailablePhpVersions(Entity $entity) : array {
     return Util::decodeResponse(
-      $this->_get(static::_URI . "/{$entity->getId()}/get-php-versions")
+      $this->_client
+        ->get(static::_URI . "/{$entity->getId()}/get-php-versions")
     );
   }
 
@@ -46,14 +47,11 @@ class Endpoint extends ServiceEndpoint {
    *
    * @param Entity $entity Service instance
    * @param string $version Desired PHP version
-   * @return PromisedResource Promise that resolves to updated entity
+   * @return Entity
    * @throws ApiException If request fails
    */
-  public function setPhpVersion(
-    Entity $entity,
-    string $version
-  ) : PromisedResource {
+  public function setPhpVersion(Entity $entity, string $version) : Entity {
     $entity->get('cloud_account')->setPhpVersion($version);
-    return $this->_buildPromise($entity);
+    return $entity;
   }
 }
