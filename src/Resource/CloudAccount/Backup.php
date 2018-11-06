@@ -75,6 +75,7 @@ class Backup extends Model {
    * Download this backup
    *
    * @param string $path Where to save the file to
+   * @param bool $force If true, overwrite existing file.
    * @throws CloudAccountException
    */
   public function download(string $path, bool $force = false) : void {
