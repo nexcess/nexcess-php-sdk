@@ -226,7 +226,7 @@ class Endpoint extends BaseEndpoint implements Creatable {
     $save_to = $path . $file_name;
     
     if (file_exists($save_to)) {
-      if (! $force ) {
+      if (! $force) {
         throw new CloudAccountException(
           CloudAccountException::FILE_EXISTS,
           ['filename' => $save_to]
