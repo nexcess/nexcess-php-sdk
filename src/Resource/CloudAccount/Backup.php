@@ -77,7 +77,7 @@ class Backup extends Model {
    * @param string $path Where to save the file to
    * @throws CloudAccountException
    */
-  public function download(string $path) : void {
+  public function download(string $path, bool $force = false) : void {
     if (! $this->isReal()) {
       throw new CloudAccountException(
         CloudAccountException::INVALID_BACKUP,
@@ -88,7 +88,8 @@ class Backup extends Model {
     $this->_getEndpoint()->downloadBackup(
       $this->getCloudAccount(),
       $this->get('filename'),
-      $path
+      $path,
+      $force
     );
   }
 
