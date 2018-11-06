@@ -196,15 +196,19 @@ class Endpoint extends BaseEndpoint implements Creatable {
   /**
    * Download a specific backup
    *
+   * @param Entity $entity The entity to act on.
    * @param string $file_name The unique file name for the backup to retrieve.
    * @param string $path the directory to store the download in.
+   * @param bool $force download even if the file already exists.
+   *
    * @throws ApiException If request fails
    * @throws Exception
    */
   public function downloadBackup(
     Entity $entity,
     string $file_name,
-    string $path
+    string $path,
+    bool $force = false
   ) : void {
     if (! file_exists($path) || ! is_dir($path)) {
       throw new CloudAccountException(
@@ -219,6 +223,11 @@ class Endpoint extends BaseEndpoint implements Creatable {
     }
 
     $save_to = $path . $file_name;
+    
+    if ($force && file_exists($save_to)) {
+      unlink($save_to);
+    }
+
     if (file_exists($save_to)) {
       throw new CloudAccountException(
         CloudAccountException::FILE_EXISTS,
