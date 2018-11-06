@@ -150,7 +150,7 @@ class Endpoint extends BaseEndpoint implements Creatable {
   /**
    * Create a backup
    *
-   * @param Entity Cloud account to back up.
+   * @param Entity $entity Cloud server instance
    * @return Backup
    * @throws ApiException If request fails
    */
@@ -167,6 +167,7 @@ class Endpoint extends BaseEndpoint implements Creatable {
   /**
    * Return a list of backups
    *
+   * @param Entity $entity Cloud server instance
    * @return Collection Of Backups
    * @throws ApiException If request fails
    */
@@ -185,6 +186,7 @@ class Endpoint extends BaseEndpoint implements Creatable {
   /**
    * Return a specific backup
    *
+   * @param Entity $entity Cloud server instance
    * @param string $file_name The unique file name for the backup to retrieve.
    * @return Backup
    * @throws ApiException If request fails
@@ -196,11 +198,10 @@ class Endpoint extends BaseEndpoint implements Creatable {
   /**
    * Download a specific backup
    *
-   * @param Entity $entity The entity to act on.
+   * @param Entity $entity Cloud server instance
    * @param string $file_name The unique file name for the backup to retrieve.
    * @param string $path the directory to store the download in.
    * @param bool $force download even if the file already exists.
-   *
    * @throws ApiException If request fails
    * @throws Exception
    */
@@ -262,7 +263,7 @@ class Endpoint extends BaseEndpoint implements Creatable {
   /**
    * Delete a specific backup
    *
-   * @param Entity $entity The entity representing the backup
+   * @param Entity $entity Cloud server instance
    * @param string $file_name The unique file name for the backup to retrieve.
    * @throws ApiException If request fails
    */
@@ -296,7 +297,6 @@ class Endpoint extends BaseEndpoint implements Creatable {
    * Find a specific backup from the list.
    *
    * @param string $file_name The unique file name for the backup to retrieve.
-   *
    * @return Backup
    * @throws ApiException If request fails
    * @throws CloudAccountException If backup not found
@@ -319,6 +319,7 @@ class Endpoint extends BaseEndpoint implements Creatable {
   /**
    * Fetch the list of backups for a given cloud account
    *
+   * @param Entity $entity Cloud server instance
    * @return array
    * @throws ApiException If request fails
    */
@@ -331,6 +332,7 @@ class Endpoint extends BaseEndpoint implements Creatable {
   /**
    * Clear Nginx Cache
    *
+   * @param Entity $entity Cloud server instance
    * @return Entity
    * @throws ResourceException If endpoint not available
    * @throws ApiException If request fails
