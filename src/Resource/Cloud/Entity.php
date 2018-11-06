@@ -34,4 +34,13 @@ class Entity extends Model {
     'status',
     'type'
   ];
+
+  /**
+   * Gets a nicer cloud "identity."
+   *
+   * @return string Cloud identity
+   */
+  public function getIdentity() : string {
+    return "{$this->_values['location']} ({$this->_values['identity']})";
+  }
 }
