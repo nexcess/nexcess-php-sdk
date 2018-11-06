@@ -388,7 +388,8 @@ abstract class Model implements Modelable {
       }
       if ($recurse) {
         if ($value instanceof Modelable) {
-          $value = $value->toCollapsedArray();
+          $value = $value->toCollapsedArray() +
+            ['identity' => $value->get('identity')];
         } elseif ($value instanceof Collector) {
           $value = $value->toArray(true);
         } elseif ($value instanceof DateTime) {

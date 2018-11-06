@@ -53,7 +53,8 @@ abstract class ModelTestCase extends TestCase {
     // expected recursive array result
     foreach ($expected as $key => $value) {
       if ($value instanceof Model) {
-        $expected[$key] = $value->toCollapsedArray();
+        $expected[$key] = $value->toCollapsedArray() +
+          ['identity' => $value->get('identity')];
       } elseif ($value instanceof Collection) {
         $expected[$key] = $value->toArray(true);
       } elseif ($value instanceof DateTime) {
