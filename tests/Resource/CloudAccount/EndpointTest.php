@@ -16,6 +16,7 @@ use GuzzleHttp\ {
 use Nexcess\Sdk\ {
   Resource\CloudAccount\Endpoint,
   Resource\CloudAccount\Entity,
+  Resource\CloudAccount\Backup,
   Resource\ResourceException,
   Resource\VirtGuestCloud\Entity as Service,
   Tests\Resource\EndpointTestCase,
@@ -36,6 +37,12 @@ class EndpointTest extends EndpointTestCase {
 
   /** @var string Resource name for cloud account instance data. */
   protected const _RESOURCE_CLOUD = 'cloud-account-1.toArray-shallow.php';
+
+  /** @var string Resource name for new backup. */
+  protected const _RESOURCE_NEW_BACKUP = 'POST-%2Fcloud-account%2F1%2Fbackup.json';
+
+  /** @var string Resource name for list of backups. */
+  protected const _RESOURCE_BACKUPS = 'GET-%2Fcloud-account%2F1%2Fbackup.json';
 
   /** {@inheritDoc} */
   protected const _RESOURCE_INSTANCES = [
@@ -162,6 +169,9 @@ class EndpointTest extends EndpointTestCase {
       ],
       [
         'clearNginxCache', []
+      ],
+      [
+        'createBackup', []
       ]
     ];
   }
@@ -331,6 +341,108 @@ class EndpointTest extends EndpointTestCase {
         $entity = $api->getModel(static::_SUBJECT_MODULE)->set('id', 1);
         $api->getEndpoint(static::_SUBJECT_MODULE)
           ->setPhpVersion($entity, '7.2');
+      });
+  }
+
+  /**
+   * @covers Endpoint::createBackup
+   */
+  public function testCreateBackup() {
+    // custom request handler for sandbox
+    $request_handler = function ($request, $options) {
+      // check request path
+      $this->assertEquals('cloud-account/1/backup', $request->getUri()->getPath());
+
+
+      return new GuzzleResponse(
+        200,
+        ['Content-type' => 'application/json'],
+        $this->_getResource(static::_RESOURCE_NEW_BACKUP, false)
+      );
+    };
+
+    // kick off
+    $this->_getSandbox(null, $request_handler)
+      ->play(function ($api, $sandbox) {
+        $entity = $api->getModel(static::_SUBJECT_MODEL_FQCN)->set('id',1);
+        $endpoint = $api->getEndpoint(static::_SUBJECT_MODULE);
+        $results = $endpoint->createBackup($entity);
+        $this->assertEquals('filename.tgz',$results->get('filename'));
+        $this->assertEquals("123 MB",$results->get('filesize'));
+        $this->assertEquals(456,$results->get('filesize_bytes'));
+      });
+  }
+
+  /**
+   * @covers Endpoint::downloadBackup
+   */
+  public function testDownloadBackup() {
+    // custom request handler for sandbox
+    $assertionCounter = 0;
+    $request_handler = function ($request, $options) use (&$assertionCounter) {
+      // check request path
+
+      switch (++$assertionCounter) {
+        case 1:
+          $this->assertEquals('cloud-account/1/backup', $request->getUri()->getPath());
+          break;
+
+        case 2:
+          $this->assertEquals('/siteworx/index', $request->getUri()->getPath());
+          break;
+      }
+
+      return new GuzzleResponse(
+        200,
+        ['Content-type' => 'application/json'],
+        $this->_getResource(static::_RESOURCE_BACKUPS, false)
+      );
+    };
+
+    // kick off
+    $this->_getSandbox(null, $request_handler)
+      ->play(function ($api, $sandbox) {
+        $filename = 'filename.tgz';
+        $path = "/tmp";
+
+        $entity = $api->getModel(static::_SUBJECT_MODEL_FQCN)->set('id',1);
+        $endpoint = $api->getEndpoint(static::_SUBJECT_MODULE);
+        $endpoint->downloadBackup($entity, $filename, $path);
+
+        $path = trim($path);
+        if (substr($path, -1) !== DIRECTORY_SEPARATOR) {
+          $path .= DIRECTORY_SEPARATOR;
+        }
+
+        $full_filename = $path . $filename;
+        $this->assertTrue(file_exists($full_filename));
+        unlink($full_filename);
+      });
+  }
+
+  /**
+   * @covers Endpoint::downloadBackup
+   */
+  public function testDeleteBackup() {
+
+    $request_handler = function ($request, $options)  {
+      $this->assertEquals('DELETE',$request->getMethod());
+      $this->assertEquals('cloud-account/1/backup/filename.tgz', $request->getUri()->getPath());
+
+      return new GuzzleResponse(
+        200,
+        ['Content-type' => 'application/json'],
+        $this->_getResource('', false)
+      );
+    };
+
+    // kick off
+    $this->_getSandbox(null, $request_handler)
+      ->play(function ($api, $sandbox) {
+        $filename = 'filename.tgz';
+        $entity = $api->getModel(static::_SUBJECT_MODEL_FQCN)->set('id',1);
+        $api->getEndpoint(static::_SUBJECT_MODULE)
+          ->deleteBackup($entity, $filename);
       });
   }
 }
