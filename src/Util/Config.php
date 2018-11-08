@@ -9,10 +9,11 @@ declare(strict_types  = 1);
 
 namespace Nexcess\Sdk\Util;
 
+use Throwable;
+
 use Nexcess\Sdk\ {
-  SdkException,
-  Util\Language,
-  Util\Util
+  Util\Util,
+  Util\UtilException
 };
 
 /**
@@ -102,7 +103,7 @@ class Config {
    * @see https://php.net/__get
    */
   public function __set(string $name, $value) {
-    return $this->set($name, $value);
+    $this->set($name, $value);
   }
 
   /**
@@ -149,9 +150,8 @@ class Config {
    * @param bool $extend Merge array values (overwrites otherwise)?
    */
   public function set(string $name, $value, bool $extend = false) {
+    $prior = $this->_options;
     try {
-      $prior = $this->_options;
-
       if (
         $extend &&
         isset($this->_options[$name]) &&
@@ -184,13 +184,16 @@ class Config {
    * Checks that a value is a given type, callable,
    * or an instance of a given class or interface.
    *
+   * phan thinks $rule is always a classname
+   * @suppress PhanUndeclaredClass
+   *
    * @param string $key The option key
    * @param mixed $value The option value
-   * @param mixed The rule to apply
-   * @throws SdkException If the rule is not met
+   * @param mixed $rule The rule to apply
+   * @throws UtilException If the rule is not met
    */
   protected function _checkOption(string $key, $value, $rule = null) {
-    $rule = $rule ?? static::_RULES[$option] ?? null;
+    $rule = $rule ?? static::_RULES[$key] ?? null;
     if ($value === null || $rule === null) {
       return;
     }
@@ -212,8 +215,8 @@ class Config {
     if (is_array($rule)) {
       $rule = implode('|', $rule);
     }
-    throw new SdkException(
-      SdkException::INVALID_CONFIG_OPTION,
+    throw new UtilException(
+      UtilException::INVALID_CONFIG_OPTION,
       ['option' => $key, 'rule' => $rule, 'value' => $value]
     );
   }

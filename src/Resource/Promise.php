@@ -9,6 +9,8 @@ declare(strict_types  = 1);
 
 namespace Nexcess\Sdk\Resource;
 
+use Throwable;
+
 use GuzzleHttp\Promise\Promise as GuzzlePromise;
 
 use Nexcess\Sdk\ {

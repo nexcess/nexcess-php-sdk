@@ -12,8 +12,6 @@ namespace Nexcess\Sdk\Resource;
 use ArrayAccess,
   JsonSerializable;
 
-use Nexcess\Sdk\Exception\ModelException;
-
 /**
  * Interface for API item models.
  */
@@ -50,7 +48,7 @@ interface Modelable extends ArrayAccess, JsonSerializable {
    *
    * @param string $name Name of the property to get
    * @return mixed The property value on success
-   * @throws ModelException If the named property does not exist
+   * @throws ResourceException If the named property does not exist
    */
   public function get(string $name);
 
@@ -74,9 +72,23 @@ interface Modelable extends ArrayAccess, JsonSerializable {
    * @param string $name Name of the property to set
    * @param mixed $value The value to set
    * @return Modelable $this
-   * @throws ModelException If the named property does not exist or is readonly
+   * @throws ResourceException If the named property does not exist or is readonly
    */
   public function set(string $name, $value) : Modelable;
+
+  /**
+   * Syncs model state with new data.
+   *
+   * @internal
+   * This method is intended for use internally and by Endpoints,
+   * and should generally not be used otherwise.
+   *
+   * @param array $data Map of property:value pairs (i.e., from API response)
+   * @param bool $hard Discard existing state?
+   * @return Model $this
+   * @throws ResourceException If sync fails
+   */
+  public function sync(array $data, bool $hard = false) : Modelable;
 
   /**
    * Gets model state as an array.
@@ -106,7 +118,7 @@ interface Modelable extends ArrayAccess, JsonSerializable {
    *
    * @param string $name Name of the property to unset
    * @return Modelable $this
-   * @throws ModelException If the named property does not exist or is readonly
+   * @throws ResourceException If the named property does not exist or is readonly
    */
   public function unset(string $name) : Modelable;
 }

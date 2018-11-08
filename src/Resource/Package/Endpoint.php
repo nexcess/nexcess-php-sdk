@@ -57,7 +57,7 @@ class Endpoint extends BaseEndpoint {
   /**
    * Lists production cloud account service packages.
    *
-   * @param string $type One of the self::CLOUDACCOUNT_ENV_* constants
+   * @param string $env_type One of the self::CLOUDACCOUNT_ENV_* constants
    * @return Collection List of packages
    */
   public function listCloudAccountPackages(

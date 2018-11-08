@@ -10,7 +10,8 @@ declare(strict_types  = 1);
 namespace Nexcess\Sdk\Resource;
 
 use Nexcess\Sdk\ {
-  Resource\Model,
+  ApiException,
+  Resource\Modelable,
   Resource\Readable
 };
 
@@ -22,9 +23,9 @@ interface Deletable extends Readable {
   /**
    * Deletes an existing item.
    *
-   * @param Model $model Model to delete
-   * @return Model The deleted model
+   * @param Modelable $model Model to delete
+   * @return Modelable The deleted model
    * @throws ApiException If request fails
    */
-  public function delete(Model $model) : Model;
+  public function delete(Modelable $model) : Modelable;
 }

@@ -9,29 +9,30 @@ declare(strict_types  = 1);
 
 namespace Nexcess\Sdk\Resource;
 
-use ArrayAccess,
-  Iterator,
-  JsonSerializable,
-  Throwable;
+use Throwable;
 
 use Nexcess\Sdk\ {
-  Exception\ModelException,
-  Exception\SdkException,
   Resource\Collector,
-  Resource\Modelable as Model
+  Resource\Modelable,
+  Resource\ResourceException,
+  SdkException,
+  Util\Util
 };
 
 /**
- * Container for a collection of Models.
+ * Container for a collection of Modelables.
  */
 class Collection implements Collector {
 
-  /** @var Model[] List of models. */
+  /** @var Modelable[] List of models. */
   protected $_models = [];
+
+  /** @var string FQCN of models this collection holds. */
+  protected $_of;
 
   /**
    * @param string $of Fully qualified Model classname this collection holds
-   * @param Model[] $models List of models to add to the collection
+   * @param Modelable[] $models List of models to add to the collection
    */
   public function __construct(string $of, array $models = []) {
     $this->_of = $of;
@@ -58,10 +59,10 @@ class Collection implements Collector {
   /**
    * {@inheritDoc}
    */
-  public function add(Model $model) : Collector {
+  public function add(Modelable $model) : Collector {
     if (! $model instanceof $this->_of) {
-      throw new ModelException(
-        ModelException::WRONG_MODEL_FOR_COLLECTION,
+      throw new ResourceException(
+        ResourceException::WRONG_MODEL_FOR_COLLECTION,
         ['collection' => $this->_of, 'model' => get_class($model)]
       );
     }
@@ -134,8 +135,8 @@ class Collection implements Collector {
           return true;
         };
       } else {
-        throw new SdkException(
-          SdkException::INVALID_FILTER,
+        throw new ResourceException(
+          ResourceException::INVALID_FILTER,
           ['method' => __METHOD__, 'type' => Util::type($filter)]
         );
       }
@@ -147,7 +148,7 @@ class Collection implements Collector {
   /**
    * {@inheritDoc}
    */
-  public function find($criteria) : ?Model {
+  public function find($criteria) : ?Modelable {
     return $this->filter($criteria)->current();
   }
 
@@ -203,7 +204,7 @@ class Collection implements Collector {
   /**
    * {@inheritDoc}
    */
-  public function remove($model_or_id) : Model {
+  public function remove($model_or_id) : Modelable {
     foreach ($this->_models as $i => $model) {
       if ($model->equals($model_or_id) || $model->getId() === $model_or_id) {
         unset($this->_models[$i]);
@@ -211,8 +212,8 @@ class Collection implements Collector {
       }
     }
 
-    throw new ModelException(
-      ModelException::MODEL_NOT_FOUND,
+    throw new ResourceException(
+      ResourceException::MODEL_NOT_FOUND,
       ['model' => $this->_of, 'id' => $model_or_id]
     );
   }

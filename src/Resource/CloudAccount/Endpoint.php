@@ -9,8 +9,7 @@ declare(strict_types  = 1);
 
 namespace Nexcess\Sdk\Resource\CloudAccount;
 
-use Closure,
-  Throwable;
+use Throwable;
 
 use GuzzleHttp\Cookie\CookieJar;
 
@@ -25,6 +24,7 @@ use Nexcess\Sdk\ {
   Resource\Endpoint as BaseEndpoint,
   Resource\Modelable,
   Resource\Promise,
+  Resource\ResourceException,
   Util\Util
 };
 
@@ -155,8 +155,10 @@ class Endpoint extends BaseEndpoint implements Creatable {
    * @throws ApiException If request fails
    */
   public function createBackup(Entity $entity) : Backup {
-    return $this->getModel(Backup::class)
-      ->setCloudAccount($entity)
+    $backup = $this->getModel(Backup::class);
+    assert($backup instanceof Backup);
+
+    return $backup->setCloudAccount($entity)
       ->sync(
         Util::decodeResponse(
           $this->_client->post(self::_URI . "/{$entity->getId()}/backup")
@@ -174,9 +176,12 @@ class Endpoint extends BaseEndpoint implements Creatable {
   public function getBackups(Entity $entity) : Collection {
     $collection = new Collection(Backup::class);
 
-    foreach ($this->_fetchBackupList($entity) as $backup) {
+    foreach ($this->_fetchBackupList($entity) as $backup_data) {
+      $backup = $this->getModel(Backup::class);
+      assert($backup instanceof Backup);
+
       $collection->add(
-        $this->getModel(Backup::class)->setCloudAccount($entity)->sync($backup)
+        $backup->setCloudAccount($entity)->sync($backup_data)
       );
     }
 
@@ -203,7 +208,7 @@ class Endpoint extends BaseEndpoint implements Creatable {
    * @param string $path the directory to store the download in.
    * @param bool $force download even if the file already exists.
    * @throws ApiException If request fails
-   * @throws Exception
+   * @throws Throwable
    */
   public function downloadBackup(
     Entity $entity,
@@ -224,7 +229,7 @@ class Endpoint extends BaseEndpoint implements Creatable {
     }
 
     $save_to = $path . $file_name;
-    
+
     if (file_exists($save_to)) {
       if (! $force) {
         throw new CloudAccountException(
@@ -302,11 +307,12 @@ class Endpoint extends BaseEndpoint implements Creatable {
    * @throws CloudAccountException If backup not found
    */
   protected function _findBackup(Entity $entity, string $file_name) : Backup {
-    foreach ($this->_fetchBackupList($entity) as $backup) {
-      if ($backup['filename'] === $file_name) {
-        return $this->getModel(Backup::class)
-          ->setCloudAccount($entity)
-          ->sync($backup);
+    $backup = $this->getModel(Backup::class);
+    assert($backup instanceof Backup);
+
+    foreach ($this->_fetchBackupList($entity) as $backup_data) {
+      if ($backup_data['filename'] === $file_name) {
+        return $backup->setCloudAccount($entity)->sync($backup_data);
       }
     }
 

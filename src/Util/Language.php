@@ -10,9 +10,8 @@ declare(strict_types  = 1);
 namespace Nexcess\Sdk\Util;
 
 use Nexcess\Sdk\ {
-  Client,
-  Exception\SdkException,
-  Util\Util
+  Util\Util,
+  Util\UtilException
 };
 
 /**
@@ -71,8 +70,8 @@ class Language {
    * Initializes an instance and makes it globally available.
    *
    * @param string $language Identifier for language to translate to
-   * @param string[] $paths List of paths to find language files in
-   * @throws SdkException If loading a language file fails
+   * @param string ...$paths List of paths to find language files in
+   * @throws UtilException If loading a language file fails
    */
   public static function init(
     string $language = self::_DEFAULT_LANGUAGE,
@@ -96,7 +95,7 @@ class Language {
 
   /**
    * @param string $language Identifier for language to translate to
-   * @param string[] $paths List of filepaths to find language files on
+   * @param string ...$paths List of filepaths to find language files on
    */
   public function __construct(string $language, string ...$paths) {
     $this->setLanguage($language);
@@ -116,7 +115,7 @@ class Language {
    * @example "en_US.json"
    * @see https://tools.ietf.org/html/bcp47
    *
-   * @param string[] $paths Filepaths to add
+   * @param string ...$paths Filepaths to add
    * @return Language $this
    */
   public function addPaths(string ...$paths) : Language {
@@ -144,8 +143,8 @@ class Language {
   public function getTranslation(string $key) : string {
     $translated = Util::dig($this->_translations, $key) ?? $key;
     if (! is_string($translated)) {
-      throw new SdkException(
-        SdkException::INVALID_TRANSLATION,
+      throw new UtilException(
+        UtilException::INVALID_TRANSLATION,
         ['key' => $key, 'translated' => $translated]
       );
     }

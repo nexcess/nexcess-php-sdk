@@ -11,9 +11,8 @@ namespace Nexcess\Sdk\Resource;
 
 use Nexcess\Sdk\ {
   ApiException,
-  Resource\Deletable,
-  Resource\Model,
-  Resource\Promise
+  Client,
+  Resource\Modelable
 };
 
 /**
@@ -22,10 +21,25 @@ use Nexcess\Sdk\ {
  */
 trait CanDelete {
 
+  /** @var Client {@inheritDoc} @see Endpoint::$_client */
+  protected $_client;
+
+  /**
+   * {@inheritDoc}
+   * @see Endpoint::_checkModelType
+   */
+  abstract protected function _checkModelType(Modelable $model) : void;
+
+  /**
+   * {@inheritDoc}
+   * @see Endpoint::_getUri
+   */
+  abstract protected function _getUri() : string;
+
   /**
    * {@inheritDoc}
    */
-  public function delete(Model $model) : Model {
+  public function delete(Modelable $model) : Modelable {
     $this->_checkModelType($model);
     $id = $model->getId();
     if (! is_int($id)) {
@@ -35,7 +49,7 @@ trait CanDelete {
       );
     }
 
-    $this->_client->delete(static::_URI . "/{$id}");
+    $this->_client->delete("{$this->_getUri()}/{$id}");
     return $model;
   }
 }

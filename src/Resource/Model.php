@@ -43,7 +43,7 @@ abstract class Model implements Modelable {
   /** @var string[] List of readonly property names. */
   protected const _READONLY_NAMES = [];
 
-  /** @var Endpoint The Endpoint associated with this Model. */
+  /** @var Endpoint|null The Endpoint (if any) associated with this Model. */
   protected $_endpoint;
 
   /** @var bool Has this model been hydrated? */
@@ -262,7 +262,10 @@ abstract class Model implements Modelable {
     }
 
     if (strpos($name, 'date') !== false && ! $value instanceof DateTime) {
-      $value = $this->_toDateTime($value);
+      $unix_timestamp = Util::filter($value, Util::FILTER_INT);
+      $value = new DateTimeImmutable(
+        isset($unix_timestamp) ? "@{$unix_timestamp}" : $value
+      );
     }
 
     $this->sync([$name => $value]);
@@ -288,21 +291,11 @@ abstract class Model implements Modelable {
   }
 
   /**
-   * Syncs model state with new data.
-   *
-   * @internal
-   * This method is intended for use internally and by Endpoints,
-   * and should generally not be used otherwise.
-   *
-   * @param array $data Map of property:value pairs (i.e., from API response)
-   * @param bool $hard Discard existing state?
-   * @return Model $this
-   * @throws ResourceException If sync fails
+   * {@inheritDoc}
    */
   public function sync(array $data, bool $hard = false) : Modelable {
+    $prior = $this->_values;
     try {
-      $prior = $this->_values;
-
       if ($hard) {
         // clear state
         $this->_values = array_fill_keys(self::_PROPERTY_NAMES, null);
@@ -497,7 +490,7 @@ abstract class Model implements Modelable {
    * Builds a Collection of Models given an array of ids or values.
    *
    * @param string $fqcn Fully qualified classname of model to build
-   * @param int[]|array[] $value Values to build models from
+   * @param int[]|array[] $values Values to build models from
    * @return Collector
    */
   protected function _buildPropertyCollection(
@@ -588,8 +581,10 @@ abstract class Model implements Modelable {
    */
   protected function _tryToHydrate() {
     $id = $this->getId();
-    if ($this->_hasEndpoint() && ($id > 0) && ! $this->_hydrated) {
+    if ($this->_hasEndpoint() && is_int($id) && ! $this->_hydrated) {
       $model = $this->_getEndpoint()->retrieve($id);
+      assert($model instanceof self);
+
       $this->_values += $model->_values;
       foreach ($this->_values as $property => $value) {
         if (isset($value)) {

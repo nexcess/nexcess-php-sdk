@@ -68,7 +68,7 @@ interface Readable {
    * but it WILL NOT UPDATE the API with the model's current state.
    * To save changes to an updatable model, @see Updatable::update
    *
-   * @param Model The Model to sync
+   * @param Model $model The Model to sync
    * @return Model The sync'd model
    */
   public function sync(Model $model) : Model;

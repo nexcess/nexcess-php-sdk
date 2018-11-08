@@ -11,9 +11,8 @@ namespace Nexcess\Sdk\Resource;
 
 use Nexcess\Sdk\ {
   ApiException,
-  Resource\Model,
-  Resource\Promise,
-  Resource\Updatable
+  Client,
+  Resource\Modelable
 };
 
 /**
@@ -22,16 +21,34 @@ use Nexcess\Sdk\ {
  */
 trait CanUpdate {
 
+  /** @var Client {@inheritDoc} @see Endpoint::$_client */
+  protected $_client;
+
+  /** @var array[] {@inheritDoc} @see Endpoint::$_retrieved */
+  protected $_retrieved = [];
+
+  /**
+   * {@inheritDoc}
+   * @see Endpoint::_checkModelType
+   */
+  abstract protected function _checkModelType(Modelable $model) : void;
+
+  /**
+   * {@inheritDoc}
+   * @see Endpoint::_getUri
+   */
+  abstract protected function _getUri() : string;
+
   /**
    * {@inheritDoc}
    */
-  public function update(Model $model) : Model {
+  public function update(Modelable $model) : Modelable {
     $this->_checkModelType($model);
     $id = $model->getId();
     if (! $id) {
       throw new ApiException(
         ApiException::MISSING_ID,
-        ['model' => static::_MODEL_FQCN]
+        ['model' => get_class($model)]
       );
     }
 
@@ -46,7 +63,7 @@ trait CanUpdate {
       $model->toCollapsedArray();
     if (! empty($update)) {
       $model->sync(
-        $this->_client->patch(static::_URI . "/{$id}", $update),
+        $this->_client->patch("{$this->_getUri()}/{$id}", $update),
         true
       );
     }

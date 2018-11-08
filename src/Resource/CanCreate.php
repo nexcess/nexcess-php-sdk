@@ -10,9 +10,8 @@ declare(strict_types  = 1);
 namespace Nexcess\Sdk\Resource;
 
 use Nexcess\Sdk\ {
-  ApiException,
-  Resource\Model,
-  Resource\Promise,
+  Client,
+  Resource\Modelable,
   Util\Util
 };
 
@@ -22,15 +21,39 @@ use Nexcess\Sdk\ {
  */
 trait CanCreate {
 
+  /** @var Client {@inheritDoc} @see Endpoint::$_client */
+  protected $_client;
+
+  /**
+   * {@inheritDoc}
+   * @see Endpoint::getModel
+   */
+  abstract public function getModel(string $name = null) : Modelable;
+
+  /**
+   * {@inheritDoc}
+   * @see Endpoint::_getUri
+   */
+  abstract protected function _getUri() : string;
+
+  /**
+   * {@inheritDoc}
+   * @see Endpoint::_validateParams
+   */
+  abstract protected function _validateParams(
+    string $action,
+    array $params
+  ) : void;
+
   /**
    * {@inheritDoc}
    */
-  public function create(array $data) : Model {
+  public function create(array $data) : Modelable {
     $this->_validateParams(__FUNCTION__, $data);
 
     return $this->getModel()->sync(
       Util::decodeResponse(
-        $this->_client->post(static::_URI . '/new', ['json' => $data])
+        $this->_client->post("{$this->_getUri()}/new", ['json' => $data])
       )
     );
   }

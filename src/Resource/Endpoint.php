@@ -9,22 +9,9 @@ declare(strict_types  = 1);
 
 namespace Nexcess\Sdk\Resource;
 
-use Throwable;
-
-use GuzzleHttp\ {
-  Client as Guzzle,
-  Exception\ClientException,
-  Exception\ConnectException,
-  Exception\RequestException,
-  Exception\ServerException,
-  Exception\TransferException,
-  Psr7\Response as GuzzleResponse
-};
-
 use Nexcess\Sdk\ {
   ApiException,
   Client,
-  SdkException,
   Resource\Collection,
   Resource\Collector,
   Resource\Modelable,
@@ -65,13 +52,13 @@ abstract class Endpoint implements Readable {
   /** @var array[] Map of action name:parameter info pairs. */
   protected const _PARAMS = [];
 
-  /** @var Guzzle The Sdk Client. */
+  /** @var Client The Sdk Client. */
   protected $_client;
 
   /** @var Config Client configuration object. */
   protected $_config;
 
-  /** @var array Map of last fetched property:value pairs. */
+  /** @var array[] Map of last fetched property:value pairs. */
   protected $_retrieved = [];
 
   /**
@@ -151,7 +138,7 @@ abstract class Endpoint implements Readable {
    * {@inheritDoc}
    */
   public function retrieve(int $id) : Modelable {
-    return $this->sync($this->getModel()->set('id', $id), true);
+    return $this->sync($this->getModel()->set('id', $id));
   }
 
   /**
@@ -188,17 +175,26 @@ abstract class Endpoint implements Readable {
    * @param Modelable $model The model to check
    * @throws ApiException If the model is of the wrong class
    */
-  protected function _checkModelType(Modelable $model) {
+  protected function _checkModelType(Modelable $model) : void {
     if ($model->moduleName() !== $this->moduleName()) {
       throw new ApiException(
         ApiException::WRONG_MODEL_FOR_URI,
         [
           'endpoint' => static::class,
-          'model' => $fqcn,
+          'module' => $this->moduleName(),
           'type' => get_class($model)
         ]
       );
     }
+  }
+
+  /**
+   * Gets the base URI path for this endpoint.
+   *
+   * @return string
+   */
+  protected function _getUri() : string {
+    return static::_URI;
   }
 
   /**
@@ -231,7 +227,6 @@ abstract class Endpoint implements Readable {
    * to prevent conflicts/confusion, validation here should remain minimal:
    * mainly limited to checking data names and types.
    *
-   * @param array $data The provided data
    * @throws ResourceException If data is missing/incorrect
    */
   protected function _validateParams(string $action, array $params) : void {

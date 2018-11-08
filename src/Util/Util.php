@@ -9,10 +9,16 @@ declare(strict_types  = 1);
 
 namespace Nexcess\Sdk\Util;
 
-use JsonSerializable,
+use ArrayAccess,
+  JsonSerializable,
   stdClass;
+
 use GuzzleHttp\Psr7\Response as GuzzleResponse;
-use Nexcess\Sdk\Util\UtilException;
+
+use Nexcess\Sdk\ {
+  ApiException,
+  Util\UtilException
+};
 
 /**
  * Assorted utility functions.

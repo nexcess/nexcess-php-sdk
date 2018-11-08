@@ -15,7 +15,7 @@
     "unauthorized": "{method} /{endpoint} is not authorized (check that correct api token/auth is configured)",
     "unprocessable_entity": "{method} /{endpoint} could not be processed; check response for error messages",
     "wrong_call_arg": "{class}::__call() invoked with incorrect argument(s): expected {expected}; {type} provided",
-    "wrong_model_for_uri": "{endpoint} expects an instance of {model}; cannot use {type}"
+    "wrong_model_for_uri": "{endpoint} expects a {module} entity; cannot use {type}"
   },
   "optional": "Optional",
   "required": "Required",
@@ -62,8 +62,10 @@
     "no_such_property": "No property '{name}' exists on {model}",
     "no_such_service_model": "No Service model exists for type: {type}",
     "no_such_writable_property": "No writable property '{name}' exists on {model}",
-    "order": {
-      "invalid_service_data": "Invalid Service data: expected Service instance or array with 'id' and 'type'; {data} was provided"
+    "Order": {
+      "Exception": {
+        "invalid_service_data": "Invalid Service data: expected Service instance or array with 'id' and 'type'; {data} was provided"
+      }
     },
     "package": {
       "package_type_required": "A package type must be provided for list queries"
@@ -78,6 +80,7 @@
     "sync_failed": "Failed to sync {model}:{id} with API response: {__rootMessage__}",
     "wait_timeout_exceeded": "Wait timeout exceeded (waited {timeout} seconds)",
     "wrong_model_for_collection": "Cannot add {model} to collection of '{collection}' models",
+    "uncollapsable": "cannot collapse property '{property}': {type}",
     "uncollectable": "cannot build a collection of {of} using {type}: {data}",
     "undatetimeable": "cannot build datetime using {type}: {datetime}",
     "unmodelable": "cannot build {model} model using {type}: {data}",
@@ -102,7 +105,8 @@
     "unknown_error": "Unknown error: {__rootMessage__}"
   },
   "service": {
-    "not_cancelable": "This service cannot be canceled via the API."
+    "no_such_service_model": "No service type '{model}' exists",
+    "not_cancelable": "This service cannot be canceled via the API"
   },
   "util": {
     "file_not_readable": "File '{file}' is not readable",

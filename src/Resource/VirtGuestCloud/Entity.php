@@ -10,12 +10,14 @@ declare(strict_types  = 1);
 namespace Nexcess\Sdk\Resource\VirtGuestCloud;
 
 use Nexcess\Sdk\ {
+  ApiException,
   Resource\Cloud\Entity as Cloud,
   Resource\CloudAccount\Entity as CloudAccount,
   Resource\Modelable,
   Resource\Package\Entity as Package,
   Resource\Order\Entity as Order,
-  Resource\Service\Entity as Service
+  Resource\Service\Entity as Service,
+  Resource\VirtGuestCloud\Endpoint
 };
 
 /**
@@ -98,11 +100,13 @@ class Entity extends Service {
   /**
    * Gets php versions available for a given cloud account to use.
    *
-   * @param Entity $entity The subject cloud account
    * @return string[] List of available php major.minor versions
    */
   public function getAvailablePhpVersions() : array {
-    return $this->_getEndpoint()->getAvailablePhpVersions($this);
+    $endpoint = $this->_getEndpoint();
+    assert($endpoint instanceof Endpoint);
+
+    return $endpoint->getAvailablePhpVersions($this);
   }
 
   /**
@@ -113,7 +117,10 @@ class Entity extends Service {
    * @throws ApiException If request fails
    */
   public function setPhpVersion(Entity $entity, string $version) : Entity {
-    return $this->_getEndpoint()->setPhpVersion($this, $version);
+    $endpoint = $this->_getEndpoint();
+    assert($endpoint instanceof Endpoint);
+
+    return $endpoint->setPhpVersion($this, $version);
   }
 
   /**

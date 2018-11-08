@@ -14,39 +14,17 @@ use RecursiveDirectoryIterator,
   RecursiveIteratorIterator,
   Throwable;
 
-use function GuzzleHttp\Promise\ {
-  rejection_for as rejection,
-  promise_for as resolution
-};
-
 use GuzzleHttp\ {
-  Client as Guzzle,
-  Exception\ClientException,
-  Exception\ConnectException,
   Exception\RequestException,
-  Exception\ServerException,
-  HandlerStack as GuzzleHandlerStack,
-  Promise\PromiseInterface as Promise,
   Psr7\Request as GuzzleRequest,
   Psr7\Response as GuzzleResponse
 };
-
-use Nexcess\Sdk\ {
-  Client,
-  Exception\ApiException,
-  Exception\SdkException,
-  Sandbox\SandboxException,
-  Util\Config,
-  Util\Util
-};
-
-use Psr\Http\Message\RequestInterface as Request;
 
 /**
  * Handles responses for the sandbox using file resources.
  *
  * Resource files should
- *  - be named like "METHOD urlencodedpath"
+ *  - be named like "METHOD-urlencodedpath"
  *  - contain the response body text (files are not parsed).
  */
 class ResourceHandler {

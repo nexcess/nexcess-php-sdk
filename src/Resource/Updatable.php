@@ -10,7 +10,8 @@ declare(strict_types  = 1);
 namespace Nexcess\Sdk\Resource;
 
 use Nexcess\Sdk\ {
-  Resource\Model,
+  ApiException,
+  Resource\Modelable,
   Resource\Readable
 };
 
@@ -26,9 +27,9 @@ interface Updatable extends Readable {
    * (e.g., aliases and readonly properties are not updatable).
    * In such cases, check for Endpoint methods that do the update you want.
    *
-   * @param Model $model The model with updated properties
-   * @return Model The updated model
+   * @param Modelable $model The model with updated properties
+   * @return Modelable The updated model
    * @throws ApiException If request fails
    */
-  public function update(Model $model) : Model;
+  public function update(Modelable $model) : Modelable;
 }

@@ -11,7 +11,6 @@ namespace Nexcess\Sdk\Resource\CloudServer;
 
 use Nexcess\Sdk\ {
   Resource\Cloud\Entity as Cloud,
-  Resource\Location\Entity as Location,
   Resource\Package\Entity as Package,
   Resource\Service\Entity as Service
 };

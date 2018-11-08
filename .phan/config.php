@@ -6,35 +6,18 @@ return [
   'suppress_issue_types' => [
     //// https://github.com/phan/phan/issues/1143
     //'PhanUnanalyzable',
-    //// https://github.com/phan/phan/issues/2123
-    //'PhanTypeInvalidDimOffset'
 
-
-    'PhanAccessMethodInternal',
-    'PhanCommentParamOnEmptyParamList',
-    'PhanCommentParamWithoutRealParam',
-    'PhanParamTooMany',
+    // https://github.com/phan/phan/issues/2123
     'PhanTypeInvalidDimOffset',
-    'PhanTypeMagicVoidWithReturn',
+    // we're using "@internal" to mean "within this repo"
+    // phan treats it as "within same namespace" for some reason
+    'PhanAccessMethodInternal',
+
+    // @todo WTF
+    // "$response is \Psr\Http\Message\MessageInterface|ResponseInterface"
+    //  // NO, it's not
+    // "but Util::decodeResponse() takes \GuzzleHttp\Psr7\Response"
+    //  // YES, and that's *exactly* what $response is
     'PhanTypeMismatchArgument',
-    'PhanTypeMismatchDeclaredParam',
-    'PhanTypeMismatchDeclaredParamNullable',
-    'PhanTypeMismatchDeclaredReturn',
-    'PhanTypeMismatchProperty',
-    'PhanTypeMismatchReturn',
-    'PhanUndeclaredClass',
-    'PhanUndeclaredClassCatch',
-    'PhanUndeclaredClassConstant',
-    'PhanUndeclaredClassMethod',
-    'PhanUndeclaredConstant',
-    'PhanUndeclaredMethod',
-    'PhanUndeclaredProperty',
-    'PhanUndeclaredTypeParameter',
-    'PhanUndeclaredTypeReturnType',
-    'PhanUndeclaredTypeThrowsType',
-    'PhanUndeclaredVariable',
-    'PhanUnextractableAnnotationElementName',
-    'PhanUnreferencedUseFunction',
-    'PhanUnreferencedUseNormal'
   ]
 ];
