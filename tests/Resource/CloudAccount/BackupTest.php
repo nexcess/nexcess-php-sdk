@@ -14,6 +14,7 @@ use Nexcess\Sdk\ {
   Resource\CloudAccount\Entity,
   Resource\CloudAccount\Backup,
   Resource\PromisedResource,
+  Resource\Promise,
   Resource\Collection,
   Resource\Model,
   Tests\Resource\ModelTestCase,
@@ -122,6 +123,26 @@ class BackupTest extends ModelTestCase {
     $this->assertEquals($entity, $backup->getCloudAccount());
   }
 
+  /**
+   * @covers Backup::setCloudAccount
+   */
+  public function testWhenComplete() {
+    $entity  = new Entity;
+    $entity->sync(['id'=>1]);
+
+    $backup = new Backup;
+    $backup->setCloudAccount($entity);
+    $promise = new Promise($backup,function(){return;});
+    
+    $endpoint = $this->createMock(Endpoint::class);
+    $endpoint->method('whenBackupComplete')
+      ->with(
+        $this->equalTo($backup),
+        $this->equalTo([])
+      )->willReturn($promise);
+    $backup->setApiEndpoint($endpoint);
+    $this->assertEquals($promise,$backup->whenComplete([]));
+  }
 
   /*
    * Stubs
