@@ -118,10 +118,8 @@ class BackupTest extends ModelTestCase {
     $entity->sync(['id'=>1]);
 
     $backup = new Backup;
-    $backup->sync(['filename'=>$filename]);
     $backup->setCloudAccount($entity);
     $this->assertEquals($entity, $backup->getCloudAccount());
-    $this->assertTrue($backup->isReal());
   }
 
 
