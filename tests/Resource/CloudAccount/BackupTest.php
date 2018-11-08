@@ -184,14 +184,19 @@ class BackupTest extends ModelTestCase {
     $this->assertEquals($promise,$backup->whenComplete([]));
   }
 
+  /**
+   * @covers Backup::getId()
+   */
+  public function testGetId() {
+    $this->assertNull(
+      $this->_getSubject()->getId(),
+      'Backups do not have numeric IDs'
+    );
+  }
+
   /*
    * Stubs
    */
-  public function testGetId() {
-        $this->markTestSkipped( 'Not relevant to backup' );
-  }
-
-
   public function testArray(
     array $data = [],
     array $expected = [],
