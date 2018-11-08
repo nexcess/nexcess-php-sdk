@@ -101,6 +101,30 @@ class BackupTest extends ModelTestCase {
     );
   }
 
+  /**
+   * @covers Backup::isReal
+   */
+  public function testIsReal() {
+    $backup = new Backup;
+    $backup->sync(['filename'=>'filename.tgz']);
+    $this->assertTrue($backup->isReal());
+  }
+
+  /**
+   * @covers Backup::setCloudAccount
+   */
+  public function testSetCloudAccount() {
+    $entity  = new Entity;
+    $entity->sync(['id'=>1]);
+
+    $backup = new Backup;
+    $backup->sync(['filename'=>$filename]);
+    $backup->setCloudAccount($entity);
+    $this->assertEquals($entity, $backup->getCloudAccount());
+    $this->assertTrue($backup->isReal());
+  }
+
+
   /*
    * Stubs
    */
@@ -108,11 +132,6 @@ class BackupTest extends ModelTestCase {
         $this->markTestSkipped( 'Not relevant to backup' );
   }
 
-  public function testIsReal() {
-    $backup = new Backup;
-    $backup->sync(['filename'=>'filename.tgz']);
-    $this->assertTrue($backup->isReal());
-  }
 
   public function testArray(
     array $data = [],
