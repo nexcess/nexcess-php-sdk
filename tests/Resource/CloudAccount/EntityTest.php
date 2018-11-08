@@ -86,7 +86,7 @@ class EntityTest extends ModelTestCase {
   public function testCreateBackup() {
     $entity = $this->_getSubject();
 
-    $backup = $this->createMock(Backup::class);
+    $backup = new Backup();
     $endpoint = $this->createMock(Endpoint::class);
     $endpoint->method('createBackup')
       ->with($this->equalTo($entity))

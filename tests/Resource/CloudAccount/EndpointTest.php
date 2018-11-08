@@ -390,6 +390,9 @@ class EndpointTest extends EndpointTestCase {
         case 2:
           $this->assertEquals('/siteworx/index', $request->getUri()->getPath());
           break;
+
+        default:
+          $this->fail("unexpected request: {$request->getUri()->getPath()}");
       }
 
       return new GuzzleResponse(
