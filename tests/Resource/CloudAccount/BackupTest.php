@@ -22,7 +22,7 @@ use Nexcess\Sdk\ {
 };
 
 /**
- * Unit test for cloud accounts (virtual hosting).
+ * Unit test for Backups.
  */
 class BackupTest extends ModelTestCase {
 
@@ -51,14 +51,15 @@ class BackupTest extends ModelTestCase {
     $filename = 'filename.tgz';
     $force = false;
 
-    $entity  = new Entity;
+    $entity  = new Entity();
     $entity->sync(['id'=>1]);
 
-    $backup = new Backup;
+    $backup = new Backup();
     $backup->setCloudAccount($entity);
     
     $endpoint = $this->createMock(Endpoint::class);
-    $endpoint->method('downloadBackup')
+    $endpoint->expects($this->once())
+      ->method('downloadBackup')
       ->with(
         $this->equalTo($entity),
         $this->equalTo($filename),
@@ -66,16 +67,14 @@ class BackupTest extends ModelTestCase {
         $this->equalTo($force)
       );
     $backup->setApiEndpoint($endpoint);
-
     try {
       $backup->download($path);
     } catch (\Throwable $e) {
       $this->assertEquals('Nexcess\Sdk\Resource\CloudAccount\Backup::download() failed: invalid Backup object (filename is empty)',$e->getMessage());
     }
 
-    $backup->sync(['filename'=>$filename]);
+    $backup->sync(['filename' => $filename]);
     $backup->download($path);
-    $this->assertTrue(true);
   }
 
   /**
@@ -84,14 +83,15 @@ class BackupTest extends ModelTestCase {
   public function testDelete() {
     $filename = 'filename.tgz';
 
-    $entity  = new Entity;
+    $entity  = new Entity();
     $entity->sync(['id'=>1]);
 
-    $backup = new Backup;
+    $backup = new Backup();
     $backup->setCloudAccount($entity);
     
     $endpoint = $this->createMock(Endpoint::class);
-    $endpoint->method('deleteBackup')
+    $endpoint->expects($this->once())
+      ->method('deleteBackup')
       ->with(
         $this->equalTo($entity),
         $this->equalTo($filename)
@@ -106,7 +106,6 @@ class BackupTest extends ModelTestCase {
 
     $backup->sync(['filename'=>$filename]);
     $backup->delete();
-    $this->assertTrue(true);
   }
 
 
@@ -129,9 +128,9 @@ class BackupTest extends ModelTestCase {
     );
 
     $another = new class() extends Model {
-      protected const _PROPERTY_NAMES = ['id'];
+      protected const _PROPERTY_NAMES = ['filename'];
       public function __construct() {
-        $this->set('id', 1);
+        $this->set('filename', 'filename.tgz');
       }
     };
 
@@ -145,7 +144,7 @@ class BackupTest extends ModelTestCase {
    * @covers Backup::isReal
    */
   public function testIsReal() {
-    $backup = new Backup;
+    $backup = new Backup();
     $backup->sync(['filename'=>'filename.tgz']);
     $this->assertTrue($backup->isReal());
   }
@@ -155,7 +154,7 @@ class BackupTest extends ModelTestCase {
    * @covers Backup::getCloudAccount
    */
   public function testGetSetCloudAccount() {
-    $entity  = new Entity;
+    $entity  = new Entity();
     $entity->sync(['id'=>1]);
 
     $backup = new Backup;
@@ -168,10 +167,10 @@ class BackupTest extends ModelTestCase {
    * @covers Backup::setCloudAccount
    */
   public function testWhenComplete() {
-    $entity  = new Entity;
+    $entity  = new Entity();
     $entity->sync(['id'=>1]);
 
-    $backup = new Backup;
+    $backup = new Backup();
     $backup->setCloudAccount($entity);
     $promise = new Promise($backup,function(){return;});
     
