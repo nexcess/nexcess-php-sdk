@@ -109,7 +109,9 @@ class BackupTest extends ModelTestCase {
   }
 
   public function testIsReal() {
-        $this->markTestSkipped( 'Not relevant to backup' );
+    $backup = new Backup;
+    $backup->sync(['filename'=>'filename.tgz']);
+    $this->assertTrue($backup->isReal());
   }
 
   public function testArray(
