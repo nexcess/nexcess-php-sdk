@@ -113,8 +113,9 @@ class BackupTest extends ModelTestCase {
 
   /**
    * @covers Backup::setCloudAccount
+   * @covers Backup::getCloudAccount
    */
-  public function testSetCloudAccount() {
+  public function testGetSetCloudAccount() {
     $entity  = new Entity;
     $entity->sync(['id'=>1]);
 
@@ -122,6 +123,7 @@ class BackupTest extends ModelTestCase {
     $backup->setCloudAccount($entity);
     $this->assertEquals($entity, $backup->getCloudAccount());
   }
+
 
   /**
    * @covers Backup::setCloudAccount
