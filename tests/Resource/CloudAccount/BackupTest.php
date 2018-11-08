@@ -46,7 +46,7 @@ class BackupTest extends ModelTestCase {
   /**
    * @covers Backup::download
    */
-  public function testDownloadBackup() {
+  public function testDownload() {
     $path = '/tmp';
     $filename = 'filename.tgz';
     $force = false;
@@ -55,7 +55,6 @@ class BackupTest extends ModelTestCase {
     $entity->sync(['id'=>1]);
 
     $backup = new Backup;
-    $backup->sync(['filename'=>$filename]);
     $backup->setCloudAccount($entity);
     
     $endpoint = $this->createMock(Endpoint::class);
@@ -67,9 +66,49 @@ class BackupTest extends ModelTestCase {
         $this->equalTo($force)
       );
     $backup->setApiEndpoint($endpoint);
+
+    try {
+      $backup->download($path);
+    } catch (\Throwable $e) {
+      $this->assertEquals('Nexcess\Sdk\Resource\CloudAccount\Backup::download() failed: invalid Backup object (filename is empty)',$e->getMessage());
+    }
+
+    $backup->sync(['filename'=>$filename]);
     $backup->download($path);
     $this->assertTrue(true);
   }
+
+  /**
+   * @covers Backup::download
+   */
+  public function testDelete() {
+    $filename = 'filename.tgz';
+
+    $entity  = new Entity;
+    $entity->sync(['id'=>1]);
+
+    $backup = new Backup;
+    $backup->setCloudAccount($entity);
+    
+    $endpoint = $this->createMock(Endpoint::class);
+    $endpoint->method('deleteBackup')
+      ->with(
+        $this->equalTo($entity),
+        $this->equalTo($filename)
+      );
+    $backup->setApiEndpoint($endpoint);
+
+    try {
+      $backup->delete();
+    } catch (\Throwable $e) {
+      $this->assertEquals('Nexcess\Sdk\Resource\CloudAccount\Backup::delete() failed: invalid Backup object (filename is empty)',$e->getMessage());
+    }
+
+    $backup->sync(['filename'=>$filename]);
+    $backup->delete();
+    $this->assertTrue(true);
+  }
+
 
   /**
    * @covers backup::equals
