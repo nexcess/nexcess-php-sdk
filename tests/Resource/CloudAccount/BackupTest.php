@@ -192,21 +192,5 @@ class BackupTest extends ModelTestCase {
       'Backups do not have numeric IDs'
     );
   }
-
-  /*
-   * Stubs
-   */
-
-  public function testGetSet(
-    Model $model = null,
-    string $name = '',
-    $expected = null,
-    $set = null
-  ) {
-        $this->markTestSkipped( 'Not relevant to backup' );
-  }
-
-  public function testSync(array $from = [], array $expected = []) {
-        $this->markTestSkipped( 'Not relevant to backup' );
-  }
+  
 }
