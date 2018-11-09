@@ -13,6 +13,9 @@ use Throwable;
 use GuzzleHttp\ {
   Psr7\Response as GuzzleResponse
 };
+
+use org\bovigo\vfs\vfsStream;
+
 use Nexcess\Sdk\ {
   Resource\CloudAccount\Endpoint,
   Resource\CloudAccount\Entity,
@@ -377,7 +380,6 @@ class EndpointTest extends EndpointTestCase {
    * @covers Endpoint::downloadBackup
    */
   public function testDownloadBackup() {
-    // custom request handler for sandbox
     $assertionCounter = 0;
     $request_handler = function ($request, $options) use (&$assertionCounter) {
       // check request path
@@ -405,21 +407,24 @@ class EndpointTest extends EndpointTestCase {
     // kick off
     $this->_getSandbox(null, $request_handler)
       ->play(function ($api, $sandbox) {
+        $vfs = vfsStream::setup('backupDownloadTest');
+
         $filename = 'filename.tgz';
-        $path = "/tmp";
+        $path = $vfs->url();
 
         $entity = $api->getModel(static::_SUBJECT_MODEL_FQCN)->set('id',1);
+
         $endpoint = $api->getEndpoint(static::_SUBJECT_MODULE);
         $endpoint->downloadBackup($entity, $filename, $path);
 
         $path = trim($path);
+
         if (substr($path, -1) !== DIRECTORY_SEPARATOR) {
           $path .= DIRECTORY_SEPARATOR;
         }
 
         $full_filename = $path . $filename;
         $this->assertTrue(file_exists($full_filename));
-        unlink($full_filename);
       });
   }
 
