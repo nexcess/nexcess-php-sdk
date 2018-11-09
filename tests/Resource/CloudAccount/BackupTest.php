@@ -30,19 +30,18 @@ class BackupTest extends ModelTestCase {
   protected const _RESOURCE_PATH = __DIR__ . '/resources';
 
   /** {@inheritDoc} */
-  protected const _RESOURCE_FROMARRAY = 'cloud-account-1.fromArray.json';
+  protected const _RESOURCE_FROMARRAY = 'backup.fromArray.json';
 
   /** {@inheritDoc} */
-  protected const _RESOURCE_TOARRAY = 'cloud-account-1.toArray-shallow.php';
+  protected const _RESOURCE_TOARRAY = 'backup.toArray-shallow.json';
 
   /** {@inheritDoc} */
-  protected const _RESOURCE_TOCOLLAPSEDARRAY =
-    'cloud-account-1.toCollapsedArray.json';
+  protected const _RESOURCE_TOCOLLAPSEDARRAY = 'backup.toCollapsedArray.json';
 
   /** {@inheritDoc} */
   protected const _SUBJECT_FQCN = Backup::class;
 
- 
+   
   /**
    * @covers Backup::download
    */
@@ -197,14 +196,6 @@ class BackupTest extends ModelTestCase {
   /*
    * Stubs
    */
-  public function testArray(
-    array $data = [],
-    array $expected = [],
-    array $collapsed = []
-  ) {
-        $this->markTestSkipped( 'Not relevant to backup' );
-    return;
-  }
 
   public function testGetSet(
     Model $model = null,
