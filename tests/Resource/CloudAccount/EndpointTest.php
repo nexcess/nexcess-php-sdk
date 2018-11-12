@@ -439,7 +439,7 @@ class EndpointTest extends EndpointTestCase {
       return new GuzzleResponse(
         200,
         ['Content-type' => 'application/json'],
-        $this->_getResource('', false)
+        []
       );
     };
 
