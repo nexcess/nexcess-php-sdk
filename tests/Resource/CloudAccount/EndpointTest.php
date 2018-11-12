@@ -478,7 +478,10 @@ class EndpointTest extends EndpointTestCase {
 
       $sandbox->makeResponse('*', 200, [$incomplete]);
       $sandbox->makeResponse('*', 200, [$complete]);
-      $this->assertTrue($promise->wait()->get('complete'));
+      $resolved = $promise->wait();
+      $this->assertInstanceOf(Backup::class, $resolved);
+      $this->assertTrue($resolved->equals($backup));
+      $this->assertTrue($resolved->get('complete'));
     });
   }
 }
