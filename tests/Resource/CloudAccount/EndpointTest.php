@@ -356,7 +356,6 @@ class EndpointTest extends EndpointTestCase {
       // check request path
       $this->assertEquals('cloud-account/1/backup', $request->getUri()->getPath());
 
-
       return new GuzzleResponse(
         200,
         ['Content-type' => 'application/json'],
@@ -367,12 +366,12 @@ class EndpointTest extends EndpointTestCase {
     // kick off
     $this->_getSandbox(null, $request_handler)
       ->play(function ($api, $sandbox) {
-        $entity = $api->getModel(static::_SUBJECT_MODEL_FQCN)->set('id',1);
+        $entity = $api->getModel(static::_SUBJECT_MODEL_FQCN)->set('id', 1);
         $endpoint = $api->getEndpoint(static::_SUBJECT_MODULE);
         $results = $endpoint->createBackup($entity);
-        $this->assertEquals('filename.tgz',$results->get('filename'));
-        $this->assertEquals("123 MB",$results->get('filesize'));
-        $this->assertEquals(456,$results->get('filesize_bytes'));
+        $this->assertEquals('filename.tgz', $results->get('filename'));
+        $this->assertEquals("123 MB", $results->get('filesize'));
+        $this->assertEquals(456, $results->get('filesize_bytes'));
       });
   }
 
@@ -412,7 +411,7 @@ class EndpointTest extends EndpointTestCase {
         $filename = 'filename.tgz';
         $path = $vfs->url();
 
-        $entity = $api->getModel(static::_SUBJECT_MODEL_FQCN)->set('id',1);
+        $entity = $api->getModel(static::_SUBJECT_MODEL_FQCN)->set('id', 1);
 
         $endpoint = $api->getEndpoint(static::_SUBJECT_MODULE);
         $endpoint->downloadBackup($entity, $filename, $path);
@@ -434,7 +433,7 @@ class EndpointTest extends EndpointTestCase {
   public function testDeleteBackup() {
 
     $request_handler = function ($request, $options)  {
-      $this->assertEquals('DELETE',$request->getMethod());
+      $this->assertEquals('DELETE', $request->getMethod());
       $this->assertEquals('cloud-account/1/backup/filename.tgz', $request->getUri()->getPath());
 
       return new GuzzleResponse(
@@ -448,7 +447,7 @@ class EndpointTest extends EndpointTestCase {
     $this->_getSandbox(null, $request_handler)
       ->play(function ($api, $sandbox) {
         $filename = 'filename.tgz';
-        $entity = $api->getModel(static::_SUBJECT_MODEL_FQCN)->set('id',1);
+        $entity = $api->getModel(static::_SUBJECT_MODEL_FQCN)->set('id', 1);
         $api->getEndpoint(static::_SUBJECT_MODULE)
           ->deleteBackup($entity, $filename);
       });
