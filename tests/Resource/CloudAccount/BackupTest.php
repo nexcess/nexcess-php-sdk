@@ -82,7 +82,7 @@ class BackupTest extends ModelTestCase {
     $filename = 'filename.tgz';
 
     $entity  = new Entity();
-    $entity->sync(['id'=>1]);
+    $entity->sync(['id' => 1]);
 
     $backup = new Backup();
     $backup->setCloudAccount($entity);
@@ -170,7 +170,7 @@ class BackupTest extends ModelTestCase {
 
     $backup = new Backup();
     $backup->setCloudAccount($entity);
-    $promise = new Promise($backup,function(){return;});
+    $promise = new Promise($backup, function(){ return; });
     
     $endpoint = $this->createMock(Endpoint::class);
     $endpoint->method('whenBackupComplete')
@@ -179,7 +179,7 @@ class BackupTest extends ModelTestCase {
         $this->equalTo([])
       )->willReturn($promise);
     $backup->setApiEndpoint($endpoint);
-    $this->assertEquals($promise,$backup->whenComplete([]));
+    $this->assertEquals($promise, $backup->whenComplete([]));
   }
 
   /**
