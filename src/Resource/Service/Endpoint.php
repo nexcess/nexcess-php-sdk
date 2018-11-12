@@ -14,9 +14,10 @@ use Nexcess\Sdk\ {
   Resource\CloudServer\Endpoint as CloudServer,
   Resource\Endpoint as BaseEndpoint,
   Resource\Service\Entity,
+  Resource\Service\ServiceCancellation,
   Resource\Service\ServiceException,
-  Resource\ServiceCancellation\Entity as ServiceCancellation,
-  Resource\VirtGuestCloud\Endpoint as VirtGuestCloud
+  Resource\VirtGuestCloud\Endpoint as VirtGuestCloud,
+  SdkException
 };
 
 /**
@@ -49,12 +50,12 @@ abstract class Endpoint extends BaseEndpoint {
    *
    * @param string $type The service type
    * @return string Service model FQCN on success
-   * @throws ResourceException If no service model is found for given type
+   * @throws ServiceException If no service model is found for given type
    */
   public static function findServiceModel(string $type) : string {
     if (! isset(self::_SERVICE_TYPE_MAP[$type])) {
-      throw new ResourceException(
-        ResourceException::NO_SUCH_SERVICE_MODEL,
+      throw new ServiceException(
+        ServiceException::NO_SUCH_SERVICE_MODEL,
         ['model' => $type]
       );
     }
@@ -109,8 +110,11 @@ abstract class Endpoint extends BaseEndpoint {
       );
     }
 
-    $survey['service_id'] = $service->getId();
-    return $this->getModel(ServiceCancellation::class)->sync(
+    $survey['service_id'] = $entity->getId();
+    $cancellation = $this->getModel(ServiceCancellation::class);
+    assert($cancellation instanceof ServiceCancellation);
+
+    return $cancellation->sync(
       $this->_client->post(static::_URI_CANCEL, $survey)
     );
   }

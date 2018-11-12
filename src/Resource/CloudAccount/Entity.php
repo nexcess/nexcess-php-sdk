@@ -10,11 +10,13 @@ declare(strict_types  = 1);
 namespace Nexcess\Sdk\Resource\CloudAccount;
 
 use Nexcess\Sdk\ {
+  ApiException,
   Resource\App\Entity as App,
+  Resource\CloudAccount\Endpoint,
+  Resource\Collection,
   Resource\Model,
   Resource\VirtGuestCloud\Entity as Service,
-  Util\Util,
-  Resource\Collection
+  Resource\ResourceException
 };
 
 /**
@@ -87,7 +89,10 @@ class Entity extends Model {
    * @throws ApiException If request fails
    */
   public function createDevAccount(array $data) : Entity {
-    return $this->_getEndpoint()->createDevAccount($this, $data);
+    $endpoint = $this->_getEndpoint();
+    assert($endpoint instanceof Endpoint);
+
+    return $endpoint->createDevAccount($this, $data);
   }
 
   /**
@@ -98,7 +103,10 @@ class Entity extends Model {
    * @throws ApiException If request fails
    */
   public function getAvailablePhpVersions() : array {
-    return $this->_getEndpoint()->getAvailablePhpVersions($this);
+    $endpoint = $this->_getEndpoint();
+    assert($endpoint instanceof Endpoint);
+
+    return $endpoint->getAvailablePhpVersions($this);
   }
 
   /**
@@ -110,7 +118,10 @@ class Entity extends Model {
    * @throws ApiException If request fails
    */
   public function setPhpVersion(string $version) : Entity {
-    return $this->_getEndpoint()->setPhpVersion($this, $version);
+    $endpoint = $this->_getEndpoint();
+    assert($endpoint instanceof Endpoint);
+
+    return $endpoint->setPhpVersion($this, $version);
   }
 
   /**
@@ -121,7 +132,10 @@ class Entity extends Model {
    * @throws ApiException If request fails
    */
   public function clearNginxCache() : Entity {
-    return $this->_getEndpoint()->clearNginxCache($this);
+    $endpoint = $this->_getEndpoint();
+    assert($endpoint instanceof Endpoint);
+
+    return $endpoint->clearNginxCache($this);
   }
 
   /**
@@ -130,7 +144,10 @@ class Entity extends Model {
    * @return Backup
    */
   public function backup() : Backup {
-    return $this->_getEndpoint()->createBackup($this);
+    $endpoint = $this->_getEndpoint();
+    assert($endpoint instanceof Endpoint);
+
+    return $endpoint->createBackup($this);
   }
 
   /**
@@ -139,7 +156,10 @@ class Entity extends Model {
    * @return Collection
    */
   public function getBackups() : Collection {
-    return $this->_getEndpoint()->getBackups($this);
+    $endpoint = $this->_getEndpoint();
+    assert($endpoint instanceof Endpoint);
+
+    return $endpoint->getBackups($this);
   }
 
   /**
@@ -148,6 +168,9 @@ class Entity extends Model {
    * @return Backup
    */
   public function getBackup(string $filename) : Backup {
-    return $this->_getEndpoint()->getBackup($this, $filename);
+    $endpoint = $this->_getEndpoint();
+    assert($endpoint instanceof Endpoint);
+
+    return $endpoint->getBackup($this, $filename);
   }
 }

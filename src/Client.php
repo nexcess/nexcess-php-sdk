@@ -29,8 +29,9 @@ use function GuzzleHttp\default_user_agent as guzzle_user_agent;
 
 use Nexcess\Sdk\ {
   ApiException,
+  Resource\Collector,
   Resource\Creatable,
-  Resource\Modelable as Model,
+  Resource\Modelable,
   Resource\Readable as Endpoint,
   Resource\Updatable,
   SdkException,
@@ -38,8 +39,6 @@ use Nexcess\Sdk\ {
   Util\Language,
   Util\Util
 };
-
-use Psr7\Http\Message\ResponseInterface as Response;
 
 /**
  * API client for nexcess.net / thermo.io
@@ -54,12 +53,8 @@ use Psr7\Http\Message\ResponseInterface as Response;
  * Argument may be one of:
  *  - array: Create a new Model from given key:value map.
  *  - int: Id for a Model to retrieve from the API.
- *  - Model: A Model with modified properties to submit to the API.
+ *  - Modelable: A Model with modified properties to submit to the API.
  *  - void: Omit the argument to get a list of Models from the API.
- *
- * @method Model|Collection ApiToken(array|int|Model|null $arg)
- * @method Model|Collection CouldAccount(array|int|Model|null $arg)
- * @method Model|Collection CloudServer(array|int|Model|null $arg)
  */
 class Client {
 
@@ -128,11 +123,11 @@ class Client {
    *  $Client->ApiToken($token);
    *
    * @param string $name Endpoint classname (short name or fully qualified)
-   * @param array|Model|mixed $args Arguments for create/read/update action
-   * @return Model On success
+   * @param array $args Arguments for create/read/update action
+   * @return Modelable|Collector On success
    * @throws SdkException If Endpoint is unknown
    * @throws ApiException If API request fails
-   * @throws ModelException If Model cannot be created/updated
+   * @throws SdkException If Model cannot be created/updated
    */
   public function __call($name, $args) {
     $endpoint = $this->getEndpoint($name);
@@ -157,7 +152,7 @@ class Client {
       return $endpoint->create($arg);
     }
 
-    if ($arg instanceof Model) {
+    if ($arg instanceof Modelable) {
       if (! $endpoint instanceof Updatable) {
         throw new ApiException(
           ApiException::ENDPOINT_NOT_WRITABLE,
@@ -168,11 +163,11 @@ class Client {
       return $endpoint->update($arg);
     }
 
-    throw new SdkException(
-      SdkException::WRONG_CALL_ARG,
+    throw new ApiException(
+      ApiException::WRONG_CALL_ARG,
       [
         'class' => __CLASS__,
-        'expected' => 'null|int|array|Model',
+        'expected' => 'null|int|array|Modelable',
         'type' => Util::type($arg)
       ]
     );
@@ -296,16 +291,16 @@ class Client {
    * as it will associate them with their correct endpoint(s) automatically.
    *
    * @param string $name Entity FQCN or module name
-   * @return Model
+   * @return Modelable
    * @throws SdkException If the model is unknown
    */
-  public function getModel(string $name) : Model {
-    if (is_a($name, Model::class, true)) {
+  public function getModel(string $name) : Modelable {
+    if (is_a($name, Modelable::class, true)) {
       $model = $name;
     } else {
       $model = static::RESOURCE_NAMESPACE . "\\{$name}\\Entity";
 
-      if (! is_a($model, Model::class, true)) {
+      if (! is_a($model, Modelable::class, true)) {
         throw new SdkException(SdkException::NO_SUCH_MODEL, ['name' => $name]);
       }
     }

@@ -12,12 +12,11 @@ namespace Nexcess\Sdk\Resource\CloudAccount;
 use GuzzleHttp\Promise\Promise;
 
 use Nexcess\Sdk\ {
-  Resource\App\Entity as App,
   Resource\CloudAccount\CloudAccountException,
+  Resource\CloudAccount\Endpoint,
   Resource\CloudAccount\Entity as CloudAccount,
   Resource\Model,
-  Resource\Modelable,
-  Util\Util
+  Resource\Modelable
 };
 
 /**
@@ -68,7 +67,10 @@ class Backup extends Model {
       );
     }
 
-    $this->_getEndpoint()->deleteBackup(
+    $endpoint = $this->_getEndpoint();
+    assert($endpoint instanceof Endpoint);
+
+    $endpoint->deleteBackup(
       $this->getCloudAccount(),
       $this->get('filename')
     );
@@ -89,7 +91,10 @@ class Backup extends Model {
       );
     }
 
-    $this->_getEndpoint()->downloadBackup(
+    $endpoint = $this->_getEndpoint();
+    assert($endpoint instanceof Endpoint);
+
+    $endpoint->downloadBackup(
       $this->getCloudAccount(),
       $this->get('filename'),
       $path,
@@ -156,7 +161,10 @@ class Backup extends Model {
    * @return Promise Backup[complete] = true
    */
   public function whenComplete(array $options = []) : Promise {
-    return $this->_getEndpoint()->whenBackupComplete($this, $options);
+    $endpoint = $this->_getEndpoint();
+    assert($endpoint instanceof Endpoint);
+
+    return $endpoint->whenBackupComplete($this, $options);
   }
 
   /**
@@ -169,8 +177,13 @@ class Backup extends Model {
       isset($this->_cloud_account, $this->_values['filename']) &&
       ! $this->_hydrated
     ) {
-      $model = $this->_getEndpoint()
-        ->getBackup($this->getCloudAccount(), $this->get('filename'));
+      $endpoint = $this->_getEndpoint();
+      assert($endpoint instanceof Endpoint);
+
+      $model = $endpoint->getBackup(
+        $this->getCloudAccount(),
+        $this->get('filename')
+      );
       $this->_values += $model->_values;
       foreach ($this->_values as $property => $value) {
         if (isset($value)) {

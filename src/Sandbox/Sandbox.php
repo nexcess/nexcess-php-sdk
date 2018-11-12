@@ -18,10 +18,6 @@ use function GuzzleHttp\Promise\ {
 };
 
 use GuzzleHttp\ {
-  Client as Guzzle,
-  Exception\ClientException,
-  Exception\ConnectException,
-  Exception\RequestException,
   Exception\ServerException,
   HandlerStack as GuzzleHandlerStack,
   Promise\PromiseInterface as Promise,
@@ -30,8 +26,6 @@ use GuzzleHttp\ {
 
 use Nexcess\Sdk\ {
   Client,
-  Exception\ApiException,
-  Exception\SdkException,
   Sandbox\SandboxException,
   Util\Config,
   Util\Util
@@ -69,8 +63,8 @@ class Sandbox {
 
   /**
    * @param Config $config SDK configuration object
-   * @param callable $request_handler Callback to handle requests
-   * @param callable $exception_handler Callback to handle exceptions
+   * @param callable|null $request_handler Callback to handle requests
+   * @param callable|null $exception_handler Callback to handle exceptions
    */
   public function __construct(
     Config $config,
@@ -167,7 +161,7 @@ class Sandbox {
    * optionally restricted to a matching request.
    *
    * @param string $response_key "METHOD /path" or "*" for this response
-   * @param GuzzleResponse|callable|Throwable Response to queue
+   * @param GuzzleResponse|callable|Throwable $response Response to queue
    * @return Sandbox $this
    */
   public function queueResponse(string $response_key, $response) : Sandbox {
@@ -176,8 +170,8 @@ class Sandbox {
       ! is_callable($response) &&
       ! $response instanceof Throwable
     ) {
-      throw new SdkException(
-        SdkException::INVALID_RESPONSE,
+      throw new SandboxException(
+        SandboxException::INVALID_RESPONSE,
         ['type' => Util::type($response)]
       );
     }

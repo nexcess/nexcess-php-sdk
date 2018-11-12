@@ -9,16 +9,14 @@ declare(strict_types  = 1);
 
 namespace Nexcess\Sdk\Resource;
 
-use ArrayAccess,
-  Countable,
+use Countable,
   Iterator,
-  JsonSerializable,
-  Throwable;
+  JsonSerializable;
 
 use Nexcess\Sdk\ {
-  Exception\ModelException,
-  Exception\SdkException,
-  Resource\Modelable as Model
+  SdkException,
+  Resource\Modelable,
+  Resource\ResourceException
 };
 
 /**
@@ -29,11 +27,11 @@ interface Collector extends Countable, Iterator, JsonSerializable {
   /**
    * Adds a model to the collection.
    *
-   * @param Model $model
+   * @param Modelable $model
    * @return Collection $this
-   * @throws ModelException If the model is the wrong class for the collection
+   * @throws ResourceException If the model is wrong class for the collection
    */
-  public function add(Model $model) : Collector;
+  public function add(Modelable $model) : Collector;
 
   /**
    * Counts how many items are in this collection.
@@ -65,7 +63,7 @@ interface Collector extends Countable, Iterator, JsonSerializable {
    *
    * Criteria can be a property:value map or a callback function.
    * Callback signature is like
-   *  bool $filter(Model $item) Return true to take item, false to discard
+   *  bool $filter(Modelable $item) Return true to take item, false to discard
    *
    * @param array|callable $filter Map of property:value|callback pairs
    * @return Collection A new collection of zero or more matching items
@@ -78,16 +76,16 @@ interface Collector extends Countable, Iterator, JsonSerializable {
    *
    * Criteria can be a property:value map or a callback function.
    * Callback signature is like
-   *  bool $criteria(Model $item) Return true to match item; false to discard
+   *  bool $criteria(Modelable $item) Return true to match item; false to discard
    *
    * Note, this method returns zero or one items.
    * If you want a list of items, @see Collection::filter
    *
    * @param array|callable $criteria Map of property:value|callback pairs
-   * @return Model|null A matching item, if any found; null otherwise
+   * @return Modelable|null A matching item, if any found; null otherwise
    * @throws SdkException If criteria callback errors
    */
-  public function find($criteria) : ?Model;
+  public function find($criteria) : ?Modelable;
 
   /**
    * Gets list of ids of items in this collection.
@@ -100,7 +98,7 @@ interface Collector extends Countable, Iterator, JsonSerializable {
    * Builds a new collection by applying a callback function to each item.
    *
    * Callback signature is like
-   *  void $function(Model $item) Callback to apply to each item
+   *  void $function(Modelable $item) Callback to apply to each item
    *
    * This method duplicates items.
    * If you want to operate on items "in place," @see Collection::each
@@ -121,19 +119,19 @@ interface Collector extends Countable, Iterator, JsonSerializable {
   /**
    * Removes a model from the collection.
    *
-   * @param Model|int $model_or_id The Model or Model id to remove
-   * @return Model The removed Model
-   * @throws ModelException If the model does not exist in the collection
+   * @param Modelable|int $model_or_id The Modelable or Modelable id to remove
+   * @return Modelable The removed Modelable
+   * @throws ResourceException If the model does not exist in the collection
    */
-  public function remove($model_or_id) : Model;
+  public function remove($model_or_id) : Modelable;
 
   /**
    * Sorts the collection by property value, optionally in descending order.
    *
-   * @param string $prop Name of property to sort by (sorts by id if omitted)
+   * @param string|null $prop Property to sort by (sorts by id if omitted)
    * @param bool $desc Sort in descending order?
    * @return Collection $this
-   * @throws ModelException If property does not exist
+   * @throws ResourceException If property does not exist
    */
   public function sort(string $prop = null, bool $desc = false) : Collector;
 

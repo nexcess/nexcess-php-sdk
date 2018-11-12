@@ -10,8 +10,11 @@ declare(strict_types  = 1);
 namespace Nexcess\Sdk\Resource\CloudServer;
 
 use Nexcess\Sdk\ {
+  ApiException,
   Resource\CloudServer\Entity,
-  Resource\Service\Endpoint as ServiceEndpoint
+  Resource\Promise,
+  Resource\Service\Endpoint as ServiceEndpoint,
+  Util\Util
 };
 
 /**
@@ -118,7 +121,7 @@ class Endpoint extends ServiceEndpoint {
   /**
    * Resolves when given cloud server is turned on.
    *
-   * @param Entity The cloud server to wait for
+   * @param Entity $entity The cloud server to wait for
    * @param array $options Promise options
    * @return Promise Entity[power_status] = on
    */
@@ -136,7 +139,7 @@ class Endpoint extends ServiceEndpoint {
   /**
    * Resolves when given cloud server is turned off.
    *
-   * @param Entity The cloud server to wait for
+   * @param Entity $entity The cloud server to wait for
    * @param array $options Promise options
    * @return Promise Entity[power_status] = off
    */
@@ -154,7 +157,7 @@ class Endpoint extends ServiceEndpoint {
   /**
    * Builds callback to wait() for a cloud server to be resized.
    *
-   * @param Entity The cloud server to wait for
+   * @param Entity $entity The cloud server to wait for
    * @param int $package_id The resized package id
    * @param array $options Promise options
    * @return Promise Entity[package_id] = $package_id
@@ -163,7 +166,7 @@ class Endpoint extends ServiceEndpoint {
     Entity $entity,
     int $package_id,
     array $options = []
-  ) : Closure {
+  ) : Promise {
     return $this->_promise(
       $entity,
       function ($entity) use ($package_id) {
