@@ -16,7 +16,6 @@ use Nexcess\Sdk\ {
   Resource\Collection,
   Resource\Model,
   Resource\VirtGuestCloud\Entity as Service,
-  Util\Util,
   Resource\ResourceException
 };
 
