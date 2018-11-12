@@ -12,7 +12,7 @@ namespace Nexcess\Sdk\Resource\CloudAccount;
 use Closure,
   Throwable;
 
-use GuzzleHttp\Cookie\CookieJar;
+use \GuzzleHttp\Cookie\CookieJar;
 
 use Nexcess\Sdk\ {
   ApiException,
@@ -90,19 +90,15 @@ class Endpoint extends BaseEndpoint implements Creatable {
    */
   public function createDevAccount(Entity $entity, array $data) : Entity {
     $data = [
-      'domain' => ($data['domain'] ?? 'dev') . ".{$entity->get('domain')}",
+      'domain' => ($data['domain']??'dev') . ".{$entity->get('domain')}",
       'ref_cloud_account_id' => $entity->getId(),
-      'ref_service_id' => $entity->get('service')->getId(),
+      'ref_service_id'=>$entity->get('service')->getId(),
       'ref_type' => 'development'
     ] + $data
       + ['copy_account' => true, 'scrub_account' => true];
-    $this->_validateParams(__FUNCTION__, $data);
+    $this->_validateParams(__FUNCTION__,$data);
 
-    return $this->getModel()->sync(
-      Util::decodeResponse(
-        $this->_client->post(static::_URI, ['json' => $data])
-      )
-    );
+    return $this->getModel()->sync(Util::decodeResponse($this->_client->post(static::_URI, ['json' => $data])));
   }
 
   /**
@@ -111,7 +107,7 @@ class Endpoint extends BaseEndpoint implements Creatable {
    * @param Entity $entity The subject cloud account
    * @return string[] List of available php major.minor versions
    */
-  public function getAvailablePhpVersions(Entity $entity) : array {
+  public function getAvailablePhpVersions(Entity $entity) :array {
     return $entity->get('service')->getAvailablePhpVersions();
   }
 
