@@ -41,7 +41,6 @@ class BackupTest extends ModelTestCase {
   /** {@inheritDoc} */
   protected const _SUBJECT_FQCN = Backup::class;
 
-   
   /**
    * @covers Backup::download
    */
