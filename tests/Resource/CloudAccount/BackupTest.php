@@ -112,7 +112,7 @@ class BackupTest extends ModelTestCase {
       new CloudAccountException(CloudAccountException::INVALID_BACKUP)
     );
 
-    (new Backup())->delete('some/path');
+    (new Backup())->delete();
   }
 
 
