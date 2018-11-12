@@ -15,12 +15,9 @@ use Nexcess\Sdk\ {
   Resource\CloudAccount\CloudAccountException,
   Resource\CloudAccount\Endpoint,
   Resource\CloudAccount\Entity as CloudAccount,
-  Resource\CloudAccount\Backup,
   Resource\PromisedResource,
   Resource\Promise,
-  Resource\Collection,
   Resource\Model,
-  Resource\Promise,
   Tests\Resource\ModelTestCase,
   Util\Config
 };
