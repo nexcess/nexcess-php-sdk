@@ -137,7 +137,7 @@ class Endpoint extends BaseEndpoint implements Creatable {
    * Overridden to handle both Entity and secondary Entities (Backup).
    */
   public function sync(Modelable $model) : Modelable {
-    if ($model instanceof Backup) {
+    if ($model instanceof Backup && $model->isReal()) {
       return $model->sync(
         $this->getBackup($model->getCloudAccount(), $model->get('filename'))
           ->toArray()

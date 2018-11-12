@@ -14,7 +14,11 @@ use Nexcess\Sdk\ {
   Resource\CloudAccount\Backup,
   Resource\CloudAccount\CloudAccountException,
   Resource\CloudAccount\Endpoint,
-  Resource\CloudAccount\Entity,
+  Resource\CloudAccount\Entity as CloudAccount,
+  Resource\CloudAccount\Backup,
+  Resource\PromisedResource,
+  Resource\Promise,
+  Resource\Collection,
   Resource\Model,
   Resource\Promise,
   Tests\Resource\ModelTestCase,
@@ -49,7 +53,7 @@ class BackupTest extends ModelTestCase {
     $filename = 'filename.tgz';
     $force = false;
 
-    $entity  = new Entity();
+    $entity  = new CloudAccount();
     $entity->sync(['id' => 1]);
 
     $backup = new Backup();
@@ -86,7 +90,7 @@ class BackupTest extends ModelTestCase {
   public function testDelete() {
     $filename = 'filename.tgz';
 
-    $entity  = new Entity();
+    $entity  = new CloudAccount();
     $entity->sync(['id' => 1]);
 
     $backup = new Backup();
@@ -161,7 +165,7 @@ class BackupTest extends ModelTestCase {
    * @covers Backup::getCloudAccount
    */
   public function testGetSetCloudAccount() {
-    $entity = new Entity();
+    $entity  = new CloudAccount();
     $entity->sync(['id' => 1]);
 
     $backup = new Backup;
@@ -174,21 +178,13 @@ class BackupTest extends ModelTestCase {
    * @covers Backup::setCloudAccount
    */
   public function testWhenComplete() {
-    $entity  = new Entity();
-    $entity->sync(['id' => 1]);
-
-    $backup = new Backup();
-    $backup->setCloudAccount($entity);
-    $promise = new Promise($backup, function () {});
-
+    $backup = $this->_getSubject()->setCloudAccount(new CloudAccount());
     $endpoint = $this->createMock(Endpoint::class);
-    $endpoint->method('whenBackupComplete')
-      ->with(
-        $this->equalTo($backup),
-        $this->equalTo([])
-      )->willReturn($promise);
+    $endpoint->expects($this->once())
+      ->method('whenBackupComplete')
+      ->willReturn(new Promise($backup, function () {}));
     $backup->setApiEndpoint($endpoint);
-    $this->assertEquals($promise, $backup->whenComplete([]));
+    $backup->whenComplete();
   }
 
   /**

@@ -80,10 +80,11 @@
     "sync_failed": "Failed to sync {model}:{id} with API response: {__rootMessage__}",
     "wait_timeout_exceeded": "Wait timeout exceeded (waited {timeout} seconds)",
     "wrong_model_for_collection": "Cannot add {model} to collection of '{collection}' models",
-    "uncollapsable": "cannot collapse property '{property}': {type}",
-    "uncollectable": "cannot build a collection of {of} using {type}: {data}",
-    "undatetimeable": "cannot build datetime using {type}: {datetime}",
-    "unmodelable": "cannot build {model} model using {type}: {data}",
+    "uncollapsable": "Cannot collapse property '{property}': {type}",
+    "uncollectable": "Cannot build a collection of {of} using {type}: {data}",
+    "undatetimeable": "Cannot build datetime using {type}: {datetime}",
+    "unmodelable": "Cannot build {model} model using {type}: {data}",
+    "unsyncable": "Cannot sync {model} with no id",
     "wrong_param": "Parameter '{param}' for {module}::{action} must be {type}; {actual} provided\n  {description}"
   },
   "sandbox": {
