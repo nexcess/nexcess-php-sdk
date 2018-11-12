@@ -7,11 +7,11 @@
 
 declare(strict_types  = 1);
 
-namespace Nexcess\Sdk\Resource\Order;
+namespace Nexcess\Sdk\Resource\Ssl;
 
 use Nexcess\Sdk\ {
   Resource\Endpoint as ReadableEndpoint,
-  Resource\Order\Entity
+  Resource\Ssl\Entity
 };
 
 /**
@@ -26,5 +26,6 @@ class Endpoint extends ReadableEndpoint {
   protected const _MODEL_FQCN = Entity::class;
 
   /** {@inheritDoc} */
-  protected const _URI = 'ssl';
+  protected const _URI = 'ssl-cert';
+
 }
