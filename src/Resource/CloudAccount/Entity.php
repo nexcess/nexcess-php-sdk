@@ -13,7 +13,8 @@ use Nexcess\Sdk\ {
   Resource\App\Entity as App,
   Resource\Model,
   Resource\VirtGuestCloud\Entity as Service,
-  Util\Util
+  Util\Util,
+  Resource\Collection
 };
 
 /**

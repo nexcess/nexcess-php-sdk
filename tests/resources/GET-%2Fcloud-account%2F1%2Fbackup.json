@@ -1,0 +1,35 @@
+[
+  {
+    "filepath": "/home/a2094f12/mag.example.com/iworx-backup/filename.tgz",
+    "filename": "filename.tgz",
+    "filesize": "123 MB",
+    "filesize_bytes": 456,
+    "type": "Full Backup",
+    "domain_options": "single-domain",
+    "filedate": 1541094489,
+    "complete": true,
+    "download_url": "https://203.0.113.12:2443/siteworx/index?action=sso&sid=53xXxXxxXxXxxXxXxxXxXx43b3a2b162&uri=yYyYyGyYyYy4yYyYy2yYyYykyYyYyGyYyYyiyYyYyXyYyYysyYyYyWyYyYyhyYyYy5yYyYykyYyYysyYyYymyYyYyOyYyYyDyYyYyxyYyYyCyYyYyzyYyYy3yYyYytyYyYyWyYyYylyYyYyGyYyYyvbQ%3D%3D"
+  },
+  {
+    "filepath": "/home/a2094f12/mag.example.com/iworx-backup/mag.example.com+full-single-Nov.01.2018-14.22.06.tgz",
+    "filename": "seoncd.filename.tgz",
+    "filesize": "92.50 MB",
+    "filesize_bytes": 789,
+    "type": "Full Backup",
+    "domain_options": "single-domain",
+    "filedate": 1541096552,
+    "complete": true,
+    "download_url": "https://203.0.113.13:2443/siteworx/index?action=sso&sid=53xXxXxxXxXxxXxXxxXxXx43b3a2b162&uri=yYyYyGyYyYy4yYyYy2yYyYykyYyYyGyYyYyiyYyYyXyYyYysyYyYyWyYyYyhyYyYy5yYyYykyYyYysyYyYymyYyYyOyYyYyDyYyYyxyYyYyCyYyYyzyYyYy3yYyYytyYyYyWyYyYylyYyYyGyYyYyvbQ%3D%3D"
+  },
+  {
+    "filepath": "/home/a2094f12/mag.example.com/iworx-backup/mag.example.com+full-single-Nov.01.2018-14.23.32.tgz",
+    "filename": "third.filename.tgz",
+    "filesize": "92.50 MB",
+    "filesize_bytes": 123,
+    "type": "Full Backup",
+    "domain_options": "single-domain",
+    "filedate": 1541096641,
+    "complete": true,
+    "download_url": "https://203.0.113.14:2443/siteworx/index?action=sso&sid=53xXxXxxXxXxxXxXxxXxXx43b3a2b162&uri=yYyYyGyYyYy4yYyYy2yYyYykyYyYyGyYyYyiyYyYyXyYyYysyYyYyWyYyYyhyYyYy5yYyYykyYyYysyYyYymyYyYyOyYyYyDyYyYyxyYyYyCyYyYyzyYyYy3yYyYytyYyYyWyYyYylyYyYyGyYyYyvbQ%3D%3D"
+  }
+]

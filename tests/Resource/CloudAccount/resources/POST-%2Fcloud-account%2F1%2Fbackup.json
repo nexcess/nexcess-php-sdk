@@ -1,0 +1,10 @@
+{
+  "filepath": "/home/a2094f12/mag.example.com/iworx-backup/filename.tgz",
+  "filename": "filename.tgz",
+  "filesize": "123 MB",
+  "filesize_bytes": 456,
+  "type": "Full Backup",
+  "domain_options": "single-domain",
+  "filedate": 12345678901,
+  "complete": false
+}

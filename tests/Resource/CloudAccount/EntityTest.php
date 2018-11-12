@@ -12,7 +12,9 @@ namespace Nexcess\Sdk\Tests\Resource\CloudAccount;
 use Nexcess\Sdk\ {
   Resource\CloudAccount\Endpoint,
   Resource\CloudAccount\Entity,
+  Resource\CloudAccount\Backup,
   Resource\PromisedResource,
+  Resource\Collection,
   Tests\Resource\ModelTestCase,
   Util\Config
 };
@@ -77,4 +79,73 @@ class EntityTest extends ModelTestCase {
       'invokes $endpoint->setPhpversion($entity, 7.2)'
     );
   }
+
+  /**
+   * @covers Entity::backup
+   */
+  public function testCreateBackup() {
+    $entity = $this->_getSubject();
+
+    $backup = new Backup();
+    $endpoint = $this->createMock(Endpoint::class);
+    $endpoint->method('createBackup')
+      ->with($this->equalTo($entity))
+      ->willReturn($backup);
+
+    $entity->setApiEndpoint($endpoint);
+
+    $this->assertEquals(
+      $backup,
+      $entity->backup(),
+      'invokes $endpoint->createBackup($entity)'
+    );
+  }
+
+  /**
+   * @covers Entity::getBackups
+   */
+  public function testGetBackups() {
+    $entity = $this->_getSubject();
+
+    $collection = new Collection(Backup::class);
+    $endpoint = $this->createMock(Endpoint::class);
+    $endpoint->method('getBackups')
+      ->with($this->equalTo($entity))
+      ->willReturn($collection);
+
+    $entity->setApiEndpoint($endpoint);
+
+    $this->assertEquals(
+      $collection,
+      $entity->getBackups(),
+      'invokes $endpoint->getBackups($entity)'
+    );
+  }
+
+  /**
+   * @covers Entity::getBackup
+   */
+  public function testGetBackup() {
+    $entity = $this->_getSubject();
+    $filename = 'filename.tgz';
+
+    $backup = $this->createMock(Backup::class);
+    $backup->method('get')
+      ->with('filename')
+      ->willReturn($filename);
+
+    $endpoint = $this->createMock(Endpoint::class);
+    $endpoint->method('getBackup')
+      ->with($this->equalTo($entity),$this->equalTo($filename))
+      ->willReturn($backup);
+
+    $entity->setApiEndpoint($endpoint);
+
+    $this->assertEquals(
+      $filename,
+      $entity->getBackup($filename)->get('filename'),
+      'invokes $endpoint->getBackups($entity)'
+    );
+  }
+
 }

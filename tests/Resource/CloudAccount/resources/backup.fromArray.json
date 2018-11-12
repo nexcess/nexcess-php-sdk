@@ -1,0 +1,14 @@
+{
+    "complete": false,
+    "download_url": "https:\/\/203.0.113.11:2443\/siteworx\/index?action=sso&sid=bb5349e71afc2ae3b2f447b40910550b&uri=L3NpdGV3b3J4L2Rvd25sb2FkP2FjdGlvbj1iYWNrdXAmZmlsZT1tYWcuZXhhbXBsZS5jb20lMkJmdWxsLXNpbmdsZS1Ob3YuMDguMjAxOC0xNC41My4wNC50Z3omZG9tYWluPW1hZy5leGFtcGxlLmNvbQ%3D%3D",
+    "filedate": {
+        "date": "2018-11-08 19:53:04.000000",
+        "timezone_type": 1,
+        "timezone": "+00:00"
+    },
+    "filename": "mag.example.com+full-single-Nov.08.2018-14.53.04.tgz",
+    "filepath": "\/home\/a2094f12\/mag.example.com\/iworx-backup\/mag.example.com+full-single-Nov.08.2018-14.53.04.tgz",
+    "filesize": 0,
+    "filesize_bytes": 0,
+    "type": "Full Backup"
+}
