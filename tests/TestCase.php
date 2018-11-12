@@ -44,6 +44,7 @@ abstract class TestCase extends PHPUnitTestCase {
     }
   }
 
+  // phpcs:disable -- @todo typehint "object $object" once we move to php 7.2
   /**
    * Gets the value of a nonpublic property of an object under test.
    *
@@ -52,6 +53,7 @@ abstract class TestCase extends PHPUnitTestCase {
    * @return mixed|null The property's value if exists; null otherwise
    */
   protected function _getNonpublicProperty($object, string $property) {
+    // phpcs:enable
     $ro = new ReflectionObject($object);
     if (! $ro->hasProperty($property)) {
       return null;
@@ -120,6 +122,7 @@ abstract class TestCase extends PHPUnitTestCase {
     return new Sandbox($config, $request_handler, $exception_handler);
   }
 
+  // phpcs:disable -- @todo typehint ": object" once we move to php 7.2
   /**
    * Gets an instance of the class under test.
    *
@@ -127,6 +130,7 @@ abstract class TestCase extends PHPUnitTestCase {
    * @return object
    */
   protected function _getSubject(...$constructor_args) {
+    // phpcs:enable
     $fqcn = static::_SUBJECT_FQCN;
     return new $fqcn(...$constructor_args);
   }
