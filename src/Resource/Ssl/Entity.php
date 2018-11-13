@@ -24,11 +24,11 @@ class Entity extends Model {
   public const MODULE_NAME = 'Ssl';
 
   /** {@inheritDoc} */
-  protected const _PROPERTY_ALIASES = ['cert_id'=>'id'];
+  protected const _PROPERTY_ALIASES = ['cert_id' => 'id'];
 
   /** {@inheritDoc} */
   protected const _PROPERTY_COLLAPSED = [
-    'client'=>'client_id'
+    'client' => 'client_id'
   ];
 
   /** {@inheritDoc} */
