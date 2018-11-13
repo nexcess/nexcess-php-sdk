@@ -139,8 +139,7 @@ class Endpoint extends BaseEndpoint implements Creatable {
   public function sync(Modelable $model) : Modelable {
     if ($model instanceof Backup && $model->isReal()) {
       return $model->sync(
-        $this->getBackup($model->getCloudAccount(), $model->get('filename'))
-          ->toArray()
+        $this->_findBackup($model->getCloudAccount(), $model->get('filename'))
       );
     }
 
@@ -197,7 +196,12 @@ class Endpoint extends BaseEndpoint implements Creatable {
    * @throws ApiException If request fails
    */
   public function getBackup(Entity $entity, string $file_name) : Backup {
-    return $this->_findBackup($entity, $file_name);
+    $backup = $this->getModel(Backup::class);
+    assert($backup instanceof Backup);
+
+    return $backup
+      ->sync($this->_findBackup($entity, $file_name))
+      ->setCloudAccount($entity);
   }
 
   /**
@@ -251,7 +255,7 @@ class Endpoint extends BaseEndpoint implements Creatable {
 
     try {
       $this->_client->get(
-        $this->_findBackup($entity, $file_name)->get('download_url'),
+        $this->_findBackup($entity, $file_name)['download_url'],
         [
           'cookies' => (new CookieJar()),
           'sink' => $stream,
@@ -272,7 +276,7 @@ class Endpoint extends BaseEndpoint implements Creatable {
    * @param string $file_name The unique file name for the backup to retrieve.
    * @throws ApiException If request fails
    */
-  public function deleteBackup(Entity $entity, string $file_name)  {
+  public function deleteBackup(Entity $entity, string $file_name) : void {
     $this->_client
       ->delete(self::_URI . "/{$entity->getId()}/backup/{$file_name}");
   }
@@ -299,27 +303,20 @@ class Endpoint extends BaseEndpoint implements Creatable {
   }
 
   /**
-   * Find a specific backup from the list.
+   * Clear Nginx Cache
    *
-   * @param string $file_name The unique file name for the backup to retrieve.
-   * @return Backup
+   * @param Entity $entity Cloud server instance
+   * @return Entity
+   * @throws ResourceException If endpoint not available
    * @throws ApiException If request fails
-   * @throws CloudAccountException If backup not found
    */
-  protected function _findBackup(Entity $entity, string $file_name) : Backup {
-    $backup = $this->getModel(Backup::class);
-    assert($backup instanceof Backup);
-
-    foreach ($this->_fetchBackupList($entity) as $backup_data) {
-      if ($backup_data['filename'] === $file_name) {
-        return $backup->setCloudAccount($entity)->sync($backup_data);
-      }
-    }
-
-    throw new CloudAccountException(
-      CloudAccountException::BACKUP_NOT_FOUND,
-      ['name' => $file_name]
+  public function clearNginxCache(Entity $entity) : Entity {
+    $this->_client->post(
+      self::_URI . "/{$entity->getId()}",
+      ['json' => ['_action' => 'purge-cache']]
     );
+
+    return $entity;
   }
 
   /**
@@ -336,19 +333,23 @@ class Endpoint extends BaseEndpoint implements Creatable {
   }
 
   /**
-   * Clear Nginx Cache
+   * Find data for a specific backup from the list.
    *
-   * @param Entity $entity Cloud server instance
-   * @return Entity
-   * @throws ResourceException If endpoint not available
+   * @param string $file_name The unique file name for the backup to retrieve.
+   * @return array
    * @throws ApiException If request fails
+   * @throws CloudAccountException If backup not found
    */
-  public function clearNginxCache(Entity $entity) : Entity {
-    $this->_client->post(
-      self::_URI . "/{$entity->getId()}",
-      ['json' => ['_action' => 'purge-cache']]
-    );
+  protected function _findBackup(Entity $entity, string $file_name) : array {
+    foreach ($this->_fetchBackupList($entity) as $backup_data) {
+      if ($backup_data['filename'] === $file_name) {
+        return $backup_data;
+      }
+    }
 
-    return $entity;
+    throw new CloudAccountException(
+      CloudAccountException::BACKUP_NOT_FOUND,
+      ['name' => $file_name]
+    );
   }
 }
