@@ -18,8 +18,9 @@ use org\bovigo\vfs\vfsStream;
 
 use Nexcess\Sdk\ {
   Resource\CloudAccount\Endpoint,
-  Resource\CloudAccount\Entity,
+  Resource\CloudAccount\Entity as CloudAccount,
   Resource\CloudAccount\Backup,
+  Resource\Promise,
   Resource\ResourceException,
   Resource\VirtGuestCloud\Entity as Service,
   Tests\Resource\EndpointTestCase,
@@ -62,7 +63,7 @@ class EndpointTest extends EndpointTestCase {
   protected const _SUBJECT_FQCN = Endpoint::class;
 
   /** {@inheritDoc} */
-  protected const _SUBJECT_MODEL_FQCN = Entity::class;
+  protected const _SUBJECT_MODEL_FQCN = CloudAccount::class;
 
   /** {@inheritDoc} */
   protected const _SUBJECT_MODULE = 'CloudAccount';
@@ -182,14 +183,14 @@ class EndpointTest extends EndpointTestCase {
    * @covers Endpoint::createDevAccount
    * @dataProvider createDevAccountProvider
    *
-   * @param Entity $cloud Parent cloud account
+   * @param CloudAccount $cloud Parent cloud account
    * @param array $params Map of test input parameters
    * @param array|Throwable $expected Expected request payload;
    *  or an Exception if input is invalid
    * @param GuzzleResponse|callable|Throwable|null $response Response to queue
    */
   public function testCreateDevAccount(
-    Entity $cloud,
+    CloudAccount $cloud,
     array $params,
     $expected,
     $response = null
@@ -245,7 +246,7 @@ class EndpointTest extends EndpointTestCase {
    */
   public function createDevAccountProvider() : array {
     $fqcn = static::_SUBJECT_MODEL_FQCN;
-    $cloud = Entity::__set_state([
+    $cloud = CloudAccount::__set_state([
       '_values' => $this->_getResource(static::_RESOURCE_CLOUD) +
         ['account_id' => 1]
     ]);
@@ -300,7 +301,7 @@ class EndpointTest extends EndpointTestCase {
         ->method('getAvailablePhpVersions')
         ->willReturn($versions);
 
-      $entity = Entity::__set_state([
+      $entity = CloudAccount::__set_state([
         '_values' => ['account_id' => 1, 'service' => $service]
       ]);
       $this->assertEquals(
@@ -455,5 +456,32 @@ class EndpointTest extends EndpointTestCase {
         $api->getEndpoint(static::_SUBJECT_MODULE)
           ->deleteBackup($entity, $filename);
       });
+  }
+
+  /**
+   * @covers Endpoint::whenBackupComplete
+   */
+  public function testWhenBackupComplete() {
+    $this->_getSandbox()->play(function ($api, $sandbox) {
+      // all values must exist to prevent extraneous _tryToHydrate() calls
+      $incomplete = $this->_getResource(self::_RESOURCE_NEW_BACKUP) +
+        ['download_url' => ''];
+      $complete = ['complete' => true] + $incomplete;
+
+      $backup = $api->getModel(Backup::class)
+        ->sync($incomplete)
+        ->setCloudAccount(new CloudAccount());
+
+      $promise = $api->getEndpoint(static::_SUBJECT_MODULE)
+        ->whenBackupComplete($backup, [Promise::OPT_INTERVAL => 0]);
+      $this->assertInstanceOf(Promise::class, $promise);
+
+      $sandbox->makeResponse('*', 200, [$incomplete]);
+      $sandbox->makeResponse('*', 200, [$complete]);
+      $resolved = $promise->wait();
+      $this->assertInstanceOf(Backup::class, $resolved);
+      $this->assertTrue($resolved->equals($backup));
+      $this->assertTrue($resolved->get('complete'));
+    });
   }
 }
