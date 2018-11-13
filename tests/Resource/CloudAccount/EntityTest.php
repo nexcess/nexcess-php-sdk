@@ -102,14 +102,14 @@ class EntityTest extends ModelTestCase {
   }
 
   /**
-   * @covers Entity::getBackups
+   * @covers Entity::listBackups
    */
-  public function testGetBackups() {
+  public function testListBackups() {
     $entity = $this->_getSubject();
 
     $collection = new Collection(Backup::class);
     $endpoint = $this->createMock(Endpoint::class);
-    $endpoint->method('getBackups')
+    $endpoint->method('listBackups')
       ->with($this->equalTo($entity))
       ->willReturn($collection);
 
@@ -117,15 +117,15 @@ class EntityTest extends ModelTestCase {
 
     $this->assertEquals(
       $collection,
-      $entity->getBackups(),
-      'invokes $endpoint->getBackups($entity)'
+      $entity->listBackups(),
+      'invokes $endpoint->listBackups($entity)'
     );
   }
 
   /**
-   * @covers Entity::getBackup
+   * @covers Entity::retrieveBackup
    */
-  public function testGetBackup() {
+  public function testRetrieveBackup() {
     $entity = $this->_getSubject();
     $filename = 'filename.tgz';
 
@@ -135,7 +135,7 @@ class EntityTest extends ModelTestCase {
       ->willReturn($filename);
 
     $endpoint = $this->createMock(Endpoint::class);
-    $endpoint->method('getBackup')
+    $endpoint->method('retrieveBackup')
       ->with($this->equalTo($entity), $this->equalTo($filename))
       ->willReturn($backup);
 
@@ -143,8 +143,8 @@ class EntityTest extends ModelTestCase {
 
     $this->assertEquals(
       $filename,
-      $entity->getBackup($filename)->get('filename'),
-      'invokes $endpoint->getBackups($entity)'
+      $entity->retrieveBackup($filename)->get('filename'),
+      'invokes $endpoint->listBackups($entity)'
     );
   }
 

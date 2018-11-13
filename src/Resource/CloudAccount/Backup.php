@@ -180,7 +180,7 @@ class Backup extends Model {
       $endpoint = $this->_getEndpoint();
       assert($endpoint instanceof Endpoint);
 
-      $model = $endpoint->getBackup(
+      $model = $endpoint->retrieveBackup(
         $this->getCloudAccount(),
         $this->get('filename')
       );

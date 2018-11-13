@@ -155,11 +155,11 @@ class Entity extends Model {
    *
    * @return Collection
    */
-  public function getBackups() : Collection {
+  public function listBackups() : Collection {
     $endpoint = $this->_getEndpoint();
     assert($endpoint instanceof Endpoint);
 
-    return $endpoint->getBackups($this);
+    return $endpoint->listBackups($this);
   }
 
   /**
@@ -167,10 +167,10 @@ class Entity extends Model {
    *
    * @return Backup
    */
-  public function getBackup(string $filename) : Backup {
+  public function retrieveBackup(string $filename) : Backup {
     $endpoint = $this->_getEndpoint();
     assert($endpoint instanceof Endpoint);
 
-    return $endpoint->getBackup($this, $filename);
+    return $endpoint->retrieveBackup($this, $filename);
   }
 }

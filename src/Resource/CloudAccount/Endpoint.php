@@ -172,7 +172,7 @@ class Endpoint extends BaseEndpoint implements Creatable {
    * @return Collection Of Backups
    * @throws ApiException If request fails
    */
-  public function getBackups(Entity $entity) : Collection {
+  public function listBackups(Entity $entity) : Collection {
     $collection = new Collection(Backup::class);
 
     foreach ($this->_fetchBackupList($entity) as $backup_data) {
@@ -195,7 +195,7 @@ class Endpoint extends BaseEndpoint implements Creatable {
    * @return Backup
    * @throws ApiException If request fails
    */
-  public function getBackup(Entity $entity, string $file_name) : Backup {
+  public function retrieveBackup(Entity $entity, string $file_name) : Backup {
     $backup = $this->getModel(Backup::class);
     assert($backup instanceof Backup);
 
