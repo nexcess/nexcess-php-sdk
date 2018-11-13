@@ -10,12 +10,13 @@ declare(strict_types  = 1);
 namespace Nexcess\Sdk\Tests\Resource\CloudAccount;
 
 use Nexcess\Sdk\ {
-  Resource\CloudAccount\Endpoint,
-  Resource\CloudAccount\Entity,
+  Resource\Collection,
   Resource\CloudAccount\Backup,
+  Resource\CloudAccount\CloudAccountException,
+  Resource\CloudAccount\Endpoint,
+  Resource\CloudAccount\Entity as CloudAccount,
   Resource\PromisedResource,
   Resource\Promise,
-  Resource\Collection,
   Resource\Model,
   Tests\Resource\ModelTestCase,
   Util\Config
@@ -49,12 +50,12 @@ class BackupTest extends ModelTestCase {
     $filename = 'filename.tgz';
     $force = false;
 
-    $entity  = new Entity();
-    $entity->sync(['id'=>1]);
+    $entity  = new CloudAccount();
+    $entity->sync(['id' => 1]);
 
     $backup = new Backup();
     $backup->setCloudAccount($entity);
-    
+
     $endpoint = $this->createMock(Endpoint::class);
     $endpoint->expects($this->once())
       ->method('downloadBackup')
@@ -65,14 +66,19 @@ class BackupTest extends ModelTestCase {
         $this->equalTo($force)
       );
     $backup->setApiEndpoint($endpoint);
-    try {
-      $backup->download($path);
-    } catch (\Throwable $e) {
-      $this->assertEquals('Nexcess\Sdk\Resource\CloudAccount\Backup::download() failed: invalid Backup object (filename is empty)',$e->getMessage());
-    }
-
     $backup->sync(['filename' => $filename]);
     $backup->download($path);
+  }
+
+  /**
+   * @covers Backup::download
+   */
+  public function testDownloadFailure() {
+    $this->setExpectedException(
+      new CloudAccountException(CloudAccountException::INVALID_BACKUP)
+    );
+
+    (new Backup())->download('some/path');
   }
 
   /**
@@ -81,12 +87,12 @@ class BackupTest extends ModelTestCase {
   public function testDelete() {
     $filename = 'filename.tgz';
 
-    $entity  = new Entity();
+    $entity  = new CloudAccount();
     $entity->sync(['id' => 1]);
 
     $backup = new Backup();
     $backup->setCloudAccount($entity);
-    
+
     $endpoint = $this->createMock(Endpoint::class);
     $endpoint->expects($this->once())
       ->method('deleteBackup')
@@ -95,15 +101,19 @@ class BackupTest extends ModelTestCase {
         $this->equalTo($filename)
       );
     $backup->setApiEndpoint($endpoint);
-
-    try {
-      $backup->delete();
-    } catch (\Throwable $e) {
-      $this->assertEquals('Nexcess\Sdk\Resource\CloudAccount\Backup::delete() failed: invalid Backup object (filename is empty)',$e->getMessage());
-    }
-
-    $backup->sync(['filename'=>$filename]);
+    $backup->sync(['filename' => $filename]);
     $backup->delete();
+  }
+
+  /**
+   * @covers Backup::download
+   */
+  public function testDeleteFailure() {
+    $this->setExpectedException(
+      new CloudAccountException(CloudAccountException::INVALID_BACKUP)
+    );
+
+    (new Backup())->delete();
   }
 
 
@@ -111,15 +121,15 @@ class BackupTest extends ModelTestCase {
    * @covers backup::equals
    */
   public function testEquals() {
-    $model = $this->_getSubject()->sync(['filename'=>'filename.tgz']);
-    $other = $this->_getSubject()->sync(['filename'=>'filename.tgz']);
+    $model = $this->_getSubject()->sync(['filename' => 'filename.tgz']);
+    $other = $this->_getSubject()->sync(['filename' => 'filename.tgz']);
 
     $this->assertTrue(
       $model->equals($other),
       'Models of same class with same id must compare equal'
     );
 
-    $other->sync(['filename'=>'other_filename.tgz']);
+    $other->sync(['filename' => 'other_filename.tgz']);
     $this->assertFalse(
       $model->equals($other),
       'Models of same class with different ids must not compare equal'
@@ -143,7 +153,7 @@ class BackupTest extends ModelTestCase {
    */
   public function testIsReal() {
     $backup = new Backup();
-    $backup->sync(['filename'=>'filename.tgz']);
+    $backup->sync(['filename' => 'filename.tgz']);
     $this->assertTrue($backup->isReal());
   }
 
@@ -152,8 +162,8 @@ class BackupTest extends ModelTestCase {
    * @covers Backup::getCloudAccount
    */
   public function testGetSetCloudAccount() {
-    $entity  = new Entity();
-    $entity->sync(['id'=>1]);
+    $entity  = new CloudAccount();
+    $entity->sync(['id' => 1]);
 
     $backup = new Backup;
     $backup->setCloudAccount($entity);
@@ -165,21 +175,13 @@ class BackupTest extends ModelTestCase {
    * @covers Backup::setCloudAccount
    */
   public function testWhenComplete() {
-    $entity  = new Entity();
-    $entity->sync(['id'=>1]);
-
-    $backup = new Backup();
-    $backup->setCloudAccount($entity);
-    $promise = new Promise($backup, function(){ return; });
-    
+    $backup = $this->_getSubject()->setCloudAccount(new CloudAccount());
     $endpoint = $this->createMock(Endpoint::class);
-    $endpoint->method('whenBackupComplete')
-      ->with(
-        $this->equalTo($backup),
-        $this->equalTo([])
-      )->willReturn($promise);
+    $endpoint->expects($this->once())
+      ->method('whenBackupComplete')
+      ->willReturn(new Promise($backup, function () {}));
     $backup->setApiEndpoint($endpoint);
-    $this->assertEquals($promise, $backup->whenComplete([]));
+    $backup->whenComplete();
   }
 
   /**
@@ -191,5 +193,4 @@ class BackupTest extends ModelTestCase {
       'Backups do not have numeric IDs'
     );
   }
-  
 }

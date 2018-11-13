@@ -18,8 +18,9 @@ use org\bovigo\vfs\vfsStream;
 
 use Nexcess\Sdk\ {
   Resource\CloudAccount\Endpoint,
-  Resource\CloudAccount\Entity,
+  Resource\CloudAccount\Entity as CloudAccount,
   Resource\CloudAccount\Backup,
+  Resource\Promise,
   Resource\ResourceException,
   Resource\VirtGuestCloud\Entity as Service,
   Tests\Resource\EndpointTestCase,
@@ -42,7 +43,8 @@ class EndpointTest extends EndpointTestCase {
   protected const _RESOURCE_CLOUD = 'cloud-account-1.toArray-shallow.php';
 
   /** @var string Resource name for new backup. */
-  protected const _RESOURCE_NEW_BACKUP = 'POST-%2Fcloud-account%2F1%2Fbackup.json';
+  protected const _RESOURCE_NEW_BACKUP =
+    'POST-%2Fcloud-account%2F1%2Fbackup.json';
 
   /** @var string Resource name for list of backups. */
   protected const _RESOURCE_BACKUPS = 'GET-%2Fcloud-account%2F1%2Fbackup.json';
@@ -61,7 +63,7 @@ class EndpointTest extends EndpointTestCase {
   protected const _SUBJECT_FQCN = Endpoint::class;
 
   /** {@inheritDoc} */
-  protected const _SUBJECT_MODEL_FQCN = Entity::class;
+  protected const _SUBJECT_MODEL_FQCN = CloudAccount::class;
 
   /** {@inheritDoc} */
   protected const _SUBJECT_MODULE = 'CloudAccount';
@@ -112,8 +114,9 @@ class EndpointTest extends EndpointTestCase {
           'copy_account' => [
             Util::TYPE_BOOL,
             true,
-            'copy_account (boolean): Required. ' .
-              Language::get('resource.CloudAccount.createDevAccount.copy_account')
+            'copy_account (boolean): Required. ' . Language::get(
+              'resource.CloudAccount.createDevAccount.copy_account'
+            )
           ],
           'domain' => [
             Util::TYPE_STRING,
@@ -124,8 +127,9 @@ class EndpointTest extends EndpointTestCase {
           'package_id' => [
             Util::TYPE_INT,
             true,
-            'package_id (integer): Required. ' .
-              Language::get('resource.CloudAccount.createDevAccount.package_id')
+            'package_id (integer): Required. ' . Language::get(
+              'resource.CloudAccount.createDevAccount.package_id'
+            )
           ],
           'ref_cloud_account_id' => [
             Util::TYPE_INT,
@@ -162,7 +166,7 @@ class EndpointTest extends EndpointTestCase {
       [
         'setPhpVersion',
         [
-          'version'=> [
+          'version' => [
             Util::TYPE_STRING,
             true,
             'version (string): Required. ' .
@@ -170,12 +174,8 @@ class EndpointTest extends EndpointTestCase {
           ]
         ]
       ],
-      [
-        'clearNginxCache', []
-      ],
-      [
-        'createBackup', []
-      ]
+      ['clearNginxCache', []],
+      ['createBackup', []]
     ];
   }
 
@@ -183,14 +183,14 @@ class EndpointTest extends EndpointTestCase {
    * @covers Endpoint::createDevAccount
    * @dataProvider createDevAccountProvider
    *
-   * @param Entity $cloud Parent cloud account
+   * @param CloudAccount $cloud Parent cloud account
    * @param array $params Map of test input parameters
    * @param array|Throwable $expected Expected request payload;
    *  or an Exception if input is invalid
    * @param GuzzleResponse|callable|Throwable|null $response Response to queue
    */
   public function testCreateDevAccount(
-    Entity $cloud,
+    CloudAccount $cloud,
     array $params,
     $expected,
     $response = null
@@ -239,7 +239,6 @@ class EndpointTest extends EndpointTestCase {
         $entity = $endpoint->getModel()->set('id', 1);
         $endpoint->clearNginxCache($entity);
       });
-
   }
 
   /**
@@ -247,7 +246,7 @@ class EndpointTest extends EndpointTestCase {
    */
   public function createDevAccountProvider() : array {
     $fqcn = static::_SUBJECT_MODEL_FQCN;
-    $cloud = Entity::__set_state([
+    $cloud = CloudAccount::__set_state([
       '_values' => $this->_getResource(static::_RESOURCE_CLOUD) +
         ['account_id' => 1]
     ]);
@@ -302,7 +301,7 @@ class EndpointTest extends EndpointTestCase {
         ->method('getAvailablePhpVersions')
         ->willReturn($versions);
 
-      $entity = Entity::__set_state([
+      $entity = CloudAccount::__set_state([
         '_values' => ['account_id' => 1, 'service' => $service]
       ]);
       $this->assertEquals(
@@ -354,7 +353,10 @@ class EndpointTest extends EndpointTestCase {
     // custom request handler for sandbox
     $request_handler = function ($request, $options) {
       // check request path
-      $this->assertEquals('cloud-account/1/backup', $request->getUri()->getPath());
+      $this->assertEquals(
+        'cloud-account/1/backup',
+        $request->getUri()->getPath()
+      );
 
       return new GuzzleResponse(
         200,
@@ -370,7 +372,7 @@ class EndpointTest extends EndpointTestCase {
         $endpoint = $api->getEndpoint(static::_SUBJECT_MODULE);
         $results = $endpoint->createBackup($entity);
         $this->assertEquals('filename.tgz', $results->get('filename'));
-        $this->assertEquals("123 MB", $results->get('filesize'));
+        $this->assertEquals('123 MB', $results->get('filesize'));
         $this->assertEquals(456, $results->get('filesize_bytes'));
       });
   }
@@ -382,16 +384,19 @@ class EndpointTest extends EndpointTestCase {
     $assertionCounter = 0;
     $request_handler = function ($request, $options) use (&$assertionCounter) {
       // check request path
-
       switch (++$assertionCounter) {
         case 1:
-          $this->assertEquals('cloud-account/1/backup', $request->getUri()->getPath());
+          $this->assertEquals(
+            'cloud-account/1/backup',
+            $request->getUri()->getPath()
+          );
           break;
-
         case 2:
-          $this->assertEquals('/siteworx/index', $request->getUri()->getPath());
+          $this->assertEquals(
+            '/siteworx/index',
+            $request->getUri()->getPath()
+          );
           break;
-
         default:
           $this->fail("unexpected request: {$request->getUri()->getPath()}");
       }
@@ -407,7 +412,6 @@ class EndpointTest extends EndpointTestCase {
     $this->_getSandbox(null, $request_handler)
       ->play(function ($api, $sandbox) {
         $vfs = vfsStream::setup('backupDownloadTest');
-
         $filename = 'filename.tgz';
         $path = $vfs->url();
 
@@ -417,7 +421,6 @@ class EndpointTest extends EndpointTestCase {
         $endpoint->downloadBackup($entity, $filename, $path);
 
         $path = trim($path);
-
         if (substr($path, -1) !== DIRECTORY_SEPARATOR) {
           $path .= DIRECTORY_SEPARATOR;
         }
@@ -431,10 +434,12 @@ class EndpointTest extends EndpointTestCase {
    * @covers Endpoint::downloadBackup
    */
   public function testDeleteBackup() {
-
-    $request_handler = function ($request, $options)  {
+    $request_handler = function ($request, $options) {
       $this->assertEquals('DELETE', $request->getMethod());
-      $this->assertEquals('cloud-account/1/backup/filename.tgz', $request->getUri()->getPath());
+      $this->assertEquals(
+        'cloud-account/1/backup/filename.tgz',
+        $request->getUri()->getPath()
+      );
 
       return new GuzzleResponse(
         200,
@@ -451,5 +456,32 @@ class EndpointTest extends EndpointTestCase {
         $api->getEndpoint(static::_SUBJECT_MODULE)
           ->deleteBackup($entity, $filename);
       });
+  }
+
+  /**
+   * @covers Endpoint::whenBackupComplete
+   */
+  public function testWhenBackupComplete() {
+    $this->_getSandbox()->play(function ($api, $sandbox) {
+      // all values must exist to prevent extraneous _tryToHydrate() calls
+      $incomplete = $this->_getResource(self::_RESOURCE_NEW_BACKUP) +
+        ['download_url' => ''];
+      $complete = ['complete' => true] + $incomplete;
+
+      $backup = $api->getModel(Backup::class)
+        ->sync($incomplete)
+        ->setCloudAccount(new CloudAccount());
+
+      $promise = $api->getEndpoint(static::_SUBJECT_MODULE)
+        ->whenBackupComplete($backup, [Promise::OPT_INTERVAL => 0]);
+      $this->assertInstanceOf(Promise::class, $promise);
+
+      $sandbox->makeResponse('*', 200, [$incomplete]);
+      $sandbox->makeResponse('*', 200, [$complete]);
+      $resolved = $promise->wait();
+      $this->assertInstanceOf(Backup::class, $resolved);
+      $this->assertTrue($resolved->equals($backup));
+      $this->assertTrue($resolved->get('complete'));
+    });
   }
 }

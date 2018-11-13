@@ -5,7 +5,7 @@ use Nexcess\Sdk\ {
   Resource\Cloud\Entity as Cloud,
   Resource\CloudAccount\Entity as CloudAccount,
   Resource\Collection,
-  Resource\Order\Entity AS Order,
+  Resource\Order\Entity as Order,
   Resource\VirtGuestCloud\Entity as VirtGuestCloud,
   Util\Util
 };

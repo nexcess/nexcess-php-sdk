@@ -105,7 +105,7 @@ abstract class Model implements Modelable {
    */
   public function __debugInfo() {
     $module = $this->moduleName();
-    $name = basename(__CLASS__);
+    $name = basename(strtr(static::class, ['\\' => '/']));
     if ($name === 'Entity') {
       $name = $module;
     }

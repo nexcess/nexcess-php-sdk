@@ -64,6 +64,9 @@ class ResourceException extends Exception {
   /** @var int Data can't be collapsed. */
   const UNCOLLAPSABLE = 16;
 
+  /** @var int Can't sync a model that isn't real. */
+  const UNSYNCABLE = 17;
+
   /** {@inheritDoc} */
   const INFO = [
     self::NO_SUCH_PROPERTY => ['message' => 'resource.no_such_property'],
@@ -85,6 +88,7 @@ class ResourceException extends Exception {
     self::UNMODELABLE => ['message' => 'resource.unmodelable'],
     self::WRONG_PARAM => ['message' => 'resource.wrong_param'],
     self::MISSING_PARAM => ['message' => 'resource.missing_param'],
-    self::UNCOLLAPSABLE => ['message' => 'resource.uncollapsable']
+    self::UNCOLLAPSABLE => ['message' => 'resource.uncollapsable'],
+    self::UNSYNCABLE => ['message' => 'resource.unsyncable']
   ];
 }

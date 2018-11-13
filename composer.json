@@ -26,7 +26,7 @@
   "scripts": {
     "tests:unit": "vendor/bin/phpunit",
     "tests:phan": "vendor/bin/phan",
-    "tests:phpcs": "vendor/bin/phpcs --standard=NocWorx src"
+    "tests:phpcs": "vendor/bin/phpcs --standard=NocWorx src tests"
   },
   "repositories": [
     { "type": "vcs", "url": "https://github.com/nocworx/phpcs" }

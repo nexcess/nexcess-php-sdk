@@ -99,7 +99,6 @@ class Sandbox {
    */
   public function handle(Request $request, array $options = []) : Promise {
     $request_key = "{$request->getMethod()} {$request->getUri()->getPath()}";
-
     $response = $this->_getResponseFor($request_key) ??
       $this->_handler ??
       new ServerException(

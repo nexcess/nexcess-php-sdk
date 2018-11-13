@@ -145,6 +145,13 @@ abstract class Endpoint implements Readable {
    * {@inheritDoc}
    */
   public function sync(Modelable $model) : Modelable {
+    if (! $model->isReal()) {
+      throw new ResourceException(
+        ResourceException::UNSYNCABLE,
+        ['model' => get_class($model)]
+      );
+    }
+
     $id = $model->getId();
     $this->_retrieved[$id] = Util::decodeResponse(
       $this->_client->get(static::_URI . "/{$id}")

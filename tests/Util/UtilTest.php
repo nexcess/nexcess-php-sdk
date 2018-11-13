@@ -123,6 +123,9 @@ class UtilTest extends TestCase {
   /**
    * @covers Util::isJsonable
    * @dataProvider isJsonableProvider
+   *
+   * @param mixed $value The value to test
+   * @param bool $expected Is the value jsonable?
    */
   public function testIsJsonable($value, bool $expected) {
     $this->assertEquals($expected, Util::isJsonable($value));

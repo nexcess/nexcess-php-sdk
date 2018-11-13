@@ -136,7 +136,7 @@ class EntityTest extends ModelTestCase {
 
     $endpoint = $this->createMock(Endpoint::class);
     $endpoint->method('getBackup')
-      ->with($this->equalTo($entity),$this->equalTo($filename))
+      ->with($this->equalTo($entity), $this->equalTo($filename))
       ->willReturn($backup);
 
     $entity->setApiEndpoint($endpoint);
