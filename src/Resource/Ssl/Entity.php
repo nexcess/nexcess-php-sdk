@@ -11,7 +11,6 @@ namespace Nexcess\Sdk\Resource\Ssl;
 
 use Nexcess\Sdk\ {
   Resource\Client\Entity as Client,
-  Resource\VirtGuestCloud\Entity as Service,
   Resource\Model
 };
 
