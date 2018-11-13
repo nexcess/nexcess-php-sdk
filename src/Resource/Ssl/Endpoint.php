@@ -11,7 +11,8 @@ namespace Nexcess\Sdk\Resource\Ssl;
 
 use Nexcess\Sdk\ {
   Resource\Endpoint as ReadableEndpoint,
-  Resource\Ssl\Entity
+  Resource\Ssl\Entity,
+  Util\Util
 };
 
 /**
@@ -28,4 +29,12 @@ class Endpoint extends ReadableEndpoint {
   /** {@inheritDoc} */
   protected const _URI = 'ssl-cert';
 
+  public function retrieveByServiceId(int $service_id) : Entity {
+    $filter = ['filter' => ['service_id' => $service_id]];
+    $response = $this->_client->request(
+      'GET',
+      static::_URI . "?{$this->_buildListQuery($filter)}"
+    );
+    return $this->getModel()->sync(Util::decodeResponse($response)[0]);
+  }
 }

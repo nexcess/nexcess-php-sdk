@@ -11,6 +11,7 @@ namespace Nexcess\Sdk\Resource\Ssl;
 
 use Nexcess\Sdk\ {
   Resource\Client\Entity as Client,
+  Resource\VirtGuestCloud\Entity as Service,
   Resource\Model
 };
 
@@ -23,13 +24,17 @@ class Entity extends Model {
   public const MODULE_NAME = 'Ssl';
 
   /** {@inheritDoc} */
-  protected const _PROPERTY_ALIASES = [];
+  protected const _PROPERTY_ALIASES = ['cert_id'=>'id'];
 
   /** {@inheritDoc} */
-  protected const _PROPERTY_COLLAPSED = [];
+  protected const _PROPERTY_COLLAPSED = [
+    'client'=>'client_id'
+  ];
 
   /** {@inheritDoc} */
-  protected const _PROPERTY_MODELS = [];
+  protected const _PROPERTY_MODELS = [
+    'client' => Client::class
+  ];
 
   /** {@inheritDoc} */
   protected const _PROPERTY_NAMES = [
