@@ -207,19 +207,34 @@ class Endpoint extends BaseEndpoint implements Creatable {
   /**
    * Download a specific backup
    *
-   * @param Entity $entity Cloud server instance
-   * @param string $file_name The unique file name for the backup to retrieve.
+   * @param Backup $backup The Backup to download
    * @param string $path the directory to store the download in.
    * @param bool $force download even if the file already exists.
    * @throws ApiException If request fails
+   * @throws CloudAccountException If backup is not ready for download
    * @throws Throwable
    */
   public function downloadBackup(
-    Entity $entity,
-    string $file_name,
+    Backup $backup,
     string $path,
     bool $force = false
   ) : void {
+
+    if (! $backup->isReal()) {
+      throw new CloudAccountException(
+        CloudAccountException::INVALID_BACKUP,
+        ['action' => __METHOD__]
+      );
+    }
+
+    $download_url = $backup->get('download_url');
+    if (empty($download_url)) {
+      throw new CloudAccountException(
+        CloudAccountException::INCOMPLETE_BACKUP,
+        ['action' => __METHOD__, 'filename' => $backup->get('filename')]
+      );
+    }
+
     if (! file_exists($path) || ! is_dir($path)) {
       throw new CloudAccountException(
         CloudAccountException::INVALID_PATH,
@@ -231,8 +246,7 @@ class Endpoint extends BaseEndpoint implements Creatable {
     if (substr($path, -1) !== DIRECTORY_SEPARATOR) {
       $path .= DIRECTORY_SEPARATOR;
     }
-
-    $save_to = $path . $file_name;
+    $save_to = $path . $backup->get('filename');
 
     if (file_exists($save_to)) {
       if (! $force) {
@@ -255,12 +269,8 @@ class Endpoint extends BaseEndpoint implements Creatable {
 
     try {
       $this->_client->get(
-        $this->_findBackup($entity, $file_name)['download_url'],
-        [
-          'cookies' => (new CookieJar()),
-          'sink' => $stream,
-          'verify' => false
-        ]
+        $download_url,
+        ['cookies' => (new CookieJar()), 'sink' => $stream, 'verify' => false]
       );
     } catch (Throwable $e) {
       fclose($stream);
@@ -270,15 +280,23 @@ class Endpoint extends BaseEndpoint implements Creatable {
   }
 
   /**
-   * Delete a specific backup
+   * Delete a specific existing backup.
    *
-   * @param Entity $entity Cloud server instance
-   * @param string $file_name The unique file name for the backup to retrieve.
-   * @throws ApiException If request fails
+   * @param Backup $backup The backup to delete
+   * @throws CloudAccountException If backup is invalid
    */
-  public function deleteBackup(Entity $entity, string $file_name) : void {
+  public function deleteBackup(Backup $backup) : void {
+    if (! $backup->isReal()) {
+      throw new CloudAccountException(
+        CloudAccountException::INVALID_BACKUP,
+        ['action' => __METHOD__]
+      );
+    }
+
+    $cloud_id = $backup->getCloudAccount()->getId();
+    $filename = $backup->get('filename');
     $this->_client
-      ->delete(self::_URI . "/{$entity->getId()}/backup/{$file_name}");
+      ->delete(self::_URI . "/{$cloud_id}/backup/{$filename}");
   }
 
   /**

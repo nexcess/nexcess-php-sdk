@@ -45,6 +45,7 @@
       "Exception": {
         "backup_not_found": "No Cloud Account Backup was found with the name '{name}'",
         "file_exists": "The target download file '{filename}' already exists; not overwriting",
+        "incomplete_backup": "{action}() failed: backup is incomplete: {filename}",
         "invalid_backup": "{action}() failed: invalid Backup object (filename is empty)",
         "invalid_path": "The target download directory '{filename}' does not exist or is not writable",
         "invalid_stream": "The target download file '{filename}' could not be opened for writing",

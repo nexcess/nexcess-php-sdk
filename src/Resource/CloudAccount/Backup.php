@@ -60,20 +60,10 @@ class Backup extends Model {
    * @throws CloudAccountException
    */
   public function delete() : void {
-    if (! $this->isReal()) {
-      throw new CloudAccountException(
-        CloudAccountException::INVALID_BACKUP,
-        ['action' => __METHOD__]
-      );
-    }
-
     $endpoint = $this->_getEndpoint();
     assert($endpoint instanceof Endpoint);
 
-    $endpoint->deleteBackup(
-      $this->getCloudAccount(),
-      $this->get('filename')
-    );
+    $endpoint->deleteBackup($this);
   }
 
   /**
@@ -81,25 +71,12 @@ class Backup extends Model {
    *
    * @param string $path Where to save the file to
    * @param bool $force If true, overwrite existing file.
-   * @throws CloudAccountException
    */
   public function download(string $path, bool $force = false) : void {
-    if (! $this->isReal()) {
-      throw new CloudAccountException(
-        CloudAccountException::INVALID_BACKUP,
-        ['action' => __METHOD__]
-      );
-    }
-
     $endpoint = $this->_getEndpoint();
     assert($endpoint instanceof Endpoint);
 
-    $endpoint->downloadBackup(
-      $this->getCloudAccount(),
-      $this->get('filename'),
-      $path,
-      $force
-    );
+    $endpoint->downloadBackup($this, $path, $force);
   }
 
   /**

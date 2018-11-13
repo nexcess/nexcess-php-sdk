@@ -17,9 +17,10 @@ use GuzzleHttp\ {
 use org\bovigo\vfs\vfsStream;
 
 use Nexcess\Sdk\ {
+  Resource\CloudAccount\Backup,
+  Resource\CloudAccount\CloudAccountException,
   Resource\CloudAccount\Endpoint,
   Resource\CloudAccount\Entity as CloudAccount,
-  Resource\CloudAccount\Backup,
   Resource\Promise,
   Resource\ResourceException,
   Resource\VirtGuestCloud\Entity as Service,
@@ -381,81 +382,119 @@ class EndpointTest extends EndpointTestCase {
    * @covers Endpoint::downloadBackup
    */
   public function testDownloadBackup() {
-    $assertionCounter = 0;
-    $request_handler = function ($request, $options) use (&$assertionCounter) {
-      // check request path
-      switch (++$assertionCounter) {
-        case 1:
-          $this->assertEquals(
-            'cloud-account/1/backup',
-            $request->getUri()->getPath()
-          );
-          break;
-        case 2:
-          $this->assertEquals(
-            '/siteworx/index',
-            $request->getUri()->getPath()
-          );
-          break;
-        default:
-          $this->fail("unexpected request: {$request->getUri()->getPath()}");
-      }
-
-      return new GuzzleResponse(
+    $this->_getSandbox()->play(function ($api, $sandbox) {
+      $sandbox->makeResponse(
+        'GET /siteworx/index',
         200,
-        ['Content-type' => 'application/json'],
-        $this->_getResource(static::_RESOURCE_BACKUPS, false)
+        $this->_getResource(static::_RESOURCE_BACKUPS)
       );
-    };
 
-    // kick off
-    $this->_getSandbox(null, $request_handler)
-      ->play(function ($api, $sandbox) {
-        $vfs = vfsStream::setup('backupDownloadTest');
-        $filename = 'filename.tgz';
-        $path = $vfs->url();
+      $vfs = vfsStream::setup('backupDownloadTest');
+      $path = $vfs->url();
 
-        $entity = $api->getModel(static::_SUBJECT_MODEL_FQCN)->set('id', 1);
+      $backup = Backup::__set_state([
+        '_values' => $this->_getResource(static::_RESOURCE_BACKUPS)[0]
+      ]);
+      $endpoint = $api->getEndpoint(static::_SUBJECT_MODULE);
+      $endpoint->downloadBackup($backup, $path);
 
-        $endpoint = $api->getEndpoint(static::_SUBJECT_MODULE);
-        $endpoint->downloadBackup($entity, $filename, $path);
+      if ($path[-1] !== DIRECTORY_SEPARATOR) {
+        $path .= DIRECTORY_SEPARATOR;
+      }
+      $this->assertTrue(file_exists($path . $backup->get('filename')));
 
-        $path = trim($path);
-        if (substr($path, -1) !== DIRECTORY_SEPARATOR) {
-          $path .= DIRECTORY_SEPARATOR;
-        }
+      // forcibly overwrite existing local file
+      $sandbox->makeResponse(
+        'GET /siteworx/index',
+        200,
+        $this->_getResource(static::_RESOURCE_BACKUPS)
+      );
 
-        $full_filename = $path . $filename;
-        $this->assertTrue(file_exists($full_filename));
-      });
+      $endpoint->downloadBackup($backup, $path, true);
+
+      // failure case: don't forcibly overwrite
+      $this->setExpectedException(
+        new CloudAccountException(CloudAccountException::FILE_EXISTS)
+      );
+
+      $endpoint->downloadBackup($backup, $path);
+    });
+  }
+
+  /**
+   * @covers Endpoint::downloadBackup
+   */
+  public function testDownloadIncompleteBackup() {
+    $this->_getSandbox()->play(function ($api, $sandbox) {
+      $this->setExpectedException(
+        new CloudAccountException(CloudAccountException::INCOMPLETE_BACKUP)
+      );
+
+      // valid backup, but not complete (no download_url)
+      $backup = Backup::__set_state([
+        '_values' => ['filename' => 'filename.tgz']
+      ]);
+      $api->getEndpoint(static::_SUBJECT_MODULE)
+        ->downloadBackup($backup, 'some/path');
+    });
+  }
+
+  /**
+   * @covers Endpoint::downloadBackup
+   */
+  public function testDownloadInvalidBackup() {
+    $this->_getSandbox()->play(function ($api, $sandbox) {
+      $this->setExpectedException(
+        new CloudAccountException(CloudAccountException::INVALID_BACKUP)
+      );
+
+      // invalid backup (no filename)
+      $api->getEndpoint(static::_SUBJECT_MODULE)
+        ->downloadBackup(new Backup(), 'some/path');
+    });
+  }
+
+  /**
+   * @covers Endpoint::downloadBackup
+   */
+  public function testDownloadUnwritableBackup() {
+    $this->_getSandbox()->play(function ($api, $sandbox) {
+      $this->setExpectedException(
+        new CloudAccountException(CloudAccountException::INVALID_STREAM)
+      );
+
+      // make target download location unwritable
+      $vfs = vfsStream::setup('backupDownloadTest', 0400);
+      $path = $vfs->url();
+
+      $backup = Backup::__set_state([
+        '_values' => $this->_getResource(static::_RESOURCE_BACKUPS)[0]
+      ]);
+      $api->getEndpoint(static::_SUBJECT_MODULE)
+        ->downloadBackup($backup, $path);
+    });
   }
 
   /**
    * @covers Endpoint::downloadBackup
    */
   public function testDeleteBackup() {
-    $request_handler = function ($request, $options) {
-      $this->assertEquals('DELETE', $request->getMethod());
-      $this->assertEquals(
-        'cloud-account/1/backup/filename.tgz',
-        $request->getUri()->getPath()
+    $this->_getSandbox()->play(function ($api, $sandbox) {
+      $backup = Backup::__set_state([
+        '_values' => $this->_getResource(static::_RESOURCE_BACKUPS)[0]
+      ])->setCloudAccount(
+        CloudAccount::__set_state(['_values' => ['account_id' => 1]])
       );
 
-      return new GuzzleResponse(
-        200,
-        ['Content-type' => 'application/json'],
-        '[]'
-      );
-    };
+      $sandbox->makeResponse('DELETE cloud-account/1/backup/filename.tgz');
+      $api->getEndpoint(static::_SUBJECT_MODULE)->deleteBackup($backup);
 
-    // kick off
-    $this->_getSandbox(null, $request_handler)
-      ->play(function ($api, $sandbox) {
-        $filename = 'filename.tgz';
-        $entity = $api->getModel(static::_SUBJECT_MODEL_FQCN)->set('id', 1);
-        $api->getEndpoint(static::_SUBJECT_MODULE)
-          ->deleteBackup($entity, $filename);
-      });
+      // failure case: invalid backup (no filename)
+      $this->setExpectedException(
+        new CloudAccountException(CloudAccountException::INVALID_BACKUP)
+      );
+      $api->getEndpoint(static::_SUBJECT_MODULE)->deleteBackup(new Backup());
+    });
   }
 
   /**
