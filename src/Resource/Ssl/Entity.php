@@ -26,9 +26,7 @@ class Entity extends Model {
   protected const _PROPERTY_ALIASES = ['cert_id' => 'id'];
 
   /** {@inheritDoc} */
-  protected const _PROPERTY_COLLAPSED = [
-    'client' => 'client_id'
-  ];
+  protected const _PROPERTY_COLLAPSED = [];
 
   /** {@inheritDoc} */
   protected const _PROPERTY_MODELS = [
