@@ -11,19 +11,19 @@ namespace Nexcess\Sdk\Resource\VirtGuestCloud;
 
 use Nexcess\Sdk\ {
   ApiException,
-  Resource\Cloud\Entity as Cloud,
-  Resource\CloudAccount\Entity as CloudAccount,
+  Resource\Cloud\Cloud,
+  Resource\CloudAccount\CloudAccount,
   Resource\Modelable,
-  Resource\Package\Entity as Package,
-  Resource\Order\Entity as Order,
-  Resource\Service\Entity as Service,
+  Resource\Package\Package,
+  Resource\Order\Order,
+  Resource\Service\Service,
   Resource\VirtGuestCloud\Endpoint
 };
 
 /**
  * Cloud Account (virtual hosting) service object.
  */
-class Entity extends Service {
+class VirtGuestCloud extends Service {
 
   /** {@inheritDoc} */
   public const MODULE_NAME = 'VirtGuestCloud';
@@ -113,10 +113,10 @@ class Entity extends Service {
    * Switches PHP versions active on this service's primary cloud account.
    *
    * @param string $version Desired PHP version
-   * @return Entity $this
+   * @return VirtGuestCloud $this
    * @throws ApiException If request fails
    */
-  public function setPhpVersion(Entity $entity, string $version) : Entity {
+  public function setPhpVersion(string $version) : VirtGuestCloud {
     $endpoint = $this->_getEndpoint();
     assert($endpoint instanceof Endpoint);
 

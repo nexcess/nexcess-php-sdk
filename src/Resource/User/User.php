@@ -14,7 +14,7 @@ use Nexcess\Sdk\Resource\Model;
 /**
  * Represents a portal User.
  */
-class Entity extends Model {
+class User extends Model {
 
   /** {@inheritDoc} */
   public const MODULE_NAME = 'User';

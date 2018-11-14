@@ -12,7 +12,7 @@ namespace Nexcess\Sdk\Resource\Package;
 use Nexcess\Sdk\ {
   Resource\Endpoint as BaseEndpoint,
   Resource\Collection,
-  Resource\Package\Entity,
+  Resource\Package\Package,
   Resource\Package\PackageException,
   Util\Util
 };
@@ -44,7 +44,7 @@ class Endpoint extends BaseEndpoint {
   protected const _URI = 'package';
 
   /** {@inheritDoc} */
-  protected const _MODEL_FQCN = Entity::class;
+  protected const _MODEL_FQCN = Package::class;
 
   /** {@inheritDoc} */
   protected const _PARAMS = [

@@ -12,7 +12,7 @@ namespace Nexcess\Sdk\Resource\User;
 
 use Nexcess\Sdk\ {
   Resource\Endpoint as BaseEndpoint,
-  Resource\User\Entity
+  Resource\User\User
 };
 
 /**
@@ -27,5 +27,5 @@ class Endpoint extends BaseEndpoint {
   protected const _URI = 'user';
 
   /** {@inheritDoc} */
-  protected const _MODEL_FQCN = Entity::class;
+  protected const _MODEL_FQCN = User::class;
 }

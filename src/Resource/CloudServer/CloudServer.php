@@ -10,15 +10,15 @@ declare(strict_types  = 1);
 namespace Nexcess\Sdk\Resource\CloudServer;
 
 use Nexcess\Sdk\ {
-  Resource\Cloud\Entity as Cloud,
-  Resource\Package\Entity as Package,
-  Resource\Service\Entity as Service
+  Resource\Cloud\Cloud,
+  Resource\Package\Package,
+  Resource\Service\Service
 };
 
 /**
  * Cloud Server (virtual machine).
  */
-class Entity extends Service {
+class CloudServer extends Service {
 
   /** {@inheritDoc} */
   public const MODULE_NAME = 'CloudServer';

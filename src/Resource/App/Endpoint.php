@@ -10,7 +10,7 @@ declare(strict_types  = 1);
 namespace Nexcess\Sdk\Resource\App;
 
 use Nexcess\Sdk\ {
-  Resource\App\Entity,
+  Resource\App\App,
   Resource\Endpoint as ReadableEndpoint
 };
 
@@ -26,5 +26,5 @@ class Endpoint extends ReadableEndpoint {
   protected const _URI = 'app';
 
   /** {@inheritDoc} */
-  protected const _MODEL_FQCN = Entity::class;
+  protected const _MODEL_FQCN = App::class;
 }

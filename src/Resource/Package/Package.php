@@ -16,7 +16,7 @@ use Nexcess\Sdk\ {
 /**
  * Represents a service package.
  */
-class Entity extends Model {
+class Package extends Model {
 
   /** {@inheritDoc} */
   public const MODULE_NAME = 'Package';

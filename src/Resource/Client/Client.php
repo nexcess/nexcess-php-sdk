@@ -12,4 +12,4 @@ namespace Nexcess\Sdk\Resource\Client;
 /**
  * @todo
  */
-class Entity {}
+class Client {}
