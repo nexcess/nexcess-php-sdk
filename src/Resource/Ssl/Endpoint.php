@@ -46,7 +46,6 @@ class Endpoint extends ReadableEndpoint {
   /**
    * Import an existing certificate
    *
-   * @param Entity $entity Cloud Server model
    * @param string $key the key to the crt
    * @param string $crt the crt
    * @param string $chain The chain certificate
@@ -62,6 +61,43 @@ class Endpoint extends ReadableEndpoint {
     $response = $this->_client->post(
       self::_URI,
       ['json' => ['key' => $key, 'crt' => $crt, 'chain' => $chain]]
+    );
+
+    return $this->getModel()->sync(Util::decodeResponse($response));
+  }
+
+ /**
+   * Create a new certificate
+   *
+   * @param string $csr A valid csr
+   * @param string $key The key for the csr
+   * @param int $months The number of months to make this certificate valid for.
+   * @param int $package_id The SSL package purchased
+   * @param array $approver_emails format
+   *              'domain.name' => 'approver@domain.name' Must be one of the
+   *              approved 'approver emails'
+   *
+   * @return Entity
+   * @throws GuzzleHttp\Exception\ClientException If request fails
+   */
+  public function createCertificateFromCsr(
+    string $csr,
+    string $key,
+    int $months,
+    int $package_id,
+    array $approver_emails
+  ) : Entity {
+    $response = $this->_client->post(
+      self::_URI,
+      [
+        'json' => [
+          'key' => $key,
+          'csr' => $csr,
+          'months' => $months,
+          'package_id' => $package_id,
+          'approver_email' => $approver_emails
+        ]
+      ]
     );
 
     return $this->getModel()->sync(Util::decodeResponse($response));

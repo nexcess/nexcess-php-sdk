@@ -55,13 +55,18 @@ class Entity extends Model {
     'is_installable',
     'is_expired',
     'alt_names',
-    'id'
+    'id',
+    'csr',
+    'crt',
+    'key',
+    'chain',
+    'months',
+    'package_id'
   ];
 
   /** {@inheritDoc} */
   protected const _READONLY_NAMES = [
     'cert_id',
-    'common_name',
     'client_id',
     'broker_id',
     'valid_from_date',
