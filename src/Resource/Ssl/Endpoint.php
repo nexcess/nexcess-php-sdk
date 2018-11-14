@@ -51,7 +51,7 @@ class Endpoint extends ReadableEndpoint {
    * @param string $chain The chain certificate
    *
    * @return Entity
-   * @throws GuzzleHttp\Exception\ClientException If request fails
+   * @throws \GuzzleHttp\Exception\ClientException If request fails
    */
   public function importCertificate(
     string $key,
@@ -78,7 +78,7 @@ class Endpoint extends ReadableEndpoint {
    *              approved 'approver emails'
    *
    * @return Entity
-   * @throws GuzzleHttp\Exception\ClientException If request fails
+   * @throws \GuzzleHttp\Exception\ClientException If request fails
    */
   public function createCertificateFromCsr(
     string $csr,
