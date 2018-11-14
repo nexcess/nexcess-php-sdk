@@ -200,8 +200,8 @@ class Endpoint extends BaseEndpoint implements Creatable {
     assert($backup instanceof Backup);
 
     return $backup
-      ->sync($this->_findBackup($entity, $file_name))
-      ->setCloudAccount($entity);
+      ->setCloudAccount($entity)
+      ->sync($this->_findBackup($entity, $file_name));
   }
 
   /**
@@ -228,7 +228,7 @@ class Endpoint extends BaseEndpoint implements Creatable {
     }
 
     $download_url = $backup->get('download_url');
-    if (empty($download_url)) {
+    if (empty($download_url) || $backup->get('complete') === false) {
       throw new CloudAccountException(
         CloudAccountException::INCOMPLETE_BACKUP,
         ['action' => __METHOD__, 'filename' => $backup->get('filename')]

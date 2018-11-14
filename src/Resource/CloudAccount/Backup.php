@@ -113,7 +113,7 @@ class Backup extends Model {
    * @return bool true if it has a non-empty file name
    */
   public function isReal() : bool {
-    return ! empty($this->_values['filename']);
+    return isset($this->_values['filename'], $this->_cloud_account);
   }
 
   /**

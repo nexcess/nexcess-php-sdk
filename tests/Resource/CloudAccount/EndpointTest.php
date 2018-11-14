@@ -394,7 +394,7 @@ class EndpointTest extends EndpointTestCase {
 
       $backup = Backup::__set_state([
         '_values' => $this->_getResource(static::_RESOURCE_BACKUPS)[0]
-      ]);
+      ])->setCloudAccount(new CloudAccount());
       $endpoint = $api->getEndpoint(static::_SUBJECT_MODULE);
       $endpoint->downloadBackup($backup, $path);
 
@@ -433,7 +433,7 @@ class EndpointTest extends EndpointTestCase {
       // valid backup, but not complete (no download_url)
       $backup = Backup::__set_state([
         '_values' => ['filename' => 'filename.tgz']
-      ]);
+      ])->setCloudAccount(new CloudAccount());
       $api->getEndpoint(static::_SUBJECT_MODULE)
         ->downloadBackup($backup, 'some/path');
     });
@@ -469,7 +469,7 @@ class EndpointTest extends EndpointTestCase {
 
       $backup = Backup::__set_state([
         '_values' => $this->_getResource(static::_RESOURCE_BACKUPS)[0]
-      ]);
+      ])->setCloudAccount(new CloudAccount());
       $api->getEndpoint(static::_SUBJECT_MODULE)
         ->downloadBackup($backup, $path);
     });

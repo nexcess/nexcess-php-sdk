@@ -94,8 +94,13 @@ class BackupTest extends ModelTestCase {
    * @covers backup::equals
    */
   public function testEquals() {
-    $model = $this->_getSubject()->sync(['filename' => 'filename.tgz']);
-    $other = $this->_getSubject()->sync(['filename' => 'filename.tgz']);
+    $cloud_account = new CloudAccount();
+    $model = $this->_getSubject()
+      ->setCloudAccount($cloud_account)
+      ->sync(['filename' => 'filename.tgz']);
+    $other = $this->_getSubject()
+      ->setCloudAccount($cloud_account)
+      ->sync(['filename' => 'filename.tgz']);
 
     $this->assertTrue(
       $model->equals($other),
@@ -126,7 +131,9 @@ class BackupTest extends ModelTestCase {
    */
   public function testIsReal() {
     $backup = new Backup();
-    $backup->sync(['filename' => 'filename.tgz']);
+    $backup
+      ->setCloudAccount(new CloudAccount())
+      ->sync(['filename' => 'filename.tgz']);
     $this->assertTrue($backup->isReal());
   }
 
