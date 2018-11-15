@@ -108,4 +108,15 @@ class Entity extends Model {
     );
   }
 
+  public function import() : Entity {
+    $endpoint = $this->_getEndpoint();
+    assert($endpoint instanceof Endpoint);
+
+      return $endpoint->importCertificate(
+        $this->get('key'),
+        $this->get('crt'),
+        $this->get('chain')
+      );
+  }
+
 }
