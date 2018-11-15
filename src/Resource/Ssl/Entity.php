@@ -88,7 +88,17 @@ class Entity extends Model {
   public function create() : Entity {
     $endpoint = $this->_getEndpoint();
     assert($endpoint instanceof Endpoint);
-    
+
+    if (!empty($this->get('csr'))) {
+      return $endpoint->createCertificateFromCsr(
+        $this->get('csr'),
+        $this->get('key'),
+        $this->get('months'),
+        $this->get('package_id'),
+        $this->get('approver_email')
+      );
+    }
+
     return $endpoint->createCertificate(
       $this->get('domain'),
       $this->get('distinguished_name'),
