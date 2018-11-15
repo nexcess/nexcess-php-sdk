@@ -85,10 +85,10 @@ class Entity extends Model {
     'valid_to_date'
   ];
 
-  public function create() {
-
+  public function create() : Entity {
     $endpoint = $this->_getEndpoint();
     assert($endpoint instanceof Endpoint);
+    
     return $endpoint->createCertificate(
       $this->get('domain'),
       $this->get('distinguished_name'),
