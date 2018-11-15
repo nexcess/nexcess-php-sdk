@@ -147,4 +147,5 @@ class Endpoint extends ReadableEndpoint {
 
     return $this->getModel()->sync(Util::decodeResponse($response));
   }
+
 }
