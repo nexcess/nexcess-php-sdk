@@ -67,7 +67,7 @@ class Endpoint extends ReadableEndpoint {
   }
 
  /**
-   * Create a new certificate
+   * Create a new certificate from a csr
    *
    * @param string $csr A valid csr
    * @param string $key The key for the csr
@@ -103,4 +103,48 @@ class Endpoint extends ReadableEndpoint {
     return $this->getModel()->sync(Util::decodeResponse($response));
   }
 
+/**
+   * Create a new certificate
+   *
+   * @param string $domain the domain this certificate is for
+   * @param array $distinguished_name Contains the following seven elements
+   *              string email An email address used to contact the
+   *                organization.
+   *              string organization Legal name of the organization that owns
+   *                the domain
+   *              string street The street address for the owner of the domain
+   *              string locality The city where the organization is located
+   *              string state The state/region where the organization is
+   *                located
+   *              string country The two-letter code for the country where the
+   *                organization is located
+   * @param array $approver_emails format
+   *              'domain.name' => 'approver@domain.name' Must be one of the
+   *              approved 'approver emails'
+   *
+   * @return Entity
+   * @throws \GuzzleHttp\Exception\ClientException If request fails
+   */
+  public function createCertificate(
+    string $domain,
+    array $distinguished_name,
+    int $months,
+    int $package_id,
+    array $approver_emails
+  ) : Entity {
+    $response = $this->_client->post(
+      self::_URI,
+      [
+        'json' => [
+          'domain' => $domain,
+          'months' => $months,
+          'package_id' => $package_id,
+          'approver_email' => $approver_emails,
+          'distinguished_name' => $distinguished_name
+        ]
+      ]
+    );
+
+    return $this->getModel()->sync(Util::decodeResponse($response));
+  }
 }
