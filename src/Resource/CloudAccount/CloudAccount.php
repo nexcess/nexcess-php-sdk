@@ -11,18 +11,18 @@ namespace Nexcess\Sdk\Resource\CloudAccount;
 
 use Nexcess\Sdk\ {
   ApiException,
-  Resource\App\Entity as App,
+  Resource\App\App,
   Resource\CloudAccount\Endpoint,
   Resource\Collection,
   Resource\Model,
-  Resource\VirtGuestCloud\Entity as Service,
+  Resource\VirtGuestCloud\VirtGuestCloud as Service,
   Resource\ResourceException
 };
 
 /**
  * Cloud Account (virtual hosting).
  */
-class Entity extends Model {
+class CloudAccount extends Model {
 
   /** {@inheritDoc} */
   public const MODULE_NAME = 'CloudAccount';
@@ -84,11 +84,11 @@ class Entity extends Model {
    *  - int "package_id" (required) Service package id
    *  - bool "scrub_account" (optional, defaults to true) Obfuscate PII?
    *  - string "subdomain" (optional, defaults to "dev.") Dev subdomain
-   * @return Entity The new dev account on success
+   * @return CloudAccount The new dev account on success
    * @throws ResourceException If endpoint not available
    * @throws ApiException If request fails
    */
-  public function createDevAccount(array $data) : Entity {
+  public function createDevAccount(array $data) : CloudAccount {
     $endpoint = $this->_getEndpoint();
     assert($endpoint instanceof Endpoint);
 
@@ -113,11 +113,11 @@ class Entity extends Model {
    * Switches PHP version on this cloud account.
    *
    * @param string $version Target PHP version
-   * @return Entity $this
+   * @return CloudAccount $this
    * @throws ResourceException If endpoint not available
    * @throws ApiException If request fails
    */
-  public function setPhpVersion(string $version) : Entity {
+  public function setPhpVersion(string $version) : CloudAccount {
     $endpoint = $this->_getEndpoint();
     assert($endpoint instanceof Endpoint);
 
@@ -127,11 +127,11 @@ class Entity extends Model {
   /**
    * Clear Nginx Cache
    *
-   * @return Entity $this
+   * @return CloudAccount $this
    * @throws ResourceException If endpoint not available
    * @throws ApiException If request fails
    */
-  public function clearNginxCache() : Entity {
+  public function clearNginxCache() : CloudAccount {
     $endpoint = $this->_getEndpoint();
     assert($endpoint instanceof Endpoint);
 

@@ -12,9 +12,9 @@ namespace Nexcess\Sdk\Resource\CloudAccount;
 use GuzzleHttp\Promise\Promise;
 
 use Nexcess\Sdk\ {
+  Resource\CloudAccount\CloudAccount,
   Resource\CloudAccount\CloudAccountException,
   Resource\CloudAccount\Endpoint,
-  Resource\CloudAccount\Entity as CloudAccount,
   Resource\Model,
   Resource\Modelable
 };
@@ -123,11 +123,11 @@ class Backup extends Model {
    * It is important to be sure that this Backup actually "belongs"
    * to the given cloud account, or things will break.
    *
-   * @param CloudAccount $cloud_account The "owner" cloud account
+   * @param CloudAccount $cloudaccount The "owner" cloud account
    * @return Backup $this
    */
-  public function setCloudAccount(CloudAccount $cloud_account) : Backup {
-    $this->_cloud_account = $cloud_account;
+  public function setCloudAccount(CloudAccount $cloudaccount) : Backup {
+    $this->_cloud_account = $cloudaccount;
     return $this;
   }
 
@@ -149,11 +149,7 @@ class Backup extends Model {
    * Overridden to handle special retrieve case.
    */
   protected function _tryToHydrate() {
-    if (
-      $this->_hasEndpoint() &&
-      isset($this->_cloud_account, $this->_values['filename']) &&
-      ! $this->_hydrated
-    ) {
+    if ($this->_hasEndpoint() && $this->isReal() && ! $this->_hydrated) {
       $endpoint = $this->_getEndpoint();
       assert($endpoint instanceof Endpoint);
 

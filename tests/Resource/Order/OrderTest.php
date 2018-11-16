@@ -7,31 +7,30 @@
 
 declare(strict_types  = 1);
 
-namespace Nexcess\Sdk\Tests\Resource\Invoice;
+namespace Nexcess\Sdk\Tests\Resource\Order;
 
 use Nexcess\Sdk\ {
-  Resource\Invoice\Entity,
+  Resource\Order\Order,
   Tests\Resource\ModelTestCase
 };
 
 /**
  * Unit test for cloud accounts (virtual hosting).
  */
-class EntityTest extends ModelTestCase {
+class OrderTest extends ModelTestCase {
 
   /** {@inheritDoc} */
   protected const _RESOURCE_PATH = __DIR__ . '/resources';
 
   /** {@inheritDoc} */
-  protected const _RESOURCE_FROMARRAY = 'invoice-1.fromArray.json';
+  protected const _RESOURCE_FROMARRAY = 'order-1.fromArray.json';
 
   /** {@inheritDoc} */
-  protected const _RESOURCE_TOARRAY = 'invoice-1.toArray-shallow.json';
+  protected const _RESOURCE_TOARRAY = 'order-1.toArray-shallow.php';
 
   /** {@inheritDoc} */
-  protected const _RESOURCE_TOCOLLAPSEDARRAY =
-    'invoice-1.toCollapsedArray.json';
+  protected const _RESOURCE_TOCOLLAPSEDARRAY = 'order-1.toCollapsedArray.json';
 
   /** {@inheritDoc} */
-  protected const _SUBJECT_FQCN = Entity::class;
+  protected const _SUBJECT_FQCN = Order::class;
 }

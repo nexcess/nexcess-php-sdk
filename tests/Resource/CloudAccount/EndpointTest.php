@@ -20,10 +20,10 @@ use Nexcess\Sdk\ {
   Resource\CloudAccount\Backup,
   Resource\CloudAccount\CloudAccountException,
   Resource\CloudAccount\Endpoint,
-  Resource\CloudAccount\Entity as CloudAccount,
+  Resource\CloudAccount\CloudAccount,
   Resource\Promise,
   Resource\ResourceException,
-  Resource\VirtGuestCloud\Entity as Service,
+  Resource\VirtGuestCloud\VirtGuestCloud as Service,
   Tests\Resource\EndpointTestCase,
   Util\Language,
   Util\Util
@@ -184,14 +184,14 @@ class EndpointTest extends EndpointTestCase {
    * @covers Endpoint::createDevAccount
    * @dataProvider createDevAccountProvider
    *
-   * @param CloudAccount $cloud Parent cloud account
+   * @param CloudAccount $cloudaccountParent cloud account
    * @param array $params Map of test input parameters
    * @param array|Throwable $expected Expected request payload;
    *  or an Exception if input is invalid
    * @param GuzzleResponse|callable|Throwable|null $response Response to queue
    */
   public function testCreateDevAccount(
-    CloudAccount $cloud,
+    CloudAccount $cloudaccount,
     array $params,
     $expected,
     $response = null
@@ -210,9 +210,9 @@ class EndpointTest extends EndpointTestCase {
       return $response;
     };
     $this->_getSandbox(null, $handler)
-      ->play(function ($api, $sandbox) use ($cloud, $params) {
+      ->play(function ($api, $sandbox) use ($cloudaccount, $params) {
         $api->getEndpoint(static::_SUBJECT_FQCN)
-          ->createDevAccount($cloud, $params);
+          ->createDevAccount($cloudaccount, $params);
       });
   }
 
@@ -247,13 +247,14 @@ class EndpointTest extends EndpointTestCase {
    */
   public function createDevAccountProvider() : array {
     $fqcn = static::_SUBJECT_MODEL_FQCN;
-    $cloud = CloudAccount::__set_state([
+    $cloudaccount = CloudAccount::__set_state([
       '_values' => $this->_getResource(static::_RESOURCE_CLOUD) +
         ['account_id' => 1]
     ]);
-    $expected = function ($input) use ($cloud) {
+    $expected = function ($input) use ($cloudaccount) {
       return [
-        'domain' => ($input['domain'] ?? 'dev') . ".{$cloud->get('domain')}",
+        'domain' => ($input['domain'] ?? 'dev') .
+          ".{$cloudaccount->get('domain')}",
         'ref_cloud_account_id' => 1,
         'ref_service_id' => 1,
         'ref_type' => 'development'
@@ -267,23 +268,32 @@ class EndpointTest extends EndpointTestCase {
     );
 
     return [
-      [$cloud, ['package_id' => 1], $expected(['package_id' => 1]), $response],
       [
-        $cloud,
+        $cloudaccount,
+        ['package_id' => 1],
+        $expected(['package_id' => 1]),
+        $response
+      ],
+      [
+        $cloudaccount,
         ['package_id' => 1, 'domain' => 'test'],
         $expected(['package_id' => 1, 'domain' => 'test']),
         $response
       ],
       [
-        $cloud,
+        $cloudaccount,
         ['package_id' => 1, 'scrub_account' => false],
         $expected(['package_id' => 1, 'scrub_account' => false]),
         $response
       ],
 
-      [$cloud, [], new ResourceException(ResourceException::MISSING_PARAM)],
       [
-        $cloud,
+        $cloudaccount,
+        [],
+        new ResourceException(ResourceException::MISSING_PARAM)
+      ],
+      [
+        $cloudaccount,
         ['package_id' => 'foo'],
         new ResourceException(ResourceException::WRONG_PARAM)
       ]
