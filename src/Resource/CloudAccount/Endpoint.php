@@ -24,7 +24,6 @@ use Nexcess\Sdk\ {
   Resource\Endpoint as BaseEndpoint,
   Resource\Modelable,
   Resource\Promise,
-  Resource\ResourceException,
   Util\Util
 };
 
