@@ -16,7 +16,7 @@ use Nexcess\Sdk\ {
 };
 
 /**
- * API endpoint for orders.
+ * API endpoint for Ssl.
  */
 class Endpoint extends ReadableEndpoint {
 
