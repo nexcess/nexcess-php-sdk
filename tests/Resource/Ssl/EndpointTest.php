@@ -27,7 +27,9 @@ class EndpointTest extends EndpointTestCase {
   /** {@inheritDoc} */
   protected const _RESOURCE_PATH = __DIR__ . '/resources';
 
+  /** {@inheritDoc} */
   protected _RESOURCE_GET = 'GET-%2Fssl-cert%2F.json'
+
   /** {@inheritDoc} */
   protected const _RESOURCE_INSTANCES = [];
 
