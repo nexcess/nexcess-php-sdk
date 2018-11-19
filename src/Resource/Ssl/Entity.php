@@ -15,7 +15,7 @@ use Nexcess\Sdk\ {
 };
 
 /**
- * Orders.
+ * Certificates
  */
 class Entity extends Model {
 
@@ -85,6 +85,14 @@ class Entity extends Model {
     'valid_to_date'
   ];
 
+  /**
+   * Create a new backup
+   * This method has two modes. If a CSR is present then it will attempt to
+   * create the cert via the CSR. Otherwise, it will attempt to create the csr
+   * and key and then create the certificate.
+   *
+   * @return entity
+   */
   public function create() : Entity {
     $endpoint = $this->_getEndpoint();
     assert($endpoint instanceof Endpoint);
@@ -108,6 +116,11 @@ class Entity extends Model {
     );
   }
 
+  /**
+   * Import a certificate
+   *
+   * @return entity
+   */
   public function import() : Entity {
     $endpoint = $this->_getEndpoint();
     assert($endpoint instanceof Endpoint);
