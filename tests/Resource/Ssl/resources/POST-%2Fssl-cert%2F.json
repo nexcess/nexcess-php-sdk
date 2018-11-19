@@ -1,0 +1,315 @@
+{
+  "account_id": 1234,
+  "host_id": 123,
+  "domain": "example.com",
+  "status": "used",
+  "deploy_date": 1542127688,
+  "deploy_complete_date": 1542127717,
+  "project_id": 1234,
+  "parent_account_id": 0,
+  "reference_account_id": 0,
+  "ssl_cert_id": 123,
+  "state": "stable",
+  "id": 1234,
+  "identity": "example.com",
+  "is_real": true,
+  "meta": {
+    "scope": "virt-guest-cloudaccount"
+  },
+  "ip": "127.0.0.1",
+  "ipv4": "127.0.0.1",
+  "is_dev_account": false,
+  "temp_domain": "xxxxxxxxxx.nxcli.net",
+  "cloudhost_hostname": "cloudhost-12345.middleearth-mordor-1.nxcli.net",
+  "unix_username": "yyyyyyyy",
+  "app": {
+    "id": 33,
+    "identity": "Wordpress 4",
+    "is_real": true,
+    "meta": {
+      "scope": "app-app"
+    },
+    "type": "wordpress",
+    "status": "active",
+    "name": "Wordpress",
+    "version": "4",
+    "is_wordpress_based": true,
+    "is_installable": true
+  },
+  "service": {
+    "id": 12345,
+    "identity": "example.com - nc.xsmall",
+    "is_real": true,
+    "meta": {
+      "scope": "service"
+    },
+    "type": "virt-guest-cloud",
+    "status": "enabled",
+    "description": "nc.xsmall",
+    "nickname": "",
+    "next_bill_date": 1544677200,
+    "host": "example.com",
+    "cloud_account": {
+      "account_id": 1234,
+      "host_id": 123,
+      "domain": "example.com",
+      "status": "used",
+      "deploy_date": 1542127688,
+      "deploy_complete_date": 1542127717,
+      "project_id": 1234,
+      "parent_account_id": 0,
+      "reference_account_id": 0,
+      "ssl_cert_id": 123,
+      "state": "stable",
+      "id": 1234,
+      "identity": "example.com",
+      "is_real": true,
+      "meta": {
+        "scope": "virt-guest-cloudaccount"
+      },
+      "ip": "127.0.0.1",
+      "ipv4": "127.0.0.1",
+      "is_dev_account": false,
+      "temp_domain": "xxxxxxxxxx.nxcli.net",
+      "cloudhost_hostname": "cloudhost-12345.middleearth-mordor-1.nxcli.net",
+      "unix_username": "yyyyyyyy",
+      "app": {
+        "id": 33,
+        "identity": "Wordpress 4",
+        "is_real": true,
+        "meta": {
+          "scope": "app-app"
+        },
+        "type": "wordpress",
+        "status": "active",
+        "name": "Wordpress",
+        "version": "4",
+        "is_wordpress_based": true,
+        "is_installable": true
+      },
+      "environment": {
+        "software": {
+          "php": {
+            "version": "7.1",
+            "path": "/opt/remi/php71",
+            "cli": "/opt/remi/php71/root/usr/bin/php"
+          },
+          "redis": {
+            "host": "",
+            "port": "",
+            "socket": "/var/run/redis-multi-yyyyyyyy.redis/redis.sock",
+            "version": "3.2"
+          }
+        },
+        "options": {
+          "nxcache_nocache": false,
+          "nxcache_varnish": false,
+          "nxcache_varnish_static": false,
+          "nxcache_varnish_ttl": 120,
+          "autoscale_enabled": true
+        },
+        "access": {
+          "url": "https://xxxxxxxxxx.nxcli.net/wp-admin/",
+          "username": "admin",
+          "password_share": {
+            "id": 2877,
+            "identity": "",
+            "is_real": true,
+            "meta": {
+              "scope": "datashare"
+            },
+            "type": "app-password",
+            "uuid": "64e71113-b258-4792-8fdc-b68c7402e85e",
+            "share_date": 1542127719,
+            "expiration_date": 1542473319,
+            "uses": 0,
+            "max_uses": 1,
+            "owner": "virt-guest-cloudaccount",
+            "owner_id": 1234,
+            "owner_object": {
+              "id": 1234,
+              "identity": "example.com",
+              "is_real": true,
+              "meta": {
+                "scope": "virt-guest-cloudaccount"
+              },
+              "status": "used",
+              "ip": "127.0.0.1",
+              "ipv4": "127.0.0.1",
+              "domain": "example.com",
+              "is_dev_account": false,
+              "temp_domain": "xxxxxxxxxx.nxcli.net",
+              "cloudhost_hostname": "cloudhost-12345.middleearth-mordor-1.nxcli.net",
+              "unix_username": "yyyyyyyy",
+              "app": {
+                "id": 33,
+                "identity": "Wordpress 4",
+                "is_real": true,
+                "meta": {
+                  "scope": "app-app"
+                },
+                "type": "wordpress",
+                "status": "active",
+                "name": "Wordpress",
+                "version": "4",
+                "is_wordpress_based": true,
+                "is_installable": true
+              },
+              "state": "stable"
+            },
+            "expired": true,
+            "link_to": "user",
+            "link_to_id": 61417,
+            "link_to_object": {
+              "id": 61417,
+              "identity": "bbaggins@example.com",
+              "is_real": true,
+              "meta": {
+                "scope": "user"
+              },
+              "prominent": false,
+              "email": "bbaggins@example.com",
+              "full_name": "B. Baggins"
+            }
+          }
+        }
+      }
+    },
+    "environment_type": "production",
+    "isolation_zone": {
+      "id": 1,
+      "identity": "Southfield, MI",
+      "is_real": true,
+      "meta": {
+        "scope": "isolation-zone"
+      }
+    },
+    "location": {
+      "id": 1,
+      "identity": "middleearth-mordor-1",
+      "is_real": true,
+      "meta": {
+        "scope": "virt-cloud"
+      },
+      "type": "openstack",
+      "status": "active",
+      "location": "Southfield, MI",
+      "location_code": "middleearth-mordor-1",
+      "country": "US"
+    },
+    "order": {
+      "id": 42278,
+      "identity": "(42278) Nexcess Client",
+      "is_real": true,
+      "meta": {
+        "scope": "order"
+      },
+      "type": "virt-guest-cloud",
+      "status": "completed",
+      "months": 1,
+      "location": {
+        "id": 1,
+        "identity": "middleearth-mordor-1",
+        "is_real": true,
+        "meta": {
+          "scope": "virt-cloud"
+        },
+        "type": "openstack",
+        "status": "active",
+        "location": "Southfield, MI",
+        "location_code": "middleearth-mordor-1",
+        "country": "US"
+      }
+    },
+    "dev_account_count": 0,
+    "state": "stable",
+    "child_cloud_accounts": []
+  },
+  "environment": {
+    "software": {
+      "php": {
+        "version": "7.1",
+        "path": "/opt/remi/php71",
+        "cli": "/opt/remi/php71/root/usr/bin/php"
+      },
+      "redis": {
+        "host": "",
+        "port": "",
+        "socket": "/var/run/redis-multi-yyyyyyyy.redis/redis.sock",
+        "version": "3.2"
+      }
+    },
+    "options": {
+      "nxcache_nocache": false,
+      "nxcache_varnish": false,
+      "nxcache_varnish_static": false,
+      "nxcache_varnish_ttl": 120,
+      "autoscale_enabled": true
+    },
+    "access": {
+      "url": "https://xxxxxxxxxx.nxcli.net/wp-admin/",
+      "username": "admin",
+      "password_share": {
+        "id": 2877,
+        "identity": "",
+        "is_real": true,
+        "meta": {
+          "scope": "datashare"
+        },
+        "type": "app-password",
+        "uuid": "64e71113-b258-4792-8fdc-b68c7402e85e",
+        "share_date": 1542127719,
+        "expiration_date": 1542473319,
+        "uses": 0,
+        "max_uses": 1,
+        "owner": "virt-guest-cloudaccount",
+        "owner_id": 1234,
+        "owner_object": {
+          "id": 1234,
+          "identity": "example.com",
+          "is_real": true,
+          "meta": {
+            "scope": "virt-guest-cloudaccount"
+          },
+          "status": "used",
+          "ip": "127.0.0.1",
+          "ipv4": "127.0.0.1",
+          "domain": "example.com",
+          "is_dev_account": false,
+          "temp_domain": "xxxxxxxxxx.nxcli.net",
+          "cloudhost_hostname": "cloudhost-12345.middleearth-mordor-1.nxcli.net",
+          "unix_username": "yyyyyyyy",
+          "app": {
+            "id": 33,
+            "identity": "Wordpress 4",
+            "is_real": true,
+            "meta": {
+              "scope": "app-app"
+            },
+            "type": "wordpress",
+            "status": "active",
+            "name": "Wordpress",
+            "version": "4",
+            "is_wordpress_based": true,
+            "is_installable": true
+          },
+          "state": "stable"
+        },
+        "expired": true,
+        "link_to": "user",
+        "link_to_id": 61417,
+        "link_to_object": {
+          "id": 61417,
+          "identity": "bbaggins@example.com",
+          "is_real": true,
+          "meta": {
+            "scope": "user"
+          },
+          "prominent": false,
+          "email": "bbaggins@example.com",
+          "full_name": "B. Baggins"
+        }
+      }
+    }
+  }
+}

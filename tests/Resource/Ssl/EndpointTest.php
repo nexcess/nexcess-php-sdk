@@ -31,6 +31,9 @@ class EndpointTest extends EndpointTestCase {
   protected _RESOURCE_GET = 'GET-%2Fssl-cert%2F.json'
 
   /** {@inheritDoc} */
+  protected _RESOURCE_IMPORT = 'POST-%2Fssl-cert%2F.json'
+
+  /** {@inheritDoc} */
   protected const _RESOURCE_INSTANCES = [];
 
   /** {@inheritDoc} */
