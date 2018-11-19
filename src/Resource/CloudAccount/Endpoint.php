@@ -139,8 +139,7 @@ class Endpoint extends BaseEndpoint implements Creatable {
   public function sync(Modelable $model) : Modelable {
     if ($model instanceof Backup && $model->isReal()) {
       return $model->sync(
-        $this->getBackup($model->getCloudAccount(), $model->get('filename'))
-          ->toArray()
+        $this->_findBackup($model->getCloudAccount(), $model->get('filename'))
       );
     }
 
@@ -173,7 +172,7 @@ class Endpoint extends BaseEndpoint implements Creatable {
    * @return Collection Of Backups
    * @throws ApiException If request fails
    */
-  public function getBackups(Entity $entity) : Collection {
+  public function listBackups(Entity $entity) : Collection {
     $collection = new Collection(Backup::class);
 
     foreach ($this->_fetchBackupList($entity) as $backup_data) {
@@ -196,26 +195,46 @@ class Endpoint extends BaseEndpoint implements Creatable {
    * @return Backup
    * @throws ApiException If request fails
    */
-  public function getBackup(Entity $entity, string $file_name) : Backup {
-    return $this->_findBackup($entity, $file_name);
+  public function retrieveBackup(Entity $entity, string $file_name) : Backup {
+    $backup = $this->getModel(Backup::class);
+    assert($backup instanceof Backup);
+
+    return $backup
+      ->setCloudAccount($entity)
+      ->sync($this->_findBackup($entity, $file_name));
   }
 
   /**
    * Download a specific backup
    *
-   * @param Entity $entity Cloud server instance
-   * @param string $file_name The unique file name for the backup to retrieve.
+   * @param Backup $backup The Backup to download
    * @param string $path the directory to store the download in.
    * @param bool $force download even if the file already exists.
    * @throws ApiException If request fails
+   * @throws CloudAccountException If backup is not ready for download
    * @throws Throwable
    */
   public function downloadBackup(
-    Entity $entity,
-    string $file_name,
+    Backup $backup,
     string $path,
     bool $force = false
   ) : void {
+
+    if (! $backup->isReal()) {
+      throw new CloudAccountException(
+        CloudAccountException::INVALID_BACKUP,
+        ['action' => __METHOD__]
+      );
+    }
+
+    $download_url = $backup->get('download_url');
+    if (empty($download_url) || $backup->get('complete') === false) {
+      throw new CloudAccountException(
+        CloudAccountException::INCOMPLETE_BACKUP,
+        ['action' => __METHOD__, 'filename' => $backup->get('filename')]
+      );
+    }
+
     if (! file_exists($path) || ! is_dir($path)) {
       throw new CloudAccountException(
         CloudAccountException::INVALID_PATH,
@@ -227,8 +246,7 @@ class Endpoint extends BaseEndpoint implements Creatable {
     if (substr($path, -1) !== DIRECTORY_SEPARATOR) {
       $path .= DIRECTORY_SEPARATOR;
     }
-
-    $save_to = $path . $file_name;
+    $save_to = $path . $backup->get('filename');
 
     if (file_exists($save_to)) {
       if (! $force) {
@@ -251,12 +269,8 @@ class Endpoint extends BaseEndpoint implements Creatable {
 
     try {
       $this->_client->get(
-        $this->_findBackup($entity, $file_name)->get('download_url'),
-        [
-          'cookies' => (new CookieJar()),
-          'sink' => $stream,
-          'verify' => false
-        ]
+        $download_url,
+        ['cookies' => (new CookieJar()), 'sink' => $stream, 'verify' => false]
       );
     } catch (Throwable $e) {
       fclose($stream);
@@ -266,15 +280,23 @@ class Endpoint extends BaseEndpoint implements Creatable {
   }
 
   /**
-   * Delete a specific backup
+   * Delete a specific existing backup.
    *
-   * @param Entity $entity Cloud server instance
-   * @param string $file_name The unique file name for the backup to retrieve.
-   * @throws ApiException If request fails
+   * @param Backup $backup The backup to delete
+   * @throws CloudAccountException If backup is invalid
    */
-  public function deleteBackup(Entity $entity, string $file_name)  {
+  public function deleteBackup(Backup $backup) : void {
+    if (! $backup->isReal()) {
+      throw new CloudAccountException(
+        CloudAccountException::INVALID_BACKUP,
+        ['action' => __METHOD__]
+      );
+    }
+
+    $cloud_id = $backup->getCloudAccount()->getId();
+    $filename = $backup->get('filename');
     $this->_client
-      ->delete(self::_URI . "/{$entity->getId()}/backup/{$file_name}");
+      ->delete(self::_URI . "/{$cloud_id}/backup/{$filename}");
   }
 
   /**
@@ -299,27 +321,20 @@ class Endpoint extends BaseEndpoint implements Creatable {
   }
 
   /**
-   * Find a specific backup from the list.
+   * Clear Nginx Cache
    *
-   * @param string $file_name The unique file name for the backup to retrieve.
-   * @return Backup
+   * @param Entity $entity Cloud server instance
+   * @return Entity
+   * @throws ResourceException If endpoint not available
    * @throws ApiException If request fails
-   * @throws CloudAccountException If backup not found
    */
-  protected function _findBackup(Entity $entity, string $file_name) : Backup {
-    $backup = $this->getModel(Backup::class);
-    assert($backup instanceof Backup);
-
-    foreach ($this->_fetchBackupList($entity) as $backup_data) {
-      if ($backup_data['filename'] === $file_name) {
-        return $backup->setCloudAccount($entity)->sync($backup_data);
-      }
-    }
-
-    throw new CloudAccountException(
-      CloudAccountException::BACKUP_NOT_FOUND,
-      ['name' => $file_name]
+  public function clearNginxCache(Entity $entity) : Entity {
+    $this->_client->post(
+      self::_URI . "/{$entity->getId()}",
+      ['json' => ['_action' => 'purge-cache']]
     );
+
+    return $entity;
   }
 
   /**
@@ -336,19 +351,23 @@ class Endpoint extends BaseEndpoint implements Creatable {
   }
 
   /**
-   * Clear Nginx Cache
+   * Find data for a specific backup from the list.
    *
-   * @param Entity $entity Cloud server instance
-   * @return Entity
-   * @throws ResourceException If endpoint not available
+   * @param string $file_name The unique file name for the backup to retrieve.
+   * @return array
    * @throws ApiException If request fails
+   * @throws CloudAccountException If backup not found
    */
-  public function clearNginxCache(Entity $entity) : Entity {
-    $this->_client->post(
-      self::_URI . "/{$entity->getId()}",
-      ['json' => ['_action' => 'purge-cache']]
-    );
+  protected function _findBackup(Entity $entity, string $file_name) : array {
+    foreach ($this->_fetchBackupList($entity) as $backup_data) {
+      if ($backup_data['filename'] === $file_name) {
+        return $backup_data;
+      }
+    }
 
-    return $entity;
+    throw new CloudAccountException(
+      CloudAccountException::BACKUP_NOT_FOUND,
+      ['name' => $file_name]
+    );
   }
 }

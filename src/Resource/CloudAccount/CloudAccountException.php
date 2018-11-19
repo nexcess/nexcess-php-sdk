@@ -34,6 +34,9 @@ class CloudAccountException extends Exception {
   /** @var int No cloud account associated with backup instance. */
   const OWNER_UNKNOWN = 6;
 
+  /** @var int Attempt to download an incomplete backup. */
+  const INCOMPLETE_BACKUP = 7;
+
   /** {@inheritDoc} */
   const INFO = [
     self::INVALID_PATH =>
@@ -47,6 +50,8 @@ class CloudAccountException extends Exception {
     self::INVALID_STREAM =>
       ['message' => 'resource.CloudAccount.Exception.invalid_stream'],
     self::OWNER_UNKNOWN =>
-      ['message' => 'resource.CloudAccount.Exception.owner_unknown']
+      ['message' => 'resource.CloudAccount.Exception.owner_unknown'],
+    self::INCOMPLETE_BACKUP =>
+      ['message' => 'resource.CloudAccount.Exception.incomplete_backup']
   ];
 }

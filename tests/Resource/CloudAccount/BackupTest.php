@@ -60,25 +60,13 @@ class BackupTest extends ModelTestCase {
     $endpoint->expects($this->once())
       ->method('downloadBackup')
       ->with(
-        $this->equalTo($entity),
-        $this->equalTo($filename),
+        $this->equalTo($backup),
         $this->equalTo($path),
         $this->equalTo($force)
       );
     $backup->setApiEndpoint($endpoint);
     $backup->sync(['filename' => $filename]);
     $backup->download($path);
-  }
-
-  /**
-   * @covers Backup::download
-   */
-  public function testDownloadFailure() {
-    $this->setExpectedException(
-      new CloudAccountException(CloudAccountException::INVALID_BACKUP)
-    );
-
-    (new Backup())->download('some/path');
   }
 
   /**
@@ -96,33 +84,23 @@ class BackupTest extends ModelTestCase {
     $endpoint = $this->createMock(Endpoint::class);
     $endpoint->expects($this->once())
       ->method('deleteBackup')
-      ->with(
-        $this->equalTo($entity),
-        $this->equalTo($filename)
-      );
+      ->with($this->equalTo($backup));
     $backup->setApiEndpoint($endpoint);
     $backup->sync(['filename' => $filename]);
     $backup->delete();
   }
 
   /**
-   * @covers Backup::download
-   */
-  public function testDeleteFailure() {
-    $this->setExpectedException(
-      new CloudAccountException(CloudAccountException::INVALID_BACKUP)
-    );
-
-    (new Backup())->delete();
-  }
-
-
-  /**
    * @covers backup::equals
    */
   public function testEquals() {
-    $model = $this->_getSubject()->sync(['filename' => 'filename.tgz']);
-    $other = $this->_getSubject()->sync(['filename' => 'filename.tgz']);
+    $cloud_account = new CloudAccount();
+    $model = $this->_getSubject()
+      ->setCloudAccount($cloud_account)
+      ->sync(['filename' => 'filename.tgz']);
+    $other = $this->_getSubject()
+      ->setCloudAccount($cloud_account)
+      ->sync(['filename' => 'filename.tgz']);
 
     $this->assertTrue(
       $model->equals($other),
@@ -153,7 +131,9 @@ class BackupTest extends ModelTestCase {
    */
   public function testIsReal() {
     $backup = new Backup();
-    $backup->sync(['filename' => 'filename.tgz']);
+    $backup
+      ->setCloudAccount(new CloudAccount())
+      ->sync(['filename' => 'filename.tgz']);
     $this->assertTrue($backup->isReal());
   }
 
