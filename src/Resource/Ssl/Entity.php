@@ -92,6 +92,7 @@ class Entity extends Model {
    * and key and then create the certificate.
    *
    * @return entity
+   * @throws \GuzzleHttp\Exception\ClientException on fail
    */
   public function create() : Entity {
     $endpoint = $this->_getEndpoint();
@@ -120,6 +121,7 @@ class Entity extends Model {
    * Import a certificate
    *
    * @return entity
+   * @throws \GuzzleHttp\Exception\ClientException on fail
    */
   public function import() : Entity {
     $endpoint = $this->_getEndpoint();
