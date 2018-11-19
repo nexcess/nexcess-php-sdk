@@ -27,6 +27,7 @@ class EndpointTest extends EndpointTestCase {
   /** {@inheritDoc} */
   protected const _RESOURCE_PATH = __DIR__ . '/resources';
 
+  protected _RESOURCE_GET = 'GET-%2Fssl-cert%2F.json'
   /** {@inheritDoc} */
   protected const _RESOURCE_INSTANCES = [];
 
@@ -46,7 +47,24 @@ class EndpointTest extends EndpointTestCase {
    * {@inheritDoc}
    */
   public function getParamsProvider() : array {
-    return [];
+    return [
+      'retrieveByServiceId' => [
+        'service_id' => [
+            Util::TYPE_INT,
+            true,
+            'service_id (integer): Required. ' .
+              Language::get('resource.Ssl.retrieveByServiceId.service_id')
+          ]
+      ],
+      'importCertificate' => [
+      ],
+      'testCreateCertificateFromCsr' => [
+      ],
+      'testCreateCertificateByCSR' => [
+      ],
+      'testCreateCertificateByData' => [
+      ],
+    ];
   }
 
   /**
@@ -73,7 +91,14 @@ class EndpointTest extends EndpointTestCase {
   /**
    * @covers Ssl::createCertificate
    */
-   public function testCreateCertificate() {
+   public function testCreateCertificateByCSR() {
+
+   }
+
+  /**
+   * @covers Ssl::createCertificate
+   */
+   public function testCreateCertificateByData() {
 
    }
 
