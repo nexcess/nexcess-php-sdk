@@ -29,6 +29,32 @@ class Endpoint extends ReadableEndpoint {
   /** {@inheritDoc} */
   protected const _URI = 'ssl-cert';
 
+  /** {@inheritDoc} */
+  protected const _PARAMS = [
+    'retrieveByServiceId' => [
+      'service_id' => [Util::TYPE_INT]
+    ],
+    'importCertificate' => [
+      'key' => [Util::TYPE_STRING],
+      'crt' => [Util::TYPE_STRING],
+      'chain' => [Util::TYPE_STRING]
+    ],
+    'createCertificateFromCsr' => [
+      'csr' => [Util::TYPE_STRING],
+      'key' => [Util::TYPE_STRING],
+      'months' => [Util::TYPE_INT],
+      'package_id' => [Util::TYPE_INT],
+      'approver_emails' => [Util::TYPE_ARRAY]
+    ],
+    'createCertificate' => [
+      'domain' => [Util::TYPE_STRING],
+      'distinguished_name' => [Util::TYPE_ARRAY],
+      'months' => [Util::TYPE_INT],
+      'package_id' => [Util::TYPE_INT],
+      'approver_emails' => [Util::TYPE_ARRAY]
+    ]
+  ];
+
   /**
    * Retrieve a certificate by it's service_id
    *
