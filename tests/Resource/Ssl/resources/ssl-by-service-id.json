@@ -1,0 +1,51 @@
+[
+    {
+        "cert_id": 123,
+        "common_name": "example1.com",
+        "client_id": 38111,
+        "broker_id": 1,
+        "valid_from_date": 0,
+        "valid_to_date": 0,
+        "chain_crts": "",
+        "approver_email": "admin@example1.com",
+        "alt_domains": "",
+        "duns": "",
+        "incorporating_agency": "",
+        "id": 123,
+        "identity": "example1.com",
+        "is_real": true,
+        "meta": {
+            "scope": "ssl-cert"
+        },
+        "crt": "",
+        "domain_count": 1,
+        "is_multi_domain": false,
+        "is_wildcard": false,
+        "is_installable": false,
+        "is_expired": true,
+        "alt_names": [],
+        "service": {
+            "id": 123456,
+            "identity": "SSL Certificate",
+            "is_real": true,
+            "meta": {
+                "scope": "service"
+            },
+            "type": "ssl",
+            "status": "enabled",
+            "description": "SSL Certificate",
+            "nickname": "",
+            "next_bill_date": 1573707600,
+            "package": {
+                "id": 179,
+                "identity": "SSL Certificate",
+                "is_real": true,
+                "meta": {
+                    "scope": "package"
+                },
+                "type": "ssl",
+                "status": "web-active"
+            }
+        }
+    }
+]

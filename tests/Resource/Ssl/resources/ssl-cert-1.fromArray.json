@@ -1,0 +1,28 @@
+{
+  "cert_id": 123,
+  "common_name": "example.com",
+  "client_id": 38111,
+  "broker_id": 0,
+  "valid_from_date": 1480291200,
+  "valid_to_date": 1574985599,
+  "chain_crts": "",
+  "approver_email": [],
+  "alt_domains": [],
+  "duns": "",
+  "incorporating_agency": "",
+  "id": 123,
+  "identity": "example.com",
+  "is_real": true,
+  "meta": {
+    "scope": "ssl-cert"
+  },
+  "crt": "-----BEGIN CERTIFICATE-----\nMIIGbDCCBVSgAwIBAgIQfpsSGBm0aOWQUqAGPoxrizANBgkqhkiG9w0BAQsFADCB\nkDELMAkGA1UEBhMCR0IxGzAZBgNVBAgTEkdyZWF0ZXIgTWFuY2hlc3RlcjEQMA4G\nA1UEBxMHU2FsZm9yZDEaMBgGA1UEChMRQ09NT0RPIENBIExpbWl0ZWQxNjA0BgNV\nBAMTLUNPTU9ETyBSU0EgRG9tYWluIFZhbGlkYXRpb24gU2VjdXJlIFNlcnZlciBD\nQTAeFw0xNjExMjgwMDAwMDBaFw0xOTExMjgyMzU5NTlaMFwxITAfBgNVBAsTGERv\nbWFpbiBDb250cm9sIFZhbGlkYXRlZDEUMBIGA1UECxMLUG9zaXRpdmVTU0wxITAf\nBgNVBAMTGHZvaWNlc29mdGhlZWxlcGhwYW50LmNvbTCCAiIwDQYJKoZIhvcNAQEB\nBQADggIPADCCAgoCggIBAKWIemxeOLlM5BlM+QDpdLWlbbjPMo46EFu6mDHmWbrp\nBs4R1BZghF7TEpyQ8z22J/Mepw5Gr+G7K2iqAZjBTCJNONi7aBBBTsVZBlWvfFzS\ncelRSpCPua8nXOeed9fL7E3Svhjy69XuhKSvUmH+UH9qTMCJ89lJqP0GA+tw/K8p\nMfDhatC7P+XukG8QfJIWqQkn4wroqyqFNv3CMZs/Q1pUto9/Pl9bsVEFBO/ZLN06\nVTlGlH+XsyOZnuI1slE5gKq+0R8gsy/XNS2Lf2068TYdNUPttBz33CGmp136xVoO\nLutYUbisP8vlWCZU0jmV8V9LcrukXWQHVjJaqb4IyJxjz+ZGrNhHOr7xvqHlNMn+\nCVgVQKFVbQry1Lzjt7tlL4/86N35U9IRU6j9O+gnp/Bd9bZCgi5lNZZRCXaaG+iZ\nxUlUlqC0/hAnexkiAOwHdyKu69Tzx23Nw7P/9JX+IgFXL1MhwMtAcA/17vFyP3aN\nesJ/mqvEtqdF/OqPhdh3vXciEd5jXDuMQVkMxG+7qqKisA7MKA0IxM01yDNOGaEG\ntauVAGvg3XHnXjtankK8DI1Stonvk2eSqWlUphPcPYyUsb5Cg91ZbgW2HorZW38d\nIu6RWHaToftYU0g1kr5MrTlCtzpVcuv52HPNDTA7q0J5lMfhrB6xayQgT80kD11X\nAgMBAAGjggHzMIIB7zAfBgNVHSMEGDAWgBSQr2o6lFoL2JDqElZz30O0Oija5zAd\nBgNVHQ4EFgQUDSScHWmLGEY871znajhymigOlO8wDgYDVR0PAQH/BAQDAgWgMAwG\nA1UdEwEB/wQCMAAwHQYDVR0lBBYwFAYIKwYBBQUHAwEGCCsGAQUFBwMCME8GA1Ud\nIARIMEYwOgYLKwYBBAGyMQECAgcwKzApBggrBgEFBQcCARYdaHR0cHM6Ly9zZWN1\ncmUuY29tb2RvLmNvbS9DUFMwCAYGZ4EMAQIBMFQGA1UdHwRNMEswSaBHoEWGQ2h0\ndHA6Ly9jcmwuY29tb2RvY2EuY29tL0NPTU9ET1JTQURvbWFpblZhbGlkYXRpb25T\nZWN1cmVTZXJ2ZXJDQS5jcmwwgYUGCCsGAQUFBwEBBHkwdzBPBggrBgEFBQcwAoZD\naHR0cDovL2NydC5jb21vZG9jYS5jb20vQ09NT0RPUlNBRG9tYWluVmFsaWRhdGlv\nblNlY3VyZVNlcnZlckNBLmNydDAkBggrBgEFBQcwAYYYaHR0cDovL29jc3AuY29t\nb2RvY2EuY29tMEEGA1UdEQQ6MDiCGHZvaWNlc29mdGhlZWxlcGhwYW50LmNvbYIc\nd3d3LnZvaWNlc29mdGhlZWxlcGhwYW50LmNvbTANBgkqhkiG9w0BAQsFAAOCAQEA\nf6LdzJOYTCB2o++3oQexJ/87spYQ4AxxKJmwNuZjTni6l3pbCToRfIlcS5hKaMl0\nvgULUUfgvRNc4anPIQm8lUTIww2zv1MtT5VOuPjGgdKhgvCIxPdpw5tSgyEW3mnx\nBF0NmdzLYocu9erTF0vcqvRzDkwtgI5bnkBDBKA1M0MorbKDvhZz/6otapZU94qx\nK7Iorb/mh+2WFokKTzqVzTup+D3+BFKFHc3giy0zLKf0uzOzGtIoWB72vuJh04fM\ngInCCoyPSIRMKy1l84XmzgFV065g3kqxHCK8O0jpkFWgF2xbZBJCj0tWnNaWXPId\ndf6VNFF4+x1ub1x92UZ6ag==\n-----END CERTIFICATE-----",
+  "domain_count": 2,
+  "is_multi_domain": false,
+  "is_wildcard": false,
+  "is_installable": true,
+  "is_expired": false,
+  "alt_names": [
+    "www.example.com"
+  ]
+}
