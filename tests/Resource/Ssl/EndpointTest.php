@@ -34,10 +34,14 @@ class EndpointTest extends EndpointTestCase {
   protected const _RESOURCE_IMPORT = 'POST-%2Fssl-cert%2F.json';
 
   /** {@inheritDoc} */
-  protected const _RESOURCE_INSTANCES = [];
+  protected const _RESOURCE_INSTANCES = [
+    'ssl-cert-1.fromArray.json' => 'ssl-cert-1.toArray-shallow.php'
+  ];
 
   /** {@inheritDoc} */
-  protected const _RESOURCE_LISTS = [];
+  protected const _RESOURCE_LISTS = [
+    'GET-%2Fssl-cert%2F.json' => []
+  ];
 
   /** {@inheritDoc} */
   protected const _SUBJECT_FQCN = Endpoint::class;
