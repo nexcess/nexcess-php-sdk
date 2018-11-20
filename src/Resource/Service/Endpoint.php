@@ -17,7 +17,8 @@ use Nexcess\Sdk\ {
   Resource\Service\ServiceCancellation,
   Resource\Service\ServiceException,
   Resource\VirtGuestCloud\Endpoint as VirtGuestCloud,
-  SdkException
+  SdkException,
+  Util\Util
 };
 
 /**
@@ -115,7 +116,7 @@ abstract class Endpoint extends BaseEndpoint {
     assert($cancellation instanceof ServiceCancellation);
 
     return $cancellation->sync(
-      $this->_client->post(static::_URI_CANCEL, $survey)
+      Util::decodeResponse($this->_client->post(static::_URI_CANCEL, $survey))
     );
   }
 

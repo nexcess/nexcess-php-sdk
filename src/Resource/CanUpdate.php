@@ -12,7 +12,8 @@ namespace Nexcess\Sdk\Resource;
 use Nexcess\Sdk\ {
   ApiException,
   Client,
-  Resource\Modelable
+  Resource\Modelable,
+  Util\Util
 };
 
 /**
@@ -63,7 +64,9 @@ trait CanUpdate {
       $model->toCollapsedArray();
     if (! empty($update)) {
       $model->sync(
-        $this->_client->patch("{$this->_getUri()}/{$id}", $update),
+        Util::decodeResponse(
+          $this->_client->patch("{$this->_getUri()}/{$id}", $update)
+        ),
         true
       );
     }
