@@ -124,7 +124,9 @@ class EndpointTest extends EndpointTestCase {
             Util::TYPE_ARRAY,
             true,
             'approver_email (array): Required. ' .
-            Language::get('resource.Ssl.createCertificateFromCsr.approver_email')
+            Language::get(
+              'resource.Ssl.createCertificateFromCsr.approver_email'
+            )
           ],
         ]
       ],
@@ -204,28 +206,28 @@ class EndpointTest extends EndpointTestCase {
    * @covers Ssl::importCertificate
    */
   public function testImportCertificate() {
-   $this->markTestIncomplete('This test has not been implemented yet.');
+    $this->markTestIncomplete('This test has not been implemented yet.');
   }
 
   /**
    * @covers Ssl::createCertificateFromCsr
    */
   public function testCreateCertificateFromCsr() {
-   $this->markTestIncomplete('This test has not been implemented yet.');
+    $this->markTestIncomplete('This test has not been implemented yet.');
   }
 
   /**
    * @covers Ssl::createCertificate
    */
   public function testCreateCertificateByCSR() {
-   $this->markTestIncomplete('This test has not been implemented yet.');
+    $this->markTestIncomplete('This test has not been implemented yet.');
   }
 
   /**
    * @covers Ssl::createCertificate
    */
   public function testCreateCertificateByData() {
-   $this->markTestIncomplete('This test has not been implemented yet.');
+    $this->markTestIncomplete('This test has not been implemented yet.');
   }
 
 }
