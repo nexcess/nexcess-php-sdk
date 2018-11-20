@@ -44,14 +44,14 @@ class Endpoint extends ReadableEndpoint {
       'key' => [Util::TYPE_STRING],
       'months' => [Util::TYPE_INT],
       'package_id' => [Util::TYPE_INT],
-      'approver_emails' => [Util::TYPE_ARRAY]
+      'approver_email' => [Util::TYPE_ARRAY]
     ],
     'createCertificate' => [
       'domain' => [Util::TYPE_STRING],
       'distinguished_name' => [Util::TYPE_ARRAY],
       'months' => [Util::TYPE_INT],
       'package_id' => [Util::TYPE_INT],
-      'approver_emails' => [Util::TYPE_ARRAY]
+      'approver_email' => [Util::TYPE_ARRAY]
     ]
   ];
 
@@ -99,7 +99,7 @@ class Endpoint extends ReadableEndpoint {
    * @param string $key The key for the csr
    * @param int $months The number of months to make this certificate valid for.
    * @param int $package_id The SSL package purchased
-   * @param array $approver_emails format
+   * @param array $approver_email format
    *              'domain.name' => 'approver@domain.name' Must be one of the
    *              approved 'approver emails'
    *
@@ -111,7 +111,7 @@ class Endpoint extends ReadableEndpoint {
     string $key,
     int $months,
     int $package_id,
-    array $approver_emails
+    array $approver_email
   ) : Entity {
     $response = $this->_client->post(
       self::_URI,
@@ -121,7 +121,7 @@ class Endpoint extends ReadableEndpoint {
           'csr' => $csr,
           'months' => $months,
           'package_id' => $package_id,
-          'approver_email' => $approver_emails
+          'approver_email' => $approver_email
         ]
       ]
     );
@@ -144,7 +144,7 @@ class Endpoint extends ReadableEndpoint {
    *                located
    *              string country The two-letter code for the country where the
    *                organization is located
-   * @param array $approver_emails format
+   * @param array $approver_email format
    *              'domain.name' => 'approver@domain.name' Must be one of the
    *              approved 'approver emails'
    *
@@ -156,7 +156,7 @@ class Endpoint extends ReadableEndpoint {
     array $distinguished_name,
     int $months,
     int $package_id,
-    array $approver_emails
+    array $approver_email
   ) : Entity {
     $response = $this->_client->post(
       self::_URI,
@@ -165,7 +165,7 @@ class Endpoint extends ReadableEndpoint {
           'domain' => $domain,
           'months' => $months,
           'package_id' => $package_id,
-          'approver_email' => $approver_emails,
+          'approver_email' => $approver_email,
           'distinguished_name' => $distinguished_name
         ]
       ]
