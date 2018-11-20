@@ -30,8 +30,8 @@ class EndpointTest extends EndpointTestCase {
   /** {@inheritDoc} */
   protected const _RESOURCE_GET = 'GET-%2Fssl-cert%2F.json';
 
-/** {@inheritDoc} */
-  protected const _RESOURCE_GET_1 = 'ssl-cert-1.fromArray.json';
+  /** @var string Resource sll cert by service_id */
+  protected const _RESOURCE_GET_1 = 'ssl-by-service-id.json';
 
   /** {@inheritDoc} */
   protected const _RESOURCE_IMPORT = 'POST-%2Fssl-cert%2F.json';
@@ -53,7 +53,7 @@ class EndpointTest extends EndpointTestCase {
   protected const _SUBJECT_MODEL_FQCN = Entity::class;
 
   /** {@inheritDoc} */
-  protected const _SUBJECT_MODULE = 'Package';
+  protected const _SUBJECT_MODULE = 'Ssl';
 
   /**
    * {@inheritDoc}
@@ -120,11 +120,11 @@ class EndpointTest extends EndpointTestCase {
             'package_id (integer): Required. ' .
             Language::get('resource.Ssl.createCertificateFromCsr.package_id')
           ],
-          'approver_emails' => [
+          'approver_email' => [
             Util::TYPE_ARRAY,
             true,
-            'approver_emails (array): Required. ' .
-            Language::get('resource.Ssl.createCertificateFromCsr.approver_emails')
+            'approver_email (array): Required. ' .
+            Language::get('resource.Ssl.createCertificateFromCsr.approver_email')
           ],
         ]
       ],
@@ -154,11 +154,11 @@ class EndpointTest extends EndpointTestCase {
             'package_id (integer): Required. ' .
             Language::get('resource.Ssl.createCertificate.package_id')
           ],
-          'approver_emails' => [
+          'approver_email' => [
             Util::TYPE_ARRAY,
             true,
-            'approver_emails (array): Required. ' .
-            Language::get('resource.Ssl.createCertificate.approver_emails')
+            'approver_email (array): Required. ' .
+            Language::get('resource.Ssl.createCertificate.approver_email')
           ]
 
         ]
@@ -173,16 +173,8 @@ class EndpointTest extends EndpointTestCase {
     // custom request handler for sandbox
     $handler = function ($request, $options) {
       // check request path
-      $this->assertEquals('ssl-cert/1', $request->getUri()->getPath());
-
-      // check request parameters
-      $actual = Util::jsonDecode((string) $request->getBody());
-      print_r($actual);
-      die();
-      $this->assertArrayHasKey('filter', $actual);
-      $this->assertEquals('set-php-version', $actual['filter']);
-      $this->assertArrayHasKey('php_version', $actual);
-      $this->assertEquals('7.2', $actual['php_version']);
+      $this->assertEquals('ssl-cert', $request->getUri()->getPath());
+      $this->assertEquals('filter[service_id]=58887', urldecode($request->getUri()->getQuery()));
 
       // assertions passed; return 200 response
       return new GuzzleResponse(
@@ -195,10 +187,12 @@ class EndpointTest extends EndpointTestCase {
     // kick off
     $this->_getSandbox(null, $handler)
       ->play(function ($api, $sandbox) {
-        $entity = $api->getModel(static::_SUBJECT_MODULE)->set('id', 1);
-        $api->getEndpoint(static::_SUBJECT_MODULE)
-          ->retrieveByServiceId('7.2');
+        $results = $api->getEndpoint(static::_SUBJECT_MODULE)
+          ->retrieveByServiceId(58887);
+        $this->assertEquals(123, $results->get('cert_id'));
+        $this->assertEquals('admin@example1.com', $results->get('approver_email'));
       });
+
   }
 
   /**
