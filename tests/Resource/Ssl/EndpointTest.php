@@ -30,6 +30,9 @@ class EndpointTest extends EndpointTestCase {
   /** {@inheritDoc} */
   protected const _RESOURCE_GET = 'GET-%2Fssl-cert%2F.json';
 
+/** {@inheritDoc} */
+  protected const _RESOURCE_GET_1 = 'ssl-cert-1.fromArray.json';
+
   /** {@inheritDoc} */
   protected const _RESOURCE_IMPORT = 'POST-%2Fssl-cert%2F.json';
 
@@ -166,9 +169,37 @@ class EndpointTest extends EndpointTestCase {
   /**
    * @covers Ssl::retrieveByServiceId
    */
-   public function testRetrieveByServiceId() {
-     $this->markTestIncomplete('This test has not been implemented yet.');
-   }
+  public function testRetrieveByServiceId() {
+    // custom request handler for sandbox
+    $handler = function ($request, $options) {
+      // check request path
+      $this->assertEquals('ssl-cert/1', $request->getUri()->getPath());
+
+      // check request parameters
+      $actual = Util::jsonDecode((string) $request->getBody());
+      print_r($actual);
+      die();
+      $this->assertArrayHasKey('filter', $actual);
+      $this->assertEquals('set-php-version', $actual['filter']);
+      $this->assertArrayHasKey('php_version', $actual);
+      $this->assertEquals('7.2', $actual['php_version']);
+
+      // assertions passed; return 200 response
+      return new GuzzleResponse(
+        200,
+        ['Content-type' => 'application/json'],
+        $this->_getResource(static::_RESOURCE_GET_1, false)
+      );
+    };
+
+    // kick off
+    $this->_getSandbox(null, $handler)
+      ->play(function ($api, $sandbox) {
+        $entity = $api->getModel(static::_SUBJECT_MODULE)->set('id', 1);
+        $api->getEndpoint(static::_SUBJECT_MODULE)
+          ->retrieveByServiceId('7.2');
+      });
+  }
 
   /**
    * @covers Ssl::importCertificate
