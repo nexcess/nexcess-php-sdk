@@ -7,7 +7,7 @@ return [
     'approver_email' => [],
     'broker_id' => 0,
     'chain' => '',
-    'chain_crts' => "",
+    'chain_crts' => '',
     'client_id' => 38111,
     'common_name' => 'example.com',
     'crt' => '-----BEGIN CERTIFICATE-----

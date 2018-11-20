@@ -174,7 +174,10 @@ class EndpointTest extends EndpointTestCase {
     $handler = function ($request, $options) {
       // check request path
       $this->assertEquals('ssl-cert', $request->getUri()->getPath());
-      $this->assertEquals('filter[service_id]=58887', urldecode($request->getUri()->getQuery()));
+      $this->assertEquals(
+        'filter[service_id]=58887',
+        urldecode($request->getUri()->getQuery())
+      );
 
       // assertions passed; return 200 response
       return new GuzzleResponse(
@@ -190,37 +193,39 @@ class EndpointTest extends EndpointTestCase {
         $results = $api->getEndpoint(static::_SUBJECT_MODULE)
           ->retrieveByServiceId(58887);
         $this->assertEquals(123, $results->get('cert_id'));
-        $this->assertEquals('admin@example1.com', $results->get('approver_email'));
+        $this->assertEquals(
+          'admin@example1.com',
+          $results->get('approver_email')
+        );
       });
-
   }
 
   /**
    * @covers Ssl::importCertificate
    */
-   public function testImportCertificate() {
-     $this->markTestIncomplete('This test has not been implemented yet.');
-   }
+  public function testImportCertificate() {
+   $this->markTestIncomplete('This test has not been implemented yet.');
+  }
 
   /**
    * @covers Ssl::createCertificateFromCsr
    */
-   public function testCreateCertificateFromCsr() {
-     $this->markTestIncomplete('This test has not been implemented yet.');
-   }
+  public function testCreateCertificateFromCsr() {
+   $this->markTestIncomplete('This test has not been implemented yet.');
+  }
 
   /**
    * @covers Ssl::createCertificate
    */
-   public function testCreateCertificateByCSR() {
-     $this->markTestIncomplete('This test has not been implemented yet.');
-   }
+  public function testCreateCertificateByCSR() {
+   $this->markTestIncomplete('This test has not been implemented yet.');
+  }
 
   /**
    * @covers Ssl::createCertificate
    */
-   public function testCreateCertificateByData() {
-     $this->markTestIncomplete('This test has not been implemented yet.');
-   }
+  public function testCreateCertificateByData() {
+   $this->markTestIncomplete('This test has not been implemented yet.');
+  }
 
 }
