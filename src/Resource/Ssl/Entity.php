@@ -62,7 +62,7 @@ class Entity extends Model {
     'months',
     'package_id',
     'valid_from_date',
-    'valid_to_date',
+    'valid_to_date'
   ];
 
   /** {@inheritDoc} */
