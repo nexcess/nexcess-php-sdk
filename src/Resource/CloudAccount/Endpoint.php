@@ -18,13 +18,12 @@ use Nexcess\Sdk\ {
   Resource\CanCreate,
   Resource\CloudAccount\Backup,
   Resource\CloudAccount\CloudAccountException,
-  Resource\CloudAccount\Entity,
+  Resource\CloudAccount\CloudAccount,
   Resource\Creatable,
   Resource\Collection,
   Resource\Endpoint as BaseEndpoint,
   Resource\Modelable,
   Resource\Promise,
-  Resource\ResourceException,
   Util\Util
 };
 
@@ -41,7 +40,7 @@ class Endpoint extends BaseEndpoint implements Creatable {
   protected const _URI = 'cloud-account';
 
   /** {@inheritDoc} */
-  protected const _MODEL_FQCN = Entity::class;
+  protected const _MODEL_FQCN = CloudAccount::class;
 
   /** {@inheritDoc} */
   protected const _PARAMS = [
@@ -72,27 +71,34 @@ class Endpoint extends BaseEndpoint implements Creatable {
    * and does not delete the cloud account directly.
    * Use this method to cancel a primary cloud account, not a dev account.
    *
-   * @param Entity $entity Cloud Server instance
+   * @param CloudAccount $cloudaccount Cloud Server instance
    * @param array $survey Cancellation survey
-   * @return Entity
+   * @return CloudAccount
    */
-  public function cancel(Entity $entity, array $survey) : Entity {
-    return $entity->get('service')->cancel($survey);
+  public function cancel(
+    CloudAccount $cloudaccount,
+    array $survey
+  ) : CloudAccount {
+    return $cloudaccount->get('service')->cancel($survey);
   }
 
   /**
    * Creates a development-mode CloudAccount based on given CloudAccount.
    * Note, the given CloudAccount MUST NOT be a development account itself.
    *
-   * @param Entity $entity CloudAccount instance
-   * @return Entity New dev account
+   * @param CloudAccount $cloudaccount CloudAccount instance
+   * @return CloudAccount New dev account
    * @throws ApiException On failure
    */
-  public function createDevAccount(Entity $entity, array $data) : Entity {
+  public function createDevAccount(
+    CloudAccount $cloudaccount,
+    array $data
+  ) : CloudAccount {
     $data = [
-      'domain' => ($data['domain'] ?? 'dev') . ".{$entity->get('domain')}",
-      'ref_cloud_account_id' => $entity->getId(),
-      'ref_service_id' => $entity->get('service')->getId(),
+      'domain' => ($data['domain'] ?? 'dev') .
+        ".{$cloudaccount->get('domain')}",
+      'ref_cloud_account_id' => $cloudaccount->getId(),
+      'ref_service_id' => $cloudaccount->get('service')->getId(),
       'ref_type' => 'development'
     ] + $data
       + ['copy_account' => true, 'scrub_account' => true];
@@ -108,33 +114,36 @@ class Endpoint extends BaseEndpoint implements Creatable {
   /**
    * Gets php versions available for a given cloud account to use.
    *
-   * @param Entity $entity The subject cloud account
+   * @param CloudAccount $cloudaccount The subject cloud account
    * @return string[] List of available php major.minor versions
    */
-  public function getAvailablePhpVersions(Entity $entity) : array {
-    return $entity->get('service')->getAvailablePhpVersions();
+  public function getAvailablePhpVersions(CloudAccount $cloudaccount) : array {
+    return $cloudaccount->get('service')->getAvailablePhpVersions();
   }
 
   /**
    * Switches PHP versions active on an existing cloud account.
    *
-   * @param Entity $entity Cloud server instance
+   * @param CloudAccount $cloudaccount Cloud server instance
    * @param string $version Desired PHP version
-   * @return Entity
+   * @return CloudAccount
    * @throws ApiException If request fails
    */
-  public function setPhpVersion(Entity $entity, string $version) : Entity {
+  public function setPhpVersion(
+    CloudAccount $cloudaccount,
+    string $version
+  ) : CloudAccount {
     $r = $this->_client->post(
-      self::_URI . "/{$entity->getId()}",
+      self::_URI . "/{$cloudaccount->getId()}",
       ['json' => ['_action' => 'set-php-version', 'php_version' => $version]]
     );
 
-    return $entity;
+    return $cloudaccount;
   }
 
   /**
    * {@inheritDoc}
-   * Overridden to handle both Entity and secondary Entities (Backup).
+   * Overridden to handle both CloudAccount and secondary Entities (Backup).
    */
   public function sync(Modelable $model) : Modelable {
     if ($model instanceof Backup && $model->isReal()) {
@@ -149,18 +158,18 @@ class Endpoint extends BaseEndpoint implements Creatable {
   /**
    * Create a backup
    *
-   * @param Entity $entity Cloud server instance
+   * @param CloudAccount $cloudaccount Cloud server instance
    * @return Backup
    * @throws ApiException If request fails
    */
-  public function createBackup(Entity $entity) : Backup {
+  public function createBackup(CloudAccount $cloudaccount) : Backup {
     $backup = $this->getModel(Backup::class);
     assert($backup instanceof Backup);
 
-    return $backup->setCloudAccount($entity)
+    return $backup->setCloudAccount($cloudaccount)
       ->sync(
         Util::decodeResponse(
-          $this->_client->post(self::_URI . "/{$entity->getId()}/backup")
+          $this->_client->post(self::_URI . "/{$cloudaccount->getId()}/backup")
         )
       );
   }
@@ -168,19 +177,19 @@ class Endpoint extends BaseEndpoint implements Creatable {
   /**
    * Return a list of backups
    *
-   * @param Entity $entity Cloud server instance
+   * @param CloudAccount $cloudaccount Cloud server instance
    * @return Collection Of Backups
    * @throws ApiException If request fails
    */
-  public function listBackups(Entity $entity) : Collection {
+  public function listBackups(CloudAccount $cloudaccount) : Collection {
     $collection = new Collection(Backup::class);
 
-    foreach ($this->_fetchBackupList($entity) as $backup_data) {
+    foreach ($this->_fetchBackupList($cloudaccount) as $backup_data) {
       $backup = $this->getModel(Backup::class);
       assert($backup instanceof Backup);
 
       $collection->add(
-        $backup->setCloudAccount($entity)->sync($backup_data)
+        $backup->setCloudAccount($cloudaccount)->sync($backup_data)
       );
     }
 
@@ -190,28 +199,30 @@ class Endpoint extends BaseEndpoint implements Creatable {
   /**
    * Return a specific backup
    *
-   * @param Entity $entity Cloud server instance
-   * @param string $file_name The unique file name for the backup to retrieve.
+   * @param CloudAccount $cloudaccount Cloud server instance
+   * @param string $filename The unique file name for the backup to retrieve
    * @return Backup
    * @throws ApiException If request fails
    */
-  public function retrieveBackup(Entity $entity, string $file_name) : Backup {
+  public function retrieveBackup(
+    CloudAccount $cloudaccount,
+    string $filename
+  ) : Backup {
     $backup = $this->getModel(Backup::class);
     assert($backup instanceof Backup);
 
     return $backup
-      ->setCloudAccount($entity)
-      ->sync($this->_findBackup($entity, $file_name));
+      ->setCloudAccount($cloudaccount)
+      ->sync($this->_findBackup($cloudaccount, $filename));
   }
 
   /**
    * Download a specific backup
    *
    * @param Backup $backup The Backup to download
-   * @param string $path the directory to store the download in.
-   * @param bool $force download even if the file already exists.
-   * @throws ApiException If request fails
-   * @throws CloudAccountException If backup is not ready for download
+   * @param string $path the directory to store the download in
+   * @param bool $force download even if the file already exists?
+   * @throws CloudAccountException If backup is not valid/ready for download
    * @throws Throwable
    */
   public function downloadBackup(
@@ -323,51 +334,51 @@ class Endpoint extends BaseEndpoint implements Creatable {
   /**
    * Clear Nginx Cache
    *
-   * @param Entity $entity Cloud server instance
-   * @return Entity
-   * @throws ResourceException If endpoint not available
-   * @throws ApiException If request fails
+   * @param CloudAccount $cloudaccount Cloud server instance
+   * @return CloudAccount
    */
-  public function clearNginxCache(Entity $entity) : Entity {
+  public function clearNginxCache(CloudAccount $cloudaccount) : CloudAccount {
     $this->_client->post(
-      self::_URI . "/{$entity->getId()}",
+      self::_URI . "/{$cloudaccount->getId()}",
       ['json' => ['_action' => 'purge-cache']]
     );
 
-    return $entity;
+    return $cloudaccount;
   }
 
   /**
    * Fetch the list of backups for a given cloud account
    *
-   * @param Entity $entity Cloud server instance
+   * @param CloudAccount $cloudaccount Cloud server instance
    * @return array
-   * @throws ApiException If request fails
    */
-  protected function _fetchBackupList(Entity $entity) : array {
+  protected function _fetchBackupList(CloudAccount $cloudaccount) : array {
     return Util::decodeResponse(
-      $this->_client->get(self::_URI . "/{$entity->getId()}/backup")
+      $this->_client->get(self::_URI . "/{$cloudaccount->getId()}/backup")
     );
   }
 
   /**
    * Find data for a specific backup from the list.
    *
-   * @param string $file_name The unique file name for the backup to retrieve.
+   * @param CloudAccount $cloudaccount The subject cloud account
+   * @param string $filename The unique file name for the backup to retrieve
    * @return array
-   * @throws ApiException If request fails
    * @throws CloudAccountException If backup not found
    */
-  protected function _findBackup(Entity $entity, string $file_name) : array {
-    foreach ($this->_fetchBackupList($entity) as $backup_data) {
-      if ($backup_data['filename'] === $file_name) {
+  protected function _findBackup(
+    CloudAccount $cloudaccount,
+    string $filename
+  ) : array {
+    foreach ($this->_fetchBackupList($cloudaccount) as $backup_data) {
+      if ($backup_data['filename'] === $filename) {
         return $backup_data;
       }
     }
 
     throw new CloudAccountException(
       CloudAccountException::BACKUP_NOT_FOUND,
-      ['name' => $file_name]
+      ['name' => $filename]
     );
   }
 }

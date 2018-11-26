@@ -14,7 +14,7 @@ use Nexcess\Sdk\Resource\Model;
 /**
  * Represents an App Environment for a cloud account.
  */
-class Entity extends Model {
+class App extends Model {
 
   /** {@inheritDoc} */
   public const MODULE_NAME = 'App';

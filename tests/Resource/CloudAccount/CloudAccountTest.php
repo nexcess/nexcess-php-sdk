@@ -11,7 +11,7 @@ namespace Nexcess\Sdk\Tests\Resource\CloudAccount;
 
 use Nexcess\Sdk\ {
   Resource\CloudAccount\Endpoint,
-  Resource\CloudAccount\Entity,
+  Resource\CloudAccount\CloudAccount,
   Resource\CloudAccount\Backup,
   Resource\PromisedResource,
   Resource\Collection,
@@ -22,7 +22,7 @@ use Nexcess\Sdk\ {
 /**
  * Unit test for cloud accounts (virtual hosting).
  */
-class EntityTest extends ModelTestCase {
+class CloudAccountTest extends ModelTestCase {
 
   /** {@inheritDoc} */
   protected const _RESOURCE_PATH = __DIR__ . '/resources';
@@ -38,10 +38,10 @@ class EntityTest extends ModelTestCase {
     'cloud-account-1.toCollapsedArray.json';
 
   /** {@inheritDoc} */
-  protected const _SUBJECT_FQCN = Entity::class;
+  protected const _SUBJECT_FQCN = CloudAccount::class;
 
   /**
-   * @covers Entity::getAvailablePhpVersions
+   * @covers CloudAccount::getAvailablePhpVersions
    */
   public function testGetAvailablePhpVersions() {
     $versions = ['5.6', '7.0', '7.1', '7.2'];
@@ -51,82 +51,82 @@ class EntityTest extends ModelTestCase {
       ->method('getAvailablePhpVersions')
       ->willReturn($versions);
 
-    $entity = Entity::__set_state(['_endpoint' => $endpoint]);
+    $cloudaccount = CloudAccount::__set_state(['_endpoint' => $endpoint]);
     $this->assertEquals(
       $versions,
-      $entity->getAvailablePhpVersions(),
+      $cloudaccount->getAvailablePhpVersions(),
       'invokes and returns $endpoint->getAvailablePhpVersions()'
     );
   }
 
   /**
-   * @covers Entity::setPhpVersion
+   * @covers CloudAccount::setPhpVersion
    */
   public function testSetPhpVersion() {
-    $entity = $this->_getSubject();
+    $cloudaccount = $this->_getSubject();
 
     $endpoint = $this->createMock(Endpoint::class);
     $endpoint->expects($this->once())
       ->method('setPhpVersion')
-      ->with($this->equalTo($entity), $this->equalTo('7.2'))
-      ->willReturn($entity);
+      ->with($this->equalTo($cloudaccount), $this->equalTo('7.2'))
+      ->willReturn($cloudaccount);
 
-    $entity->setApiEndpoint($endpoint);
+    $cloudaccount->setApiEndpoint($endpoint);
 
     $this->assertEquals(
-      $entity,
-      $entity->setPhpVersion('7.2'),
-      'invokes $endpoint->setPhpversion($entity, 7.2)'
+      $cloudaccount,
+      $cloudaccount->setPhpVersion('7.2'),
+      'invokes $endpoint->setPhpversion($cloudaccount, 7.2)'
     );
   }
 
   /**
-   * @covers Entity::backup
+   * @covers CloudAccount::backup
    */
   public function testCreateBackup() {
-    $entity = $this->_getSubject();
+    $cloudaccount = $this->_getSubject();
 
     $backup = new Backup();
     $endpoint = $this->createMock(Endpoint::class);
     $endpoint->method('createBackup')
-      ->with($this->equalTo($entity))
+      ->with($this->equalTo($cloudaccount))
       ->willReturn($backup);
 
-    $entity->setApiEndpoint($endpoint);
+    $cloudaccount->setApiEndpoint($endpoint);
 
     $this->assertEquals(
       $backup,
-      $entity->backup(),
-      'invokes $endpoint->createBackup($entity)'
+      $cloudaccount->backup(),
+      'invokes $endpoint->createBackup($cloudaccount)'
     );
   }
 
   /**
-   * @covers Entity::listBackups
+   * @covers CloudAccount::listBackups
    */
   public function testListBackups() {
-    $entity = $this->_getSubject();
+    $cloudaccount = $this->_getSubject();
 
     $collection = new Collection(Backup::class);
     $endpoint = $this->createMock(Endpoint::class);
     $endpoint->method('listBackups')
-      ->with($this->equalTo($entity))
+      ->with($this->equalTo($cloudaccount))
       ->willReturn($collection);
 
-    $entity->setApiEndpoint($endpoint);
+    $cloudaccount->setApiEndpoint($endpoint);
 
     $this->assertEquals(
       $collection,
-      $entity->listBackups(),
-      'invokes $endpoint->listBackups($entity)'
+      $cloudaccount->listBackups(),
+      'invokes $endpoint->listBackups($cloudaccount)'
     );
   }
 
   /**
-   * @covers Entity::retrieveBackup
+   * @covers CloudAccount::retrieveBackup
    */
   public function testRetrieveBackup() {
-    $entity = $this->_getSubject();
+    $cloudaccount = $this->_getSubject();
     $filename = 'filename.tgz';
 
     $backup = $this->createMock(Backup::class);
@@ -136,16 +136,15 @@ class EntityTest extends ModelTestCase {
 
     $endpoint = $this->createMock(Endpoint::class);
     $endpoint->method('retrieveBackup')
-      ->with($this->equalTo($entity), $this->equalTo($filename))
+      ->with($this->equalTo($cloudaccount), $this->equalTo($filename))
       ->willReturn($backup);
 
-    $entity->setApiEndpoint($endpoint);
+    $cloudaccount->setApiEndpoint($endpoint);
 
     $this->assertEquals(
       $filename,
-      $entity->retrieveBackup($filename)->get('filename'),
-      'invokes $endpoint->listBackups($entity)'
+      $cloudaccount->retrieveBackup($filename)->get('filename'),
+      'invokes $endpoint->listBackups($cloudaccount)'
     );
   }
-
 }

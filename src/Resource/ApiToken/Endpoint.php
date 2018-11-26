@@ -10,7 +10,7 @@ declare(strict_types  = 1);
 namespace Nexcess\Sdk\Resource\ApiToken;
 
 use Nexcess\Sdk\ {
-  Resource\ApiToken\Entity,
+  Resource\ApiToken\ApiToken,
   Resource\CanCreate,
   Resource\CanDelete,
   Resource\CanUpdate,
@@ -36,12 +36,10 @@ class Endpoint
   protected const _URI = 'api-token';
 
   /** {@inheritDoc} */
-  protected const _MODEL_FQCN = Entity::class;
+  protected const _MODEL_FQCN = ApiToken::class;
 
   /** {@inheritDoc} */
   protected const _PARAMS = [
-    'create' => [
-      'name' => [Util::TYPE_STRING]
-    ]
+    'create' => ['name' => [Util::TYPE_STRING]]
   ];
 }

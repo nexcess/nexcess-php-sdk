@@ -104,33 +104,11 @@ abstract class Model implements Modelable {
    * @see https://php.net/__debugInfo
    */
   public function __debugInfo() {
-    $module = $this->moduleName();
-    $name = basename(strtr(static::class, ['\\' => '/']));
-    if ($name === 'Entity') {
-      $name = $module;
-    }
-
     return [
-      'entity' => $name,
-      'module' => $module,
+      'module' => $this->moduleName(),
+      'name' => basename(strtr(static::class, ['\\' => '/'])),
       'has_endpoint' => isset($this->_endpoint),
-      'values' => array_map(
-        function ($value) {
-          if ($value instanceof Model) {
-            return ['entity' => $value->moduleName(), 'id' => $value->getId()];
-          }
-
-          if ($value instanceof Collection) {
-            return [
-              'collection' => $value->of(),
-              'entities' => $value->getIds()
-            ];
-          }
-
-          return $value;
-        },
-        $this->_values
-      )
+      'data' => $this->toArray()
     ];
   }
 

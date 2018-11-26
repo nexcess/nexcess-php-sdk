@@ -14,7 +14,7 @@ use Nexcess\Sdk\ {
   Resource\CloudAccount\Backup,
   Resource\CloudAccount\CloudAccountException,
   Resource\CloudAccount\Endpoint,
-  Resource\CloudAccount\Entity as CloudAccount,
+  Resource\CloudAccount\CloudAccount,
   Resource\PromisedResource,
   Resource\Promise,
   Resource\Model,
@@ -50,11 +50,11 @@ class BackupTest extends ModelTestCase {
     $filename = 'filename.tgz';
     $force = false;
 
-    $entity  = new CloudAccount();
-    $entity->sync(['id' => 1]);
+    $cloudaccount  = new CloudAccount();
+    $cloudaccount->sync(['id' => 1]);
 
     $backup = new Backup();
-    $backup->setCloudAccount($entity);
+    $backup->setCloudAccount($cloudaccount);
 
     $endpoint = $this->createMock(Endpoint::class);
     $endpoint->expects($this->once())
@@ -75,11 +75,11 @@ class BackupTest extends ModelTestCase {
   public function testDelete() {
     $filename = 'filename.tgz';
 
-    $entity  = new CloudAccount();
-    $entity->sync(['id' => 1]);
+    $cloudaccount  = new CloudAccount();
+    $cloudaccount->sync(['id' => 1]);
 
     $backup = new Backup();
-    $backup->setCloudAccount($entity);
+    $backup->setCloudAccount($cloudaccount);
 
     $endpoint = $this->createMock(Endpoint::class);
     $endpoint->expects($this->once())
@@ -142,12 +142,12 @@ class BackupTest extends ModelTestCase {
    * @covers Backup::getCloudAccount
    */
   public function testGetSetCloudAccount() {
-    $entity  = new CloudAccount();
-    $entity->sync(['id' => 1]);
+    $cloudaccount = new CloudAccount();
+    $cloudaccount->sync(['id' => 1]);
 
     $backup = new Backup;
-    $backup->setCloudAccount($entity);
-    $this->assertEquals($entity, $backup->getCloudAccount());
+    $backup->setCloudAccount($cloudaccount);
+    $this->assertEquals($cloudaccount, $backup->getCloudAccount());
   }
 
 

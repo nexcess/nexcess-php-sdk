@@ -14,7 +14,7 @@ use GuzzleHttp\ {
 };
 use Nexcess\Sdk\ {
   Resource\VirtGuestCloud\Endpoint,
-  Resource\VirtGuestCloud\Entity,
+  Resource\VirtGuestCloud\VirtGuestCloud,
   Tests\Resource\EndpointTestCase
 };
 
@@ -27,7 +27,7 @@ class EndpointTest extends EndpointTestCase {
   protected const _SUBJECT_FQCN = Endpoint::class;
 
   /** {@inheritDoc} */
-  protected const _SUBJECT_MODEL_FQCN = Entity::class;
+  protected const _SUBJECT_MODEL_FQCN = VirtGuestCloud::class;
 
   /** {@inheritDoc} */
   protected const _SUBJECT_MODULE = 'VirtGuestCloud';

@@ -10,14 +10,14 @@ declare(strict_types  = 1);
 namespace Nexcess\Sdk\Tests\Resource\Cloud;
 
 use Nexcess\Sdk\ {
-  Resource\Cloud\Entity,
+  Resource\Cloud\Cloud,
   Tests\Resource\ModelTestCase
 };
 
 /**
  * Unit test for clouds (virt-cloud hosts).
  */
-class EntityTest extends ModelTestCase {
+class CloudTest extends ModelTestCase {
 
   /** {@inheritDoc} */
   protected const _RESOURCE_PATH = __DIR__ . '/resources';
@@ -32,5 +32,5 @@ class EntityTest extends ModelTestCase {
   protected const _RESOURCE_TOCOLLAPSEDARRAY = 'cloud-3.toCollapsedArray.json';
 
   /** {@inheritDoc} */
-  protected const _SUBJECT_FQCN = Entity::class;
+  protected const _SUBJECT_FQCN = Cloud::class;
 }

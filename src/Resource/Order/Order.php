@@ -10,14 +10,14 @@ declare(strict_types  = 1);
 namespace Nexcess\Sdk\Resource\Order;
 
 use Nexcess\Sdk\ {
-  Resource\Client\Entity as Client,
-  Resource\Cloud\Entity as Cloud,
-  Resource\Invoice\Entity as Invoice,
+  Resource\Client\Client,
+  Resource\Cloud\Cloud,
+  Resource\Invoice\Invoice,
   Resource\Model,
   Resource\Order\OrderException,
-  Resource\Package\Entity as Package,
+  Resource\Package\Package,
   Resource\Service\Endpoint as ServiceEndpoint,
-  Resource\Service\Entity as Service,
+  Resource\Service\Service,
   SdkException,
   Util\Util
 };
@@ -25,7 +25,7 @@ use Nexcess\Sdk\ {
 /**
  * Orders.
  */
-class Entity extends Model {
+class Order extends Model {
 
   /** {@inheritDoc} */
   public const MODULE_NAME = 'Order';

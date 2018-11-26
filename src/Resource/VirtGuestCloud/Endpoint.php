@@ -12,7 +12,7 @@ namespace Nexcess\Sdk\Resource\VirtGuestCloud;
 use Nexcess\Sdk\ {
   ApiException,
   Resource\Service\Endpoint as ServiceEndpoint,
-  Resource\VirtGuestCloud\Entity,
+  Resource\VirtGuestCloud\VirtGuestCloud,
   Util\Util
 };
 
@@ -25,7 +25,7 @@ class Endpoint extends ServiceEndpoint {
   public const MODULE_NAME = 'VirtGuestCloud';
 
   /** {@inheritDoc} */
-  protected const _MODEL_FQCN = Entity::class;
+  protected const _MODEL_FQCN = VirtGuestCloud::class;
 
   /** {@inheritDoc} */
   protected const _SERVICE_TYPE = 'virt-guest-cloud';
@@ -33,26 +33,31 @@ class Endpoint extends ServiceEndpoint {
   /**
    * Gets php versions available for a given cloud account to use.
    *
-   * @param Entity $entity The subject cloud account
+   * @param VirtGuestCloud $virtguestcloud The subject cloud account
    * @return string[] List of available php major.minor versions
    */
-  public function getAvailablePhpVersions(Entity $entity) : array {
+  public function getAvailablePhpVersions(
+    VirtGuestCloud $virtguestcloud
+  ) : array {
     return Util::decodeResponse(
       $this->_client
-        ->get(static::_URI . "/{$entity->getId()}/get-php-versions")
+        ->get(static::_URI . "/{$virtguestcloud->getId()}/get-php-versions")
     );
   }
 
   /**
    * Switches PHP versions active on a service's primary cloud account.
    *
-   * @param Entity $entity Service instance
+   * @param VirtGuestCloud $virtguestcloud Service instance
    * @param string $version Desired PHP version
-   * @return Entity
+   * @return VirtGuestCloud
    * @throws ApiException If request fails
    */
-  public function setPhpVersion(Entity $entity, string $version) : Entity {
-    $entity->get('cloud_account')->setPhpVersion($version);
-    return $entity;
+  public function setPhpVersion(
+    VirtGuestCloud $virtguestcloud,
+    string $version
+  ) : VirtGuestCloud {
+    $virtguestcloud->get('cloud_account')->setPhpVersion($version);
+    return $virtguestcloud;
   }
 }

@@ -14,7 +14,7 @@ use Nexcess\Sdk\Resource\Model;
 /**
  * Represents an Invoice.
  */
-class Entity extends Model {
+class Invoice extends Model {
 
   /** {@inheritDoc} */
   public const MODULE_NAME = 'Invoice';
