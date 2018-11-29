@@ -185,12 +185,11 @@ class Endpoint extends ReadableEndpoint {
    * @return array
    * @throws \GuzzleHttp\Exception\ClientException If request fails
    */
-  public function decodeCsr(string $csr, int $package_id) {
+  public function decodeCsr(string $csr, int $package_id) : array {
     return Util::decodeResponse($this->_client->post(
-      self::_URI . "/decode-csr",
-      ['json'=>['csr' => $csr, 'package_id' => $package_id]]
+      self::_URI . '/decode-csr',
+      ['json' => ['csr' => $csr, 'package_id' => $package_id]]
     ));
-
   }
 
 }
