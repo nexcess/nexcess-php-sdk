@@ -11,7 +11,7 @@ namespace Nexcess\Sdk\Resource\Ssl;
 
 use Nexcess\Sdk\ {
   Resource\Endpoint as ReadableEndpoint,
-  Resource\Ssl\Entity,
+  Resource\Ssl\Ssl,
   Util\Util
 };
 
@@ -24,7 +24,7 @@ class Endpoint extends ReadableEndpoint {
   public const MODULE_NAME = 'Ssl';
 
   /** {@inheritDoc} */
-  protected const _MODEL_FQCN = Entity::class;
+  protected const _MODEL_FQCN = Ssl::class;
 
   /** {@inheritDoc} */
   protected const _URI = 'ssl-cert';
@@ -59,8 +59,9 @@ class Endpoint extends ReadableEndpoint {
    * Retrieve a certificate by it's service_id
    *
    * @param int $service_id a valid service_id for a certificate
+   * @return Ssl
    */
-  public function retrieveByServiceId(int $service_id) : Entity {
+  public function retrieveByServiceId(int $service_id) : Ssl {
     $filter = ['filter' => ['service_id' => $service_id]];
     $response = $this->_client->request(
       'GET',
@@ -76,14 +77,14 @@ class Endpoint extends ReadableEndpoint {
    * @param string $crt the crt
    * @param string $chain The chain certificate
    *
-   * @return Entity
+   * @return Ssl
    * @throws \GuzzleHttp\Exception\ClientException If request fails
    */
   public function importCertificate(
     string $key,
     string $crt,
     string $chain = ''
-  ) : Entity {
+  ) : Ssl {
     $response = $this->_client->post(
       self::_URI,
       ['json' => ['key' => $key, 'crt' => $crt, 'chain' => $chain]]
@@ -103,7 +104,7 @@ class Endpoint extends ReadableEndpoint {
    *              'domain.name' => 'approver@domain.name' Must be one of the
    *              approved 'approver emails'
    *
-   * @return Entity
+   * @return Ssl
    * @throws \GuzzleHttp\Exception\ClientException If request fails
    */
   public function createCertificateFromCsr(
@@ -112,7 +113,7 @@ class Endpoint extends ReadableEndpoint {
     int $months,
     int $package_id,
     array $approver_email
-  ) : Entity {
+  ) : Ssl {
     $response = $this->_client->post(
       self::_URI,
       [
@@ -148,7 +149,7 @@ class Endpoint extends ReadableEndpoint {
    *              'domain.name' => 'approver@domain.name' Must be one of the
    *              approved 'approver emails'
    *
-   * @return Entity
+   * @return Ssl
    * @throws \GuzzleHttp\Exception\ClientException If request fails
    */
   public function createCertificate(
@@ -157,7 +158,7 @@ class Endpoint extends ReadableEndpoint {
     int $months,
     int $package_id,
     array $approver_email
-  ) : Entity {
+  ) : Ssl {
     $response = $this->_client->post(
       self::_URI,
       [
