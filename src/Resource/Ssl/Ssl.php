@@ -17,7 +17,7 @@ use Nexcess\Sdk\ {
 /**
  * Certificates
  */
-class Entity extends Model {
+class Ssl extends Model {
 
   /** {@inheritDoc} */
   public const MODULE_NAME = 'Ssl';
