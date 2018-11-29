@@ -11,14 +11,14 @@ namespace Nexcess\Sdk\Tests\Resource\VirtGuestCloud;
 
 use Nexcess\Sdk\ {
   Resource\VirtGuestCloud\Endpoint,
-  Resource\VirtGuestCloud\Entity,
+  Resource\VirtGuestCloud\VirtGuestCloud,
   Tests\Resource\ModelTestCase
 };
 
 /**
  * Unit test for cloud account services.
  */
-class EntityTest extends ModelTestCase {
+class VirtGuestCloudTest extends ModelTestCase {
 
   /** {@inheritDoc} */
   protected const _RESOURCE_PATH = __DIR__ . '/resources';
@@ -34,10 +34,10 @@ class EntityTest extends ModelTestCase {
     'service-1.toCollapsedArray.json';
 
   /** {@inheritDoc} */
-  protected const _SUBJECT_FQCN = Entity::class;
+  protected const _SUBJECT_FQCN = VirtGuestCloud::class;
 
   /**
-   * @covers Entity::getAvailablePhpVersions
+   * @covers VirtGuestCloud::getAvailablePhpVersions
    */
   public function testGetAvailablePhpVersions() {
     $versions = ['5.6', '7.0', '7.1', '7.2'];

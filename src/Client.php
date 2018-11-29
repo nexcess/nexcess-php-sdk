@@ -298,7 +298,7 @@ class Client {
     if (is_a($name, Modelable::class, true)) {
       $model = $name;
     } else {
-      $model = static::RESOURCE_NAMESPACE . "\\{$name}\\Entity";
+      $model = static::RESOURCE_NAMESPACE . "\\{$name}\\{$name}";
 
       if (! is_a($model, Modelable::class, true)) {
         throw new SdkException(SdkException::NO_SUCH_MODEL, ['name' => $name]);

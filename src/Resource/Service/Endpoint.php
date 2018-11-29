@@ -13,7 +13,7 @@ use Nexcess\Sdk\ {
   ApiException,
   Resource\CloudServer\Endpoint as CloudServer,
   Resource\Endpoint as BaseEndpoint,
-  Resource\Service\Entity,
+  Resource\Service\Service,
   Resource\Service\ServiceCancellation,
   Resource\Service\ServiceException,
   Resource\VirtGuestCloud\Endpoint as VirtGuestCloud,
@@ -66,21 +66,21 @@ abstract class Endpoint extends BaseEndpoint {
   /**
    * Gets the questions for the cancellation survey for a service.
    *
-   * @param Entity $entity Service to cancel
+   * @param Service $service Service to cancel
    * @return array List of cancellation survey questions + metadata
    */
-  public function getCancellationSurvey(Entity $entity) : array {
+  public function getCancellationSurvey(Service $service) : array {
     throw new SdkException(
       SdkException::NOT_IMPLEMENTED,
       ['method' => __METHOD__]
     );
 
-    $this->_checkModelType($entity);
+    $this->_checkModelType($service);
 
-    if ($entity->get('is_cancellable') !== true) {
+    if ($service->get('is_cancellable') !== true) {
       throw new ServiceException(
         ServiceException::NOT_CANCELLABLE,
-        ['service' => static::_SERVICE_TYPE, 'id' => $entity->getId()]
+        ['service' => static::_SERVICE_TYPE, 'id' => $service->getId()]
       );
     }
 
@@ -90,27 +90,30 @@ abstract class Endpoint extends BaseEndpoint {
   /**
    * Requests a service cancellation.
    *
-   * @param Entity $entity Service to cancel
+   * @param Service $service Service to cancel
    * @param array $survey Cancellation survey
    * @return ServiceCancellation
    * @throws ApiException If request fails
    */
-  public function cancel(Entity $entity, array $survey) : ServiceCancellation {
+  public function cancel(
+    Service $service,
+    array $survey
+  ) : ServiceCancellation {
     throw new SdkException(
       SdkException::NOT_IMPLEMENTED,
       ['method' => __METHOD__]
     );
 
-    $this->_checkModelType($entity);
+    $this->_checkModelType($service);
 
-    if ($entity->get('is_cancellable') !== true) {
+    if ($service->get('is_cancellable') !== true) {
       throw new ServiceException(
         ServiceException::NOT_CANCELLABLE,
-        ['service' => static::_SERVICE_TYPE, 'id' => $entity->getId()]
+        ['service' => static::_SERVICE_TYPE, 'id' => $service->getId()]
       );
     }
 
-    $survey['service_id'] = $entity->getId();
+    $survey['service_id'] = $service->getId();
     $cancellation = $this->getModel(ServiceCancellation::class);
     assert($cancellation instanceof ServiceCancellation);
 

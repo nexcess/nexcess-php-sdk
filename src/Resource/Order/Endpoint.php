@@ -11,7 +11,7 @@ namespace Nexcess\Sdk\Resource\Order;
 
 use Nexcess\Sdk\ {
   Resource\Endpoint as ReadableEndpoint,
-  Resource\Order\Entity
+  Resource\Order\Order
 };
 
 /**
@@ -23,7 +23,7 @@ class Endpoint extends ReadableEndpoint {
   public const MODULE_NAME = 'Order';
 
   /** {@inheritDoc} */
-  protected const _MODEL_FQCN = Entity::class;
+  protected const _MODEL_FQCN = Order::class;
 
   /** {@inheritDoc} */
   protected const _URI = 'order';

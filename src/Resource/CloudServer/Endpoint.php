@@ -11,7 +11,7 @@ namespace Nexcess\Sdk\Resource\CloudServer;
 
 use Nexcess\Sdk\ {
   ApiException,
-  Resource\CloudServer\Entity,
+  Resource\CloudServer\CloudServer,
   Resource\Promise,
   Resource\Service\Endpoint as ServiceEndpoint,
   Util\Util
@@ -29,88 +29,91 @@ class Endpoint extends ServiceEndpoint {
   protected const _SERVICE_TYPE = 'virt-guest';
 
   /** {@inheritDoc} */
-  protected const _MODEL_FQCN = Entity::class;
+  protected const _MODEL_FQCN = CloudServer::class;
 
   /**
    * Reboots an existing cloud server.
    *
-   * @param Entity $entity Cloud Server model
-   * @return Entity
+   * @param CloudServer $cloudserver Cloud Server model
+   * @return CloudServer
    * @throws ApiException If request fails
    */
-  public function reboot(Entity $entity) : Entity {
+  public function reboot(CloudServer $cloudserver) : CloudServer {
     $this->_client->post(
-      self::_URI . "/{$entity->getId()}",
+      self::_URI . "/{$cloudserver->getId()}",
       ['json' => ['_action' => 'reboot']]
     );
 
-    return $entity;
+    return $cloudserver;
   }
 
   /**
    * Resizes an existing cloud server.
    *
-   * @param Entity $entity Cloud Server model
+   * @param CloudServer $cloudserver Cloud Server model
    * @param int $package_id Desired package id
-   * @return Entity
+   * @return CloudServer
    * @throws ApiException If request fails
    */
-  public function resize(Entity $entity, int $package_id) : Entity {
+  public function resize(
+    CloudServer $cloudserver,
+    int $package_id
+  ) : CloudServer {
     $this->_client->post(
-      self::_URI . "/{$entity->getId()}",
+      self::_URI . "/{$cloudserver->getId()}",
       ['json' => ['_action' => 'resize', 'package_id' => $package_id]]
     );
 
-    return $entity;
+    return $cloudserver;
   }
 
   /**
    * Starts an existing cloud server.
    *
-   * @param Entity $entity Cloud Server model
-   * @return Entity
+   * @param CloudServer $cloudserver Cloud Server model
+   * @return CloudServer
    * @throws ApiException If request fails
    */
-  public function start(Entity $entity) : Entity {
+  public function start(CloudServer $cloudserver) : CloudServer {
     $this->_client->post(
-      self::_URI . "/{$entity->getId()}",
+      self::_URI . "/{$cloudserver->getId()}",
       ['json' => ['_action' => 'start']]
     );
 
 
-    return $entity;
+    return $cloudserver;
   }
 
   /**
    * Stops an existing cloud server.
    *
-   * @param Entity $entity Cloud Server model
-   * @return Entity
+   * @param CloudServer $cloudserver Cloud Server model
+   * @return CloudServer
    * @throws ApiException If request fails
    */
-  public function stop(Entity $entity) : Entity {
+  public function stop(CloudServer $cloudserver) : CloudServer {
     $this->_client->post(
-      self::_URI . "/{$entity->getId()}",
+      self::_URI . "/{$cloudserver->getId()}",
       ['json' => ['_action' => 'stop']]
     );
 
 
-    return $entity;
+    return $cloudserver;
   }
 
   /**
    * Views an existing cloud server's console log.
    *
-   * @param Entity $entity Cloud Server model
+   * @param CloudServer $cloudserver Cloud Server model
    * @return string[] Lines from console log file
    * @throws ApiException If request fails
    */
-  public function viewConsoleLog(Entity $entity) : array {
+  public function viewConsoleLog(CloudServer $cloudserver) : array {
     return explode(
       "\n",
       Util::filter(
         $this->_client->post(
-          self::_URI . "/{$entity->getId()}",
+          self::_URI . "/{$cloudserver->getId()}",
           ['_action' => 'console-log']
         )->getBody(),
         Util::FILTER_STRING
@@ -121,16 +124,19 @@ class Endpoint extends ServiceEndpoint {
   /**
    * Resolves when given cloud server is turned on.
    *
-   * @param Entity $entity The cloud server to wait for
+   * @param CloudServer $cloudserver The cloud server to wait for
    * @param array $options Promise options
-   * @return Promise Entity[power_status] = on
+   * @return Promise CloudServer[power_status] = on
    */
-  public function whenStarted(Entity $entity, array $options = []) : Promise {
+  public function whenStarted(
+    CloudServer $cloudserver,
+    array $options = []
+  ) : Promise {
     return $this->_promise(
-      $entity,
-      function ($entity) {
-        $this->sync($entity);
-        return $entity->get('power_status') === 'on';
+      $cloudserver,
+      function ($cloudserver) {
+        $this->sync($cloudserver);
+        return $cloudserver->get('power_status') === 'on';
       },
       $options
     );
@@ -139,16 +145,19 @@ class Endpoint extends ServiceEndpoint {
   /**
    * Resolves when given cloud server is turned off.
    *
-   * @param Entity $entity The cloud server to wait for
+   * @param CloudServer $cloudserver The cloud server to wait for
    * @param array $options Promise options
-   * @return Promise Entity[power_status] = off
+   * @return Promise CloudServer[power_status] = off
    */
-  public function whenStopped(Entity $entity, array $options = []) : Promise {
+  public function whenStopped(
+    CloudServer $cloudserver,
+    array $options = []
+  ) : Promise {
     return $this->_promise(
-      $entity,
-      function ($entity) {
-        $this->sync($entity);
-        return $entity->get('power_status') === 'off';
+      $cloudserver,
+      function ($cloudserver) {
+        $this->sync($cloudserver);
+        return $cloudserver->get('power_status') === 'off';
       },
       $options
     );
@@ -157,22 +166,22 @@ class Endpoint extends ServiceEndpoint {
   /**
    * Builds callback to wait() for a cloud server to be resized.
    *
-   * @param Entity $entity The cloud server to wait for
+   * @param CloudServer $cloudserver The cloud server to wait for
    * @param int $package_id The resized package id
    * @param array $options Promise options
-   * @return Promise Entity[package_id] = $package_id
+   * @return Promise CloudServer[package_id] = $package_id
    */
   protected function whenResized(
-    Entity $entity,
+    CloudServer $cloudserver,
     int $package_id,
     array $options = []
   ) : Promise {
     return $this->_promise(
-      $entity,
-      function ($entity) use ($package_id) {
-        $this->sync($entity);
-        return $entity->get('package_id') === $package_id &&
-          $entity->get('state') === 'stable';
+      $cloudserver,
+      function ($cloudserver) use ($package_id) {
+        $this->sync($cloudserver);
+        return $cloudserver->get('package_id') === $package_id &&
+          $cloudserver->get('state') === 'stable';
       },
       $options
     );

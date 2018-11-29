@@ -7,30 +7,31 @@
 
 declare(strict_types  = 1);
 
-namespace Nexcess\Sdk\Tests\Resource\Order;
+namespace Nexcess\Sdk\Tests\Resource\CloudServer;
 
 use Nexcess\Sdk\ {
-  Resource\Order\Entity,
+  Resource\CloudServer\CloudServer,
   Tests\Resource\ModelTestCase
 };
 
 /**
  * Unit test for cloud accounts (virtual hosting).
  */
-class EntityTest extends ModelTestCase {
+class CloudServerTest extends ModelTestCase {
 
   /** {@inheritDoc} */
   protected const _RESOURCE_PATH = __DIR__ . '/resources';
 
   /** {@inheritDoc} */
-  protected const _RESOURCE_FROMARRAY = 'order-1.fromArray.json';
+  protected const _RESOURCE_FROMARRAY = 'cloud-server-1.fromArray.json';
 
   /** {@inheritDoc} */
-  protected const _RESOURCE_TOARRAY = 'order-1.toArray-shallow.php';
+  protected const _RESOURCE_TOARRAY = 'cloud-server-1.toArray-shallow.php';
 
   /** {@inheritDoc} */
-  protected const _RESOURCE_TOCOLLAPSEDARRAY = 'order-1.toCollapsedArray.json';
+  protected const _RESOURCE_TOCOLLAPSEDARRAY =
+    'cloud-server-1.toCollapsedArray.json';
 
   /** {@inheritDoc} */
-  protected const _SUBJECT_FQCN = Entity::class;
+  protected const _SUBJECT_FQCN = CloudServer::class;
 }

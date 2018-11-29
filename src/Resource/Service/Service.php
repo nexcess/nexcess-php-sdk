@@ -11,17 +11,11 @@ namespace Nexcess\Sdk\Resource\Service;
 
 use Nexcess\Sdk\Resource\Model;
 
-abstract class Entity extends Model {
+abstract class Service extends Model {
 
   /** {@inheritDoc} */
   public const MODULE_NAME = 'Service';
 
   /** {@inheritDoc} */
   protected const _PROPERTY_ALIASES = ['id' => 'service_id'];
-
-  /**
-   * Request cancellation of this service.
-   *
-   * @param array $survey Cancellation survey
-   */
 }

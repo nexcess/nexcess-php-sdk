@@ -15,7 +15,7 @@ use GuzzleHttp\ {
 };
 use Nexcess\Sdk\ {
   Resource\Package\Endpoint,
-  Resource\Package\Entity,
+  Resource\Package\Package,
   Resource\ResourceException,
   Tests\Resource\EndpointTestCase,
   Util\Language,
@@ -44,7 +44,7 @@ class EndpointTest extends EndpointTestCase {
   protected const _SUBJECT_FQCN = Endpoint::class;
 
   /** {@inheritDoc} */
-  protected const _SUBJECT_MODEL_FQCN = Entity::class;
+  protected const _SUBJECT_MODEL_FQCN = Package::class;
 
   /** {@inheritDoc} */
   protected const _SUBJECT_MODULE = 'Package';
