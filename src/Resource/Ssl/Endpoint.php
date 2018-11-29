@@ -126,8 +126,9 @@ class Endpoint extends ReadableEndpoint {
         ]
       ]
     );
-
-    return $this->getModel()->sync(Util::decodeResponse($response));
+    return $this->retrieveByServiceId(
+      Util::decodeResponse($response)['service_id']
+    );
   }
 
 /**
@@ -173,6 +174,23 @@ class Endpoint extends ReadableEndpoint {
     );
 
     return $this->getModel()->sync(Util::decodeResponse($response));
+  }
+
+  /**
+   * Decode an existing CSR and compare it to the package_id
+   *
+   * @param string $csr The CSR to decode
+   * @param int $package_id valid package_id for the type of csr
+   *
+   * @return array
+   * @throws \GuzzleHttp\Exception\ClientException If request fails
+   */
+  public function decodeCsr(string $csr, int $package_id) {
+    return Util::decodeResponse($this->_client->post(
+      self::_URI . "/decode-csr",
+      ['json'=>['csr' => $csr, 'package_id' => $package_id]]
+    ));
+
   }
 
 }
