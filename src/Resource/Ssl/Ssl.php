@@ -91,10 +91,10 @@ class Ssl extends Model {
    * create the cert via the CSR. Otherwise, it will attempt to create the csr
    * and key and then create the certificate.
    *
-   * @return entity
+   * @return Ssl
    * @throws \GuzzleHttp\Exception\ClientException on fail
    */
-  public function create() : Entity {
+  public function create() : Ssl {
     $endpoint = $this->_getEndpoint();
     assert($endpoint instanceof Endpoint);
 
@@ -120,10 +120,10 @@ class Ssl extends Model {
   /**
    * Import a certificate
    *
-   * @return entity
+   * @return Ssl
    * @throws \GuzzleHttp\Exception\ClientException on fail
    */
-  public function import() : Entity {
+  public function import() : Ssl {
     $endpoint = $this->_getEndpoint();
     assert($endpoint instanceof Endpoint);
 
