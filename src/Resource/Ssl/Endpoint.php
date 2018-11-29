@@ -173,7 +173,9 @@ class Endpoint extends ReadableEndpoint {
       ]
     );
 
-    return $this->getModel()->sync(Util::decodeResponse($response));
+    return $this->retrieveByServiceId(
+      Util::decodeResponse($response)['service_id']
+    );
   }
 
   /**
@@ -192,4 +194,39 @@ class Endpoint extends ReadableEndpoint {
     ));
   }
 
+  /**
+   * Create a CSR and make sure the type matches the package type.
+   *
+   * @param string $domain The primary hostName for this certificate
+   * @param array $distinguished_name Contains the following seven elements
+   *              string email An email address used to contact the
+   *                organization.
+   *              string organization Legal name of the organization that owns
+   *                the domain
+   *              string street The street address for the owner of the domain
+   *              string locality The city where the organization is located
+   *              string state The state/region where the organization is
+   *                located
+   *              string country The two-letter code for the country where the
+   *                organization is located
+   * @param int $package_id valid package_id for the type of csr
+   * @return array
+   * @throws \GuzzleHttp\Exception\ClientException If request fails
+   */
+  public function getCsrDetails(
+    string $domain,
+    array $distinguished_name,
+    int $package_id
+  ) : array {
+    return Util::decodeResponse($this->_client->post(
+      self::_URI . '/get-csr-details',
+      [
+        'json' => [
+          'domains' => $domain,
+          'package_id' => $package_id,
+          'distinguished_name' => $distinguished_name
+        ]
+      ]
+    ));
+  }
 }
