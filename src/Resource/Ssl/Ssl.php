@@ -134,4 +134,36 @@ class Ssl extends Model {
       );
   }
 
+  /**
+   * Decode an existing CSR and compare it to the package_id
+   *
+   * @return array
+   * @throws \GuzzleHttp\Exception\ClientException on fail
+   */
+  public function decodeCsr() : array {
+    $endpoint = $this->_getEndpoint();
+    assert($endpoint instanceof Endpoint);
+
+      return $endpoint->decodeCsr(
+        $this->get('csr'),
+        $this->get('package_id')
+      );
+  }
+
+  /**
+   * Create a CSR and make sure the type matches the package type.
+   *
+   * @return array
+   * @throws \GuzzleHttp\Exception\ClientException on fail
+   */
+  public function getCsrDetails() : array {
+    $endpoint = $this->_getEndpoint();
+    assert($endpoint instanceof Endpoint);
+
+    return $endpoint->getCsrDetails(
+      $this->get('domain'),
+      $this->get('distinguished_name'),
+      $this->get('package_id')
+    );
+  }
 }
