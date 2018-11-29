@@ -44,7 +44,7 @@ abstract class TestCase extends PHPUnitTestCase {
     }
   }
 
-  // phpcs:disable -- @todo typehint "object $object" once we move to php 7.2
+  // phpcs:disable -- @todo typehint "object $object" once we drop 7.1 support
   /**
    * Gets the value of a nonpublic property of an object under test.
    *
@@ -122,7 +122,7 @@ abstract class TestCase extends PHPUnitTestCase {
     return new Sandbox($config, $request_handler, $exception_handler);
   }
 
-  // phpcs:disable -- @todo typehint ": object" once we move to php 7.2
+  // phpcs:disable -- @todo typehint ": object" once we drop 7.1 support
   /**
    * Gets an instance of the class under test.
    *
@@ -133,5 +133,32 @@ abstract class TestCase extends PHPUnitTestCase {
     // phpcs:enable
     $fqcn = static::_SUBJECT_FQCN;
     return new $fqcn(...$constructor_args);
+  }
+
+  // phpcs:disable -- @todo typehint "object $object" once we drop 7.1 support
+  /**
+   * Sets the value of a nonpublic property of an object under test.
+   *
+   * NOTE it's very easy to break everything using this method
+   *
+   * @param object $object The object to inspect
+   * @param string $property The property to set
+   * @param mixed $value The new value
+   * @return void
+   */
+  protected function _setNonpublicProperty(
+    $object,
+    string $property,
+    $value
+  ) : void {
+    // phpcs:enable
+    $ro = new ReflectionObject($object);
+    if (! $ro->hasProperty($property)) {
+      return;
+    }
+
+    $rp = $ro->getProperty($property);
+    $rp->setAccessible(true);
+    $rp->setValue($object, $value);
   }
 }
