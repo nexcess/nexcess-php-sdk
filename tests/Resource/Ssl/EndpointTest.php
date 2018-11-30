@@ -15,7 +15,7 @@ use GuzzleHttp\ {
 };
 use Nexcess\Sdk\ {
   Resource\Ssl\Endpoint,
-  Resource\Ssl\Entity,
+  Resource\Ssl\Ssl,
   Resource\ResourceException,
   Tests\Resource\EndpointTestCase,
   Util\Language,

@@ -10,14 +10,14 @@ declare(strict_types  = 1);
 namespace Nexcess\Sdk\Tests\Resource\Ssl;
 
 use Nexcess\Sdk\ {
-  Resource\Ssl\Entity,
+  Resource\Ssl\Ssl,
   Tests\Resource\ModelTestCase
 };
 
 /**
  * Unit test for Ssl.
  */
-class EntityTest extends ModelTestCase {
+class SslTest extends ModelTestCase {
 
   /** {@inheritDoc} */
   protected const _RESOURCE_PATH = __DIR__ . '/resources';
