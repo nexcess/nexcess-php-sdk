@@ -52,6 +52,15 @@ class Endpoint extends ReadableEndpoint {
       'months' => [Util::TYPE_INT],
       'package_id' => [Util::TYPE_INT],
       'approver_email' => [Util::TYPE_ARRAY]
+    ],
+    'decodeCsr' => [
+      'csr' => [Util::TYPE_STRING],
+      'approver_email' => [Util::TYPE_ARRAY]
+    ],
+    'getCsrDetails' => [
+      'domain' => [Util::TYPE_STRING],
+      'distinguished_name' => [Util::TYPE_ARRAY],
+      'package_id' => [Util::TYPE_INT]
     ]
   ];
 
