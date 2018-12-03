@@ -55,6 +55,16 @@ class EndpointTest extends EndpointTestCase {
   /** {@inheritDoc} */
   protected const _SUBJECT_MODULE = 'Ssl';
 
+  /** @var string Chain Cert */
+  protected const _CHAIN = 'chain.txt';
+
+  /** @var string Certificate */
+  protected const _CRT = 'crt.txt';
+
+  /** @var string Private Key */
+  protected const _KEY = 'key.txt';
+
+
   /**
    * {@inheritDoc}
    */
@@ -172,9 +182,7 @@ class EndpointTest extends EndpointTestCase {
    * @covers Ssl::retrieveByServiceId
    */
   public function testRetrieveByServiceId() {
-    // custom request handler for sandbox
     $handler = function ($request, $options) {
-      // check request path
       $this->assertEquals('ssl-cert', $request->getUri()->getPath());
       $this->assertEquals(
         'filter[service_id]=58887',
@@ -206,7 +214,26 @@ class EndpointTest extends EndpointTestCase {
    * @covers Ssl::importCertificate
    */
   public function testImportCertificate() {
-    $this->markTestIncomplete('This test has not been implemented yet.');
+    $handler = function ($request, $options) {
+      $this->assertEquals('ssl-cert', $request->getUri()->getPath());
+      return new GuzzleResponse(
+        200,
+        ['Content-type' => 'application/json'],
+        $this->_getResource(static::_RESOURCE_GET, false)
+      );
+    };
+
+    // kick off
+    $this->_getSandbox(null, $handler)
+      ->play(function ($api, $sandbox) {
+        $endpoint = $api->getEndpoint(static::_SUBJECT_MODULE);
+        $results = $endpoint->importCertificate(
+          $this->_getResource(static::_KEY),
+          $this->_getResource(static::_CRT),
+          $this->_getResource(static::_CHAIN)
+        );
+        $this->assertEquals(637, $results->get('cert_id'));
+      });
   }
 
   /**
