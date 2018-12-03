@@ -64,6 +64,12 @@ class EndpointTest extends EndpointTestCase {
   /** @var string Private Key */
   protected const _KEY = 'key.txt';
 
+  /** @var string Private Key */
+  protected const _CSR_2 = 'csr_2.txt';
+
+  /** @var string Private Key */
+  protected const _KEY_2 = 'key_2.txt';
+
 
   /**
    * {@inheritDoc}
@@ -240,7 +246,30 @@ class EndpointTest extends EndpointTestCase {
    * @covers Ssl::createCertificateFromCsr
    */
   public function testCreateCertificateFromCsr() {
-    $this->markTestIncomplete('This test has not been implemented yet.');
+    // kick off
+    $this->_getSandbox()
+      ->play(function ($api, $sandbox) {
+
+        $sandbox->makeResponse(
+          'POST ssl-cert',
+          200,
+          $this->_getResource(static::_RESOURCE_IMPORT)
+        );
+        $sandbox->makeResponse(
+          'GET ssl-cert',
+          200,
+          $this->_getResource(static::_RESOURCE_GET_1)
+        );
+        $endpoint = $api->getEndpoint(static::_SUBJECT_MODULE);
+        $results = $endpoint->createCertificateFromCsr(
+          $this->_getResource(static::_CSR_2),
+          $this->_getResource(static::_KEY_2),
+          179,
+          12,
+          ['example.com'=>'admin@example.com']
+        );
+        $this->assertEquals(123, $results->get('cert_id'),'PING');
+      });
   }
 
   /**
