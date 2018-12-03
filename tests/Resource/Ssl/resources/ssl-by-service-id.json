@@ -1,18 +1,18 @@
 [
     {
         "cert_id": 123,
-        "common_name": "example1.com",
+        "common_name": "example.com",
         "client_id": 38111,
         "broker_id": 1,
         "valid_from_date": 0,
         "valid_to_date": 0,
         "chain_crts": "",
-        "approver_email": "admin@example1.com",
+        "approver_email": "admin@example.com",
         "alt_domains": "",
         "duns": "",
         "incorporating_agency": "",
         "id": 123,
-        "identity": "example1.com",
+        "identity": "example.com",
         "is_real": true,
         "meta": {
             "scope": "ssl-cert"

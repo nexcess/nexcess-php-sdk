@@ -1,16 +1,19 @@
 <?php
-return [
-    'id' => 123,
-    'cert_id' => 123,
-    'alt_domains' => [],
-    'alt_names' => ['www.example.com'],
-    'approver_email' => [],
-    'broker_id' => 0,
-    'chain' => '',
-    'chain_crts' => '',
-    'client_id' => 38111,
-    'common_name' => 'example.com',
-    'crt' => '-----BEGIN CERTIFICATE-----
+
+return array (
+  'id' => 637,
+  'alt_domains' => '',
+  'alt_names' =>
+  array (
+    0 => 'www.example.com',
+  ),
+  'approver_email' => NULL,
+  'broker_id' => 0,
+  'chain' => NULL,
+  'chain_crts' => '',
+  'client_id' => 11111,
+  'common_name' => 'example.com',
+  'crt' => '-----BEGIN CERTIFICATE-----
 MIIGbDCCBVSgAwIBAgIQfpsSGBm0aOWQUqAGPoxrizANBgkqhkiG9w0BAQsFADCB
 kDELMAkGA1UEBhMCR0IxGzAZBgNVBAgTEkdyZWF0ZXIgTWFuY2hlc3RlcjEQMA4G
 A1UEBxMHU2FsZm9yZDEaMBgGA1UEChMRQ09NT0RPIENBIExpbWl0ZWQxNjA0BgNV
@@ -47,18 +50,21 @@ K7Iorb/mh+2WFokKTzqVzTup+D3+BFKFHc3giy0zLKf0uzOzGtIoWB72vuJh04fM
 gInCCoyPSIRMKy1l84XmzgFV065g3kqxHCK8O0jpkFWgF2xbZBJCj0tWnNaWXPId
 df6VNFF4+x1ub1x92UZ6ag==
 -----END CERTIFICATE-----',
-    'csr' => '',
-    'domain' => '',
-    'domain_count' => 2,
-    'duns' => '',
-    'identity' => 'example.com',
-    'incorporating_agency' => '',
-    'is_expired' => false,
-    'is_installable' => true,
-    'is_multi_domain' => false,
-    'is_real' => true,
-    'is_wildcard' => false,
-    'key' => '',
-    'valid_from_date' => new DateTimeImmutable('11/28/2016 00:00:00'),
-    'valid_to_date' => new DateTimeImmutable('11/28/2019 23:59:59')
-];
+  'csr' => NULL,
+  'distinguished_name' => NULL,
+  'domain' => NULL,
+  'domain_count' => 2,
+  'duns' => '',
+  'identity' => 'example.com',
+  'incorporating_agency' => '',
+  'is_expired' => false,
+  'is_installable' => true,
+  'is_multi_domain' => false,
+  'is_real' => true,
+  'is_wildcard' => false,
+  'key' => NULL,
+  'months' => NULL,
+  'package_id' => NULL,
+  'valid_from_date' => new DateTimeImmutable('2016/11/28 00:00:00.000000'),
+  'valid_to_date' => new DateTimeImmutable('2019/11/28 23:59:59.000000')
+);
