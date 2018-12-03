@@ -23,7 +23,10 @@ class Ssl extends Model {
   public const MODULE_NAME = 'Ssl';
 
   /** {@inheritDoc} */
-  protected const _PROPERTY_ALIASES = ['id' => 'cert_id'];
+  protected const _PROPERTY_ALIASES = [
+    'id' => 'cert_id',
+    'service_id' => 'service.id'
+  ];
 
   /** {@inheritDoc} */
   protected const _PROPERTY_COLLAPSED = [];
@@ -62,7 +65,8 @@ class Ssl extends Model {
     'months',
     'package_id',
     'valid_from_date',
-    'valid_to_date'
+    'valid_to_date',
+    'service.id'
   ];
 
   /** {@inheritDoc} */
