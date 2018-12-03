@@ -28,29 +28,29 @@ class EndpointTest extends EndpointTestCase {
   protected const _RESOURCE_PATH = __DIR__ . '/resources';
 
   /** {@inheritDoc} */
-  protected const _RESOURCE_GET = 'GET-%2Fssl-cert%2F.json';
+  protected const _RESOURCE_GET = 'GET-%2Fssl-cert%2F1.json';
+// what is returned by API ssl-cert/CERT_ID
 
   /** @var string Resource sll cert by service_id */
   protected const _RESOURCE_GET_1 = 'ssl-by-service-id.json';
-
+  
   /** {@inheritDoc} */
   protected const _RESOURCE_IMPORT = 'POST-%2Fssl-cert%2F.json';
 
   /** {@inheritDoc} */
   protected const _RESOURCE_INSTANCES = [
-    'ssl-cert-1.fromArray.json' => 'ssl-cert-1.toArray-shallow.php'
+    'GET-%2Fssl-cert%2F1.json' => 'ssl-cert-1.toArray.php'
   ];
 
   /** {@inheritDoc} */
   protected const _RESOURCE_LISTS = [
-    'GET-%2Fssl-cert%2F.json' => []
   ];
 
   /** {@inheritDoc} */
   protected const _SUBJECT_FQCN = Endpoint::class;
 
   /** {@inheritDoc} */
-  protected const _SUBJECT_MODEL_FQCN = Entity::class;
+  protected const _SUBJECT_MODEL_FQCN = Ssl::class;
 
   /** {@inheritDoc} */
   protected const _SUBJECT_MODULE = 'Ssl';
@@ -196,7 +196,7 @@ class EndpointTest extends EndpointTestCase {
           ->retrieveByServiceId(58887);
         $this->assertEquals(123, $results->get('cert_id'));
         $this->assertEquals(
-          'admin@example1.com',
+          'admin@example.com',
           $results->get('approver_email')
         );
       });
@@ -228,6 +228,24 @@ class EndpointTest extends EndpointTestCase {
    */
   public function testCreateCertificateByData() {
     $this->markTestIncomplete('This test has not been implemented yet.');
+  }
+
+  /**
+   * @covers Ssl::decodeCsr
+   */
+  public function testdecodeCsr() {
+    $this->markTestIncomplete('This test has not been implemented yet.');
+  }
+
+  /**
+   * @covers Ssl::decodeCsr
+   */
+  public function getCsrDetails() {
+    $this->markTestIncomplete('This test has not been implemented yet.');
+  }
+
+  public function testGetParams(string $action='', array $expected=[]) {
+    $this->markTestSkipped();
   }
 
 }
