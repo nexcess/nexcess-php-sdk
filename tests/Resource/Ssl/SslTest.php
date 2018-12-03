@@ -23,14 +23,14 @@ class SslTest extends ModelTestCase {
   protected const _RESOURCE_PATH = __DIR__ . '/resources';
 
   /** {@inheritDoc} */
-  protected const _RESOURCE_FROMARRAY = '';
+  protected const _RESOURCE_FROMARRAY = 'GET-%2Fssl-cert%2F1.json';
 
   /** {@inheritDoc} */
-  protected const _RESOURCE_TOARRAY = '';
+  protected const _RESOURCE_TOARRAY = 'ssl-cert-1.toArray.php';
 
   /** {@inheritDoc} */
-  protected const _RESOURCE_TOCOLLAPSEDARRAY = '';
+  protected const _RESOURCE_TOCOLLAPSEDARRAY = 'ssl-cert-1.toCollapsedArray.json';
 
   /** {@inheritDoc} */
-  protected const _SUBJECT_FQCN = Entity::class;
+  protected const _SUBJECT_FQCN = Ssl::class;
 }
