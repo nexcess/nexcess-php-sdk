@@ -38,10 +38,8 @@ class Ssl extends Model {
 
   /** {@inheritDoc} */
   protected const _PROPERTY_NAMES = [
-    'alt_domains',
     'alt_names',
     'approver_email',
-    'broker_id',
     'cert_id',
     'chain',
     'chain_crts',
@@ -51,34 +49,17 @@ class Ssl extends Model {
     'csr',
     'distinguished_name',
     'domain',
-    'domain_count',
-    'duns',
     'id',
-    'identity',
-    'incorporating_agency',
-    'is_expired',
-    'is_installable',
-    'is_multi_domain',
-    'is_real',
-    'is_wildcard',
     'key',
     'months',
     'package_id',
-    'valid_from_date',
-    'valid_to_date',
     'service.id'
   ];
 
   /** {@inheritDoc} */
   protected const _READONLY_NAMES = [
-    'broker_id',
-    'chain_crts',
     'client_id',
-    'crt',
-    'domain_count',
-    'duns',
     'identity',
-    'incorporating_agency',
     'is_expired',
     'is_installable',
     'is_multi_domain',

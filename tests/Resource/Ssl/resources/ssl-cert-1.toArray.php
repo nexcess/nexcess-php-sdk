@@ -2,13 +2,11 @@
 
 return [
   'id' => 637,
-  'alt_domains' => '',
   'alt_names' =>
   [
     0 => 'www.example.com',
   ],
   'approver_email' => null,
-  'broker_id' => 0,
   'chain' => null,
   'chain_crts' => '',
   'client_id' => 11111,
@@ -53,10 +51,7 @@ df6VNFF4+x1ub1x92UZ6ag==
   'csr' => null,
   'distinguished_name' => null,
   'domain' => null,
-  'domain_count' => 2,
-  'duns' => '',
   'identity' => 'example.com',
-  'incorporating_agency' => '',
   'is_expired' => false,
   'is_installable' => true,
   'is_multi_domain' => false,
