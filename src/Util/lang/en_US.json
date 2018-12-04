@@ -142,6 +142,9 @@
         "distinguished_name" : "A properly formatted array of data known as the distinguished name",
         "package_id" : "The NocWorx package id appropriate for this type of certificate."
     },
+    "Exception": {
+      "no_matching_certs" : "No certificates were found matching the filter provided."
+    }
   },
   "util": {
     "file_not_readable": "File '{file}' is not readable",

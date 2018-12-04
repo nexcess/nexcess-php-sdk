@@ -12,6 +12,7 @@ namespace Nexcess\Sdk\Resource\Ssl;
 use Nexcess\Sdk\ {
   Resource\Endpoint as ReadableEndpoint,
   Resource\Ssl\Ssl,
+  Resource\Ssl\SslException,
   Util\Util
 };
 
@@ -71,12 +72,11 @@ class Endpoint extends ReadableEndpoint {
    * @return Ssl
    */
   public function retrieveByServiceId(int $service_id) : Ssl {
-    $filter = ['filter' => ['service_id' => $service_id]];
-    $response = $this->_client->request(
-      'GET',
-      static::_URI . "?{$this->_buildListQuery($filter)}"
-    );
-    return $this->getModel()->sync(Util::decodeResponse($response)[0]);
+    $certs = $this->list(['filter' => ['service_id' => $service_id]]);
+    if (count($certs) === 0) {
+      throw new SslException(SslException::NO_MATCHING_CERTS);
+    }
+    return $certs->current();
   }
 
   /**
