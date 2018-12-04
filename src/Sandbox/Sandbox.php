@@ -102,9 +102,9 @@ class Sandbox {
     $response = $this->_getResponseFor($request_key) ??
       $this->_handler ??
       new ServerException(
-        '503 Service Unavailable',
+        "No Response Matching '{$request_key}' is Staged in Sandbox",
         $request,
-        new GuzzleResponse(503, [], 'Service Unavailable')
+        new GuzzleResponse(404, [], 'Not Found')
       );
 
     if (is_callable($response)) {
