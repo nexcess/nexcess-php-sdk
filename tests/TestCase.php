@@ -137,11 +137,36 @@ abstract class TestCase extends PHPUnitTestCase {
 
   // phpcs:disable -- @todo typehint "object $object" once we drop 7.1 support
   /**
+   * Invokes a nonpublic method on an object under test.
+   *
+   * @param object $object The object under test
+   * @param string $method The method to invoke
+   * @param mixed ...$args Argument(s) to use for invocation
+   * @return mixed The return value from the method invocation
+   */
+  protected function _invokeNonpublicMethod(
+    $object,
+    string $method,
+    ...$args
+  ) {
+    // phpcs:enable
+    $ro = new ReflectionObject($object);
+    if (! $ro->hasMethod($method)) {
+      return;
+    }
+
+    $rm = $ro->getMethod($method);
+    $rm->setAccessible(true);
+    return $rm->invoke($object, ...$args);
+  }
+
+  // phpcs:disable -- @todo typehint "object $object" once we drop 7.1 support
+  /**
    * Sets the value of a nonpublic property of an object under test.
    *
    * NOTE it's very easy to break everything using this method
    *
-   * @param object $object The object to inspect
+   * @param object $object The object to modify
    * @param string $property The property to set
    * @param mixed $value The new value
    * @return void
