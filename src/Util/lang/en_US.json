@@ -110,6 +110,39 @@
     "no_such_service_model": "No service type '{model}' exists",
     "not_cancelable": "This service cannot be canceled via the API"
   },
+  "Ssl": {
+    "retrieveByServiceId" : {
+      "service_id" : "The service id for the certificate you wish to retrieve."
+    },
+    "importCertificate" : {
+      "key": "The private key for this certificate",
+      "crt":"The certificate",
+      "chain":"An optional chain certificate"
+    },
+    "createCertificateFromCsr" : {
+      "csr" : "The Certificate Signing Request",
+      "key" : "The private key for this certificate",
+      "months" : "How many months this certificate is good for",
+      "package_id" : "The NocWorx package id appropriate for this type of certificate.",
+      "approver_email" :"Array of approver email addresses, one per domain. Must be from the list of approver email addresses!"
+    },
+    "createCertificate" : {
+      "domain" : "The host name to create a certificate for",
+      "distinguished_name" : "A properly formatted array of data known as the distinguished name",
+      "months" : "How many months this certificate is good for",
+      "package_id" : "The NocWorx package id appropriate for this type of certificate.",
+      "approver_email" :"Array of approver email addresses, one per domain. Must be from the list of approver email addresses!"
+    },
+    "decodeCsr" : {
+      "csr" : "The Certificate Signing Request to decode",
+      "distinguished_name" : "A properly formatted array of data known as the distinguished name"
+    },
+    "getCsrDetails" : {
+        "domain" : "The host name to create a certificate for",
+        "distinguished_name" : "A properly formatted array of data known as the distinguished name",
+        "package_id" : "The NocWorx package id appropriate for this type of certificate."
+    },
+  },
   "util": {
     "file_not_readable": "File '{file}' is not readable",
     "invalid_config_option": "Invalid configuration: {option} must be {rule}; '{value}' provided",
