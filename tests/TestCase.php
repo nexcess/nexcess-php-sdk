@@ -166,7 +166,7 @@ abstract class TestCase extends PHPUnitTestCase {
    *
    * NOTE it's very easy to break everything using this method
    *
-   * @param object $object The object to modufy
+   * @param object $object The object to modify
    * @param string $property The property to set
    * @param mixed $value The new value
    * @return void
