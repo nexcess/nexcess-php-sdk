@@ -24,8 +24,7 @@ class Ssl extends Model {
 
   /** {@inheritDoc} */
   protected const _PROPERTY_ALIASES = [
-    'id' => 'cert_id',
-    'service_id' => 'service.id'
+    'id' => 'cert_id'
   ];
 
   /** {@inheritDoc} */
@@ -52,8 +51,7 @@ class Ssl extends Model {
     'id',
     'key',
     'months',
-    'package_id',
-    'service.id'
+    'package_id'
   ];
 
   /** {@inheritDoc} */

@@ -61,6 +61,5 @@ df6VNFF4+x1ub1x92UZ6ag==
   'months' => null,
   'package_id' => null,
   'valid_from_date' => new DateTimeImmutable('2016/11/28 00:00:00.000000'),
-  'valid_to_date' => new DateTimeImmutable('2019/11/28 23:59:59.000000'),
-  'service_id' => null
+  'valid_to_date' => new DateTimeImmutable('2019/11/28 23:59:59.000000')
 ];
