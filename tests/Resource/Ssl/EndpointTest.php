@@ -56,19 +56,19 @@ class EndpointTest extends EndpointTestCase {
   protected const _SUBJECT_MODULE = 'Ssl';
 
   /** @var string Chain Cert */
-  protected const _CHAIN = 'chain.txt';
+  protected const _RESOURCE_CHAIN = 'chain.txt';
 
   /** @var string Certificate */
-  protected const _CRT = 'crt.txt';
+  protected const _RESOURCE_CRT = 'crt.txt';
 
   /** @var string Private Key */
-  protected const _KEY = 'key.txt';
+  protected const _RESOURCE_KEY = 'key.txt';
 
   /** @var string Private Key */
-  protected const _CSR_2 = 'csr_2.txt';
+  protected const _RESOURCE_CSR_2 = 'csr_2.txt';
 
   /** @var string Private Key */
-  protected const _KEY_2 = 'key_2.txt';
+  protected const _RESOURCE_KEY_2 = 'key_2.txt';
 
   /** @var string The decoded csr payload */
   protected const _RESOURCE_GET_DECODED_CSR = 'decoded_csr.txt';
@@ -236,9 +236,9 @@ class EndpointTest extends EndpointTestCase {
       ->play(function ($api, $sandbox) {
         $endpoint = $api->getEndpoint(static::_SUBJECT_MODULE);
         $results = $endpoint->importCertificate(
-          $this->_getResource(static::_KEY),
-          $this->_getResource(static::_CRT),
-          $this->_getResource(static::_CHAIN)
+          $this->_getResource(static::_RESOURCE_KEY),
+          $this->_getResource(static::_RESOURCE_CRT),
+          $this->_getResource(static::_RESOURCE_CHAIN)
         );
         $this->assertEquals(637, $results->get('cert_id'));
       });
@@ -264,8 +264,8 @@ class EndpointTest extends EndpointTestCase {
         );
         $endpoint = $api->getEndpoint(static::_SUBJECT_MODULE);
         $results = $endpoint->createCertificateFromCsr(
-          $this->_getResource(static::_CSR_2),
-          $this->_getResource(static::_KEY_2),
+          $this->_getResource(static::_RESOURCE_CSR_2),
+          $this->_getResource(static::_RESOURCE_KEY_2),
           179,
           12,
           ['example.com' => 'admin@example.com']
@@ -345,7 +345,7 @@ class EndpointTest extends EndpointTestCase {
       ->play(function ($api, $sandbox) {
         $endpoint = $api->getEndpoint(static::_SUBJECT_MODULE);
         $results = $endpoint->decodeCsr(
-          $this->_getResource(static::_CSR_2),
+          $this->_getResource(static::_RESOURCE_CSR_2),
           179
         );
 
