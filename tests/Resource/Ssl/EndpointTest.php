@@ -322,7 +322,43 @@ class EndpointTest extends EndpointTestCase {
    * @covers Ssl::decodeCsr
    */
   public function testDecodeCsr() {
-    $this->markTestIncomplete('This test has not been implemented yet.');
+    $handler = function ($request, $options) {
+      $this->assertEquals('ssl-cert/decode-csr', $request->getUri()->getPath());
+      return new GuzzleResponse(
+        200,
+        ['Content-type' => 'application/json'],
+        $this->_getResource(static::_RESOURCE_GET_DECODED_CSR, false)
+      );
+    };
+
+    // kick off
+    $this->_getSandbox(null, $handler)
+      ->play(function ($api, $sandbox) {
+        $endpoint = $api->getEndpoint(static::_SUBJECT_MODULE);
+        $results = $endpoint->decodeCsr(
+          $this->_getResource(static::_CSR_2),
+          179
+        );
+
+        // san
+        $this->assertArrayHasKey('san',$results);
+        $this->assertEmpty($results['san']);
+
+        // distinguished name
+        $this->assertArrayHasKey('dn',$results);
+        $this->assertNotEmpty($results['dn']);
+        $this->assertEquals('example.com', $results['dn']['commonName']);
+        $this->assertEquals('US', $results['dn']['countryName']);
+        $this->assertEquals('MI', $results['dn']['stateOrProvinceName']);
+        $this->assertEquals('Anytown', $results['dn']['localityName']);
+
+        // approvers
+        $this->assertArrayHasKey('approvers',$results);
+        $this->assertNotEmpty($results['approvers']);
+        $this->assertArrayHasKey('example.com',$results['approvers']);
+        $this->assertEquals(5,count($results['approvers']['example.com']));
+        $this->assertequals('admin@example.com',$results['approvers']['example.com'][0]);
+    });
   }
 
   /**

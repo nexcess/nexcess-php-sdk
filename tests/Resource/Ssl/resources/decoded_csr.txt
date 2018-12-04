@@ -1,0 +1,21 @@
+{
+  "dn": {
+    "commonName": "example.com",
+    "countryName": "US",
+    "stateOrProvinceName": "MI",
+    "localityName": "Anytown",
+    "organizationName": "Acme Examples",
+    "organizationalUnitName": "marketing",
+    "emailAddress": "cal@example.com"
+  },
+  "san": [],
+  "approvers": {
+    "example.com": [
+      "admin@example.com",
+      "administrator@example.com",
+      "hostmaster@example.com",
+      "postmaster@example.com",
+      "webmaster@example.com"
+    ]
+  }
+}
