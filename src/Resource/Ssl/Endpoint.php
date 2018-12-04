@@ -94,12 +94,14 @@ class Endpoint extends ReadableEndpoint {
     string $crt,
     string $chain = ''
   ) : Ssl {
-    $response = $this->_client->post(
-      self::_URI,
-      ['json' => ['key' => $key, 'crt' => $crt, 'chain' => $chain]]
+    return $this->getModel()->sync(
+      Util::decodeResponse(
+        $this->_client->post(
+              self::_URI,
+              ['json' => ['key' => $key, 'crt' => $crt, 'chain' => $chain]]
+        )
+      )
     );
-
-    return $this->getModel()->sync(Util::decodeResponse($response));
   }
 
  /**
