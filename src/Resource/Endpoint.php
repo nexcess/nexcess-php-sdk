@@ -125,13 +125,10 @@ abstract class Endpoint implements Readable {
           ['uri' => static::_URI . "?{$this->_buildListQuery($filter)}"]
         );
       }
-
       $collection->add($this->getModel()->sync($data));
     }
 
-    // this might end up being redundant,
-    // but is needed since not all endpoints support filters on all properties.
-    return empty($filter) ? $collection : $collection->filter($filter);
+    return $collection;
   }
 
   /**
