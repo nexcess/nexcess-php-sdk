@@ -1,15 +1,15 @@
 <?php
 
-return array (
+return [
   'id' => 637,
   'alt_domains' => '',
   'alt_names' =>
-  array (
+  [
     0 => 'www.example.com',
-  ),
-  'approver_email' => NULL,
+  ],
+  'approver_email' => null,
   'broker_id' => 0,
-  'chain' => NULL,
+  'chain' => null,
   'chain_crts' => '',
   'client_id' => 11111,
   'common_name' => 'example.com',
@@ -50,9 +50,9 @@ K7Iorb/mh+2WFokKTzqVzTup+D3+BFKFHc3giy0zLKf0uzOzGtIoWB72vuJh04fM
 gInCCoyPSIRMKy1l84XmzgFV065g3kqxHCK8O0jpkFWgF2xbZBJCj0tWnNaWXPId
 df6VNFF4+x1ub1x92UZ6ag==
 -----END CERTIFICATE-----',
-  'csr' => NULL,
-  'distinguished_name' => NULL,
-  'domain' => NULL,
+  'csr' => null,
+  'distinguished_name' => null,
+  'domain' => null,
   'domain_count' => 2,
   'duns' => '',
   'identity' => 'example.com',
@@ -62,10 +62,10 @@ df6VNFF4+x1ub1x92UZ6ag==
   'is_multi_domain' => false,
   'is_real' => true,
   'is_wildcard' => false,
-  'key' => NULL,
-  'months' => NULL,
-  'package_id' => NULL,
+  'key' => null,
+  'months' => null,
+  'package_id' => null,
   'valid_from_date' => new DateTimeImmutable('2016/11/28 00:00:00.000000'),
   'valid_to_date' => new DateTimeImmutable('2019/11/28 23:59:59.000000'),
   'service_id' => null
-);
+];

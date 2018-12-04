@@ -29,7 +29,8 @@ class SslTest extends ModelTestCase {
   protected const _RESOURCE_TOARRAY = 'ssl-cert-1.toArray.php';
 
   /** {@inheritDoc} */
-  protected const _RESOURCE_TOCOLLAPSEDARRAY = 'ssl-cert-1.toCollapsedArray.json';
+  protected const _RESOURCE_TOCOLLAPSEDARRAY =
+    'ssl-cert-1.toCollapsedArray.json';
 
   /** {@inheritDoc} */
   protected const _SUBJECT_FQCN = Ssl::class;

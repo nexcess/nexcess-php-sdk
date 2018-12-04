@@ -268,7 +268,7 @@ class EndpointTest extends EndpointTestCase {
           $this->_getResource(static::_KEY_2),
           179,
           12,
-          ['example.com'=>'admin@example.com']
+          ['example.com' => 'admin@example.com']
         );
         $this->assertEquals(
           123,
@@ -314,7 +314,7 @@ class EndpointTest extends EndpointTestCase {
           ],
           179,
           12,
-          ['example.com'=>'admin@example.com']
+          ['example.com' => 'admin@example.com']
         );
         $this->assertEquals(
           123,
@@ -350,11 +350,11 @@ class EndpointTest extends EndpointTestCase {
         );
 
         // san
-        $this->assertArrayHasKey('san',$results);
+        $this->assertArrayHasKey('san', $results);
         $this->assertEmpty($results['san']);
 
         // distinguished name
-        $this->assertArrayHasKey('dn',$results);
+        $this->assertArrayHasKey('dn', $results);
         $this->assertNotEmpty($results['dn']);
         $this->assertEquals('example.com', $results['dn']['commonName']);
         $this->assertEquals('US', $results['dn']['countryName']);
@@ -370,7 +370,7 @@ class EndpointTest extends EndpointTestCase {
           'admin@example.com',
           $results['approvers']['example.com'][0]
         );
-    });
+      });
   }
 
   /**
@@ -380,7 +380,7 @@ class EndpointTest extends EndpointTestCase {
     $this->markTestIncomplete('This test has not been implemented yet.');
   }
 
-  public function testGetParams(string $action='', array $expected=[]) {
+  public function testGetParams(string $action = '', array $expected = []) {
     $this->markTestSkipped();
   }
 
