@@ -270,7 +270,10 @@ class EndpointTest extends EndpointTestCase {
           12,
           ['example.com'=>'admin@example.com']
         );
-        $this->assertEquals(123, $results->get('cert_id'), 'Checking Certificate ID');
+        $this->assertEquals(
+          123,
+          $results->get('cert_id'), 'Checking Certificate ID'
+        );
       });
   }
 
@@ -313,8 +316,14 @@ class EndpointTest extends EndpointTestCase {
           12,
           ['example.com'=>'admin@example.com']
         );
-        $this->assertEquals(123, $results->get('cert_id'), 'Checking Certificate ID');
-        $this->assertEquals('example.com', $results->get('common_name'), 'Checking common name');
+        $this->assertEquals(
+          123,
+          $results->get('cert_id'), 'Checking Certificate ID'
+        );
+        $this->assertEquals(
+          'example.com',
+          $results->get('common_name'), 'Checking common name'
+        );
       });
   }
 
@@ -353,11 +362,14 @@ class EndpointTest extends EndpointTestCase {
         $this->assertEquals('Anytown', $results['dn']['localityName']);
 
         // approvers
-        $this->assertArrayHasKey('approvers',$results);
+        $this->assertArrayHasKey('approvers', $results);
         $this->assertNotEmpty($results['approvers']);
-        $this->assertArrayHasKey('example.com',$results['approvers']);
-        $this->assertEquals(5,count($results['approvers']['example.com']));
-        $this->assertequals('admin@example.com',$results['approvers']['example.com'][0]);
+        $this->assertArrayHasKey('example.com', $results['approvers']);
+        $this->assertEquals(5, count($results['approvers']['example.com']));
+        $this->assertequals(
+          'admin@example.com',
+          $results['approvers']['example.com'][0]
+        );
     });
   }
 
