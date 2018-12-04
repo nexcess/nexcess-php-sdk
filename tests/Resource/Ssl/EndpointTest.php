@@ -70,6 +70,8 @@ class EndpointTest extends EndpointTestCase {
   /** @var string Private Key */
   protected const _KEY_2 = 'key_2.txt';
 
+  /** @var string The decoded csr payload */
+  protected const _RESOURCE_GET_DECODED_CSR = 'decoded_csr.txt';
 
   /**
    * {@inheritDoc}
@@ -268,28 +270,58 @@ class EndpointTest extends EndpointTestCase {
           12,
           ['example.com'=>'admin@example.com']
         );
-        $this->assertEquals(123, $results->get('cert_id'),'PING');
+        $this->assertEquals(123, $results->get('cert_id'), 'Checking Certificate ID');
       });
   }
 
   /**
    * @covers Ssl::createCertificate
    */
-  public function testCreateCertificateByCSR() {
-    $this->markTestIncomplete('This test has not been implemented yet.');
-  }
-
-  /**
-   * @covers Ssl::createCertificate
-   */
-  public function testCreateCertificateByData() {
-    $this->markTestIncomplete('This test has not been implemented yet.');
+  /*
+    string $domain,
+    array $distinguished_name,
+    int $months,
+    int $package_id,
+    array $approver_email
+  */
+  public function testCreateCertificate() {
+    $this->_getSandbox()
+      ->play(function ($api, $sandbox) {
+        $sandbox->makeResponse(
+          'POST ssl-cert',
+          200,
+          $this->_getResource(static::_RESOURCE_IMPORT)
+        );
+        $sandbox->makeResponse(
+          'GET ssl-cert',
+          200,
+          $this->_getResource(static::_RESOURCE_GET_1)
+        );
+        $endpoint = $api->getEndpoint(static::_SUBJECT_MODULE);
+        $results = $endpoint->createCertificate(
+          'example.com',
+          [
+            'email' => 'john@example.com',
+            'street' => '123 Main Street',
+            'locality' => 'Anytown',
+            'state' => 'MI',
+            'country' => 'US',
+            'organization' => 'Acme Examples',
+            'organizational_unit' => 'marketing'
+          ],
+          179,
+          12,
+          ['example.com'=>'admin@example.com']
+        );
+        $this->assertEquals(123, $results->get('cert_id'), 'Checking Certificate ID');
+        $this->assertEquals('example.com', $results->get('common_name'), 'Checking common name');
+      });
   }
 
   /**
    * @covers Ssl::decodeCsr
    */
-  public function testdecodeCsr() {
+  public function testDecodeCsr() {
     $this->markTestIncomplete('This test has not been implemented yet.');
   }
 
