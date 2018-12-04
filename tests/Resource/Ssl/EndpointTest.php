@@ -29,7 +29,6 @@ class EndpointTest extends EndpointTestCase {
 
   /** {@inheritDoc} */
   protected const _RESOURCE_GET = 'GET-%2Fssl-cert%2F1.json';
-// what is returned by API ssl-cert/CERT_ID
 
   /** @var string Resource sll cert by service_id */
   protected const _RESOURCE_GET_1 = 'ssl-by-service-id.json';
