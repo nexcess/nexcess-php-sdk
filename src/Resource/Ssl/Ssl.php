@@ -90,7 +90,7 @@ class Ssl extends Model {
       );
     }
 
-    return $endpoint->createCertificate(
+    return $endpoint->create(
       $this->get('domain'),
       $this->get('distinguished_name'),
       $this->get('months'),
