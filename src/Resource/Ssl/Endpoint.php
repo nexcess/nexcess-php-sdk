@@ -10,6 +10,7 @@ declare(strict_types  = 1);
 namespace Nexcess\Sdk\Resource\Ssl;
 
 use Nexcess\Sdk\ {
+  Resource\Creatable,
   Resource\Endpoint as ReadableEndpoint,
   Resource\Ssl\Ssl,
   Resource\Ssl\SslException,
@@ -19,7 +20,7 @@ use Nexcess\Sdk\ {
 /**
  * API endpoint for Ssl.
  */
-class Endpoint extends ReadableEndpoint {
+class Endpoint extends ReadableEndpoint implements Creatable{
 
   /** {@inheritDoc} */
   public const MODULE_NAME = 'Ssl';
