@@ -154,10 +154,12 @@ abstract class Model implements Modelable {
     }
 
     $value = Util::dig($this->_values, $name);
-    if (! isset($value)) {
-      $this->_tryToHydrate();
-      $value = Util::dig($this->_values, $name);
-    }
+
+    // @todo revisit and decide whether this should be removed permanently
+    //if (! isset($value)) {
+    //  $this->_tryToHydrate();
+    //  $value = Util::dig($this->_values, $name);
+    //}
 
     return $value;
   }
@@ -559,7 +561,7 @@ abstract class Model implements Modelable {
    */
   protected function _tryToHydrate() {
     $id = $this->getId();
-    if ($this->_hasEndpoint() && is_int($id) && ! $this->_hydrated) {
+    if (is_int($id) && $this->_hasEndpoint() && ! $this->_hydrated) {
       $model = $this->_getEndpoint()->retrieve($id);
       assert($model instanceof self);
 
