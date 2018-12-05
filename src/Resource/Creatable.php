@@ -9,23 +9,12 @@ declare(strict_types  = 1);
 
 namespace Nexcess\Sdk\Resource;
 
-use Nexcess\Sdk\ {
-  ApiException,
-  Resource\Modelable,
-  Resource\Readable
-};
-
 /**
- * Interface for API endpoints which can create new resources.
+ * Interface for API endpoints which can create new resources on the API.
+ *
+ * Such endpoints MUST have a create() method,
+ * though the method's signature will vary based on the inputs required.
+ *
+ * All endpoint create() methods MUST return a Modelable instance.
  */
-interface Creatable extends Readable {
-
-  /**
-   * Creates a new item.
-   *
-   * @param array $data Map of values for new item
-   * @return Modelable
-   * @throws ApiException If request fails
-   */
-  public function create(array $data) : Modelable;
-}
+interface Creatable extends Readable {}
