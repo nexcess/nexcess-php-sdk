@@ -1,11 +1,9 @@
 {
     "cert_id": 637,
     "common_name": "example.com",
-    "client_id": 11111,
     "broker_id": 0,
     "valid_from_date": 1480291200,
     "valid_to_date": 1574985599,
-    "chain_crts": "",
     "alt_domains": "",
     "duns": "",
     "incorporating_agency": "",

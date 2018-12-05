@@ -8,8 +8,7 @@ return [
   ],
   'approver_email' => null,
   'chain' => null,
-  'chain_crts' => '',
-  'client_id' => 11111,
+  'client_id' => null,
   'common_name' => 'example.com',
   'crt' => '-----BEGIN CERTIFICATE-----
 MIIGbDCCBVSgAwIBAgIQfpsSGBm0aOWQUqAGPoxrizANBgkqhkiG9w0BAQsFADCB

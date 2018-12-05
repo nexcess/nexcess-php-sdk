@@ -37,12 +37,9 @@ class Ssl extends Model {
 
   /** {@inheritDoc} */
   protected const _PROPERTY_NAMES = [
-    'alt_names',
     'approver_email',
     'cert_id',
     'chain',
-    'chain_crts',
-    'client_id',
     'common_name',
     'crt',
     'csr',
@@ -56,6 +53,7 @@ class Ssl extends Model {
 
   /** {@inheritDoc} */
   protected const _READONLY_NAMES = [
+    'alt_names',
     'client_id',
     'identity',
     'is_expired',
@@ -68,35 +66,43 @@ class Ssl extends Model {
   ];
 
   /**
-   * Create a new backup
-   * This method has two modes. If a CSR is present then it will attempt to
-   * create the cert via the CSR. Otherwise, it will attempt to create the csr
-   * and key and then create the certificate.
+   * Create a new Ssl
+   * @param array $distinguished_name
    *
    * @return Ssl
    * @throws \GuzzleHttp\Exception\ClientException on fail
    */
-  public function create() : Ssl {
+  public function create(array $distinguished_name) : Ssl {
     $endpoint = $this->_getEndpoint();
     assert($endpoint instanceof Endpoint);
 
-    if (!empty($this->get('csr'))) {
+    return $endpoint->create(
+      $this->get('domain'),
+      $distinguished_name,
+      $this->get('months'),
+      $this->get('package_id'),
+      $this->get('approver_email')
+    );
+  }
+
+  /**
+   * Create a new Ssl from a CSR
+   * @param string $csr a valid CSR
+   *
+   * @return Ssl
+   * @throws \GuzzleHttp\Exception\ClientException on fail
+   */
+  public function createFromCsr(string $csr) : Ssl {
+    $endpoint = $this->_getEndpoint();
+    assert($endpoint instanceof Endpoint);
+
       return $endpoint->createFromCsr(
-        $this->get('csr'),
+        $csr,
         $this->get('key'),
         $this->get('months'),
         $this->get('package_id'),
         $this->get('approver_email')
       );
-    }
-
-    return $endpoint->create(
-      $this->get('domain'),
-      $this->get('distinguished_name'),
-      $this->get('months'),
-      $this->get('package_id'),
-      $this->get('approver_email')
-    );
   }
 
   /**
