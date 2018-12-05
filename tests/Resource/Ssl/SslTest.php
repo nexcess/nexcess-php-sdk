@@ -60,7 +60,7 @@ class SslTest extends ModelTestCase {
           'months' => 12,
           'package_id' => 179,
           'domain' => 'example.com',
-          'approver_email' => ['example.com'=>['admin@example.com']]
+          'approver_email' => ['example.com' => ['admin@example.com']]
         ]
       ]
     );
@@ -69,11 +69,9 @@ class SslTest extends ModelTestCase {
           $this->_getResource(self::_RESOURCE_DISTINGUISHED_NAME)
         );
 
-    $this->assertEquals(Ssl::class,get_class($response));
-    $this->assertEquals(123,$response->get('id'));
-    $this->assertEquals('example.com',$response->get('common_name'));
-
-
+    $this->assertEquals(Ssl::class, get_class($response));
+    $this->assertEquals(123, $response->get('id'));
+    $this->assertEquals('example.com', $response->get('common_name'));
   }
 
 }
