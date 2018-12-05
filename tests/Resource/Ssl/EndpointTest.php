@@ -147,37 +147,37 @@ class EndpointTest extends EndpointTestCase {
           ],
         ]
       ],
-      ['createCertificate',
+      ['create',
         [
           'domain' => [
             Util::TYPE_STRING,
             true,
             'domain (string): Required. ' .
-            Language::get('resource.Ssl.createCertificate.domain')
+            Language::get('resource.Ssl.create.domain')
           ],
           'distinguished_name' => [
             Util::TYPE_ARRAY,
             true,
             'distinguished_name (array): Required. ' .
-            Language::get('resource.Ssl.createCertificate.distinguished_name')
+            Language::get('resource.Ssl.create.distinguished_name')
           ],
           'months' => [
             Util::TYPE_INT,
             true,
             'months (integer): Required. ' .
-            Language::get('resource.Ssl.createCertificate.months')
+            Language::get('resource.Ssl.create.months')
           ],
           'package_id' => [
             Util::TYPE_INT,
             true,
             'package_id (integer): Required. ' .
-            Language::get('resource.Ssl.createCertificate.package_id')
+            Language::get('resource.Ssl.create.package_id')
           ],
           'approver_email' => [
             Util::TYPE_ARRAY,
             true,
             'approver_email (array): Required. ' .
-            Language::get('resource.Ssl.createCertificate.approver_email')
+            Language::get('resource.Ssl.create.approver_email')
           ]
 
         ]
@@ -277,16 +277,9 @@ class EndpointTest extends EndpointTestCase {
   }
 
   /**
-   * @covers Ssl::createCertificate
+   * @covers Ssl::create
    */
-  /*
-    string $domain,
-    array $distinguished_name,
-    int $months,
-    int $package_id,
-    array $approver_email
-  */
-  public function testCreateCertificate() {
+  public function testcCeate() {
     $this->_getSandbox()
       ->play(function ($api, $sandbox) {
         $sandbox->makeResponse(
@@ -300,7 +293,7 @@ class EndpointTest extends EndpointTestCase {
           $this->_getResource(static::_RESOURCE_GET_1)
         );
         $endpoint = $api->getEndpoint(static::_SUBJECT_MODULE);
-        $results = $endpoint->createCertificate(
+        $results = $endpoint->create(
           'example.com',
           [
             'email' => 'john@example.com',

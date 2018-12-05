@@ -47,7 +47,7 @@ class Endpoint extends ReadableEndpoint {
       'package_id' => [Util::TYPE_INT],
       'approver_email' => [Util::TYPE_ARRAY]
     ],
-    'createCertificate' => [
+    'create' => [
       'domain' => [Util::TYPE_STRING],
       'distinguished_name' => [Util::TYPE_ARRAY],
       'months' => [Util::TYPE_INT],
@@ -164,7 +164,7 @@ class Endpoint extends ReadableEndpoint {
    * @return Ssl
    * @throws \GuzzleHttp\Exception\ClientException If request fails
    */
-  public function createCertificate(
+  public function create(
     string $domain,
     array $distinguished_name,
     int $months,
