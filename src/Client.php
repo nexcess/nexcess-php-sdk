@@ -149,6 +149,7 @@ class Client {
         );
       }
 
+      // @phan-suppress-next-line PhanUndeclaredMethod
       return $endpoint->create($arg);
     }
 
