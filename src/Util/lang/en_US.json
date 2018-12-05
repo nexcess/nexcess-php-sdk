@@ -119,14 +119,14 @@
       "crt":"The certificate",
       "chain":"An optional chain certificate"
     },
-    "createCertificateFromCsr" : {
+    "createFromCsr" : {
       "csr" : "The Certificate Signing Request",
       "key" : "The private key for this certificate",
       "months" : "How many months this certificate is good for",
       "package_id" : "The NocWorx package id appropriate for this type of certificate.",
       "approver_email" :"Array of approver email addresses, one per domain. Must be from the list of approver email addresses!"
     },
-    "createCertificate" : {
+    "create" : {
       "domain" : "The host name to create a certificate for",
       "distinguished_name" : "A properly formatted array of data known as the distinguished name",
       "months" : "How many months this certificate is good for",

@@ -81,7 +81,7 @@ class Ssl extends Model {
     assert($endpoint instanceof Endpoint);
 
     if (!empty($this->get('csr'))) {
-      return $endpoint->createCertificateFromCsr(
+      return $endpoint->createFromCsr(
         $this->get('csr'),
         $this->get('key'),
         $this->get('months'),

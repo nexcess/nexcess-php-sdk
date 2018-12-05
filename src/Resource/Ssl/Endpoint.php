@@ -41,7 +41,7 @@ class Endpoint extends ReadableEndpoint implements Creatable{
       'crt' => [Util::TYPE_STRING],
       'chain' => [Util::TYPE_STRING]
     ],
-    'createCertificateFromCsr' => [
+    'createFromCsr' => [
       'csr' => [Util::TYPE_STRING],
       'key' => [Util::TYPE_STRING],
       'months' => [Util::TYPE_INT],
@@ -119,7 +119,7 @@ class Endpoint extends ReadableEndpoint implements Creatable{
    * @return Ssl
    * @throws \GuzzleHttp\Exception\ClientException If request fails
    */
-  public function createCertificateFromCsr(
+  public function createFromCsr(
     string $csr,
     string $key,
     int $months,

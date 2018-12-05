@@ -111,38 +111,38 @@ class EndpointTest extends EndpointTestCase {
 
         ]
       ],
-      ['createCertificateFromCsr',
+      ['createFromCsr',
         [
           'csr' => [
             Util::TYPE_STRING,
             true,
             'csr (string): Required. ' .
-            Language::get('resource.Ssl.createCertificateFromCsr.csr')
+            Language::get('resource.Ssl.createFromCsr.csr')
           ],
           'key' => [
             Util::TYPE_STRING,
             true,
             'key (string): Required. ' .
-            Language::get('resource.Ssl.createCertificateFromCsr.key')
+            Language::get('resource.Ssl.createFromCsr.key')
           ],
           'months' => [
             Util::TYPE_INT,
             true,
             'months (integer): Required. ' .
-            Language::get('resource.Ssl.createCertificateFromCsr.months')
+            Language::get('resource.Ssl.createFromCsr.months')
           ],
           'package_id' => [
             Util::TYPE_INT,
             true,
             'package_id (integer): Required. ' .
-            Language::get('resource.Ssl.createCertificateFromCsr.package_id')
+            Language::get('resource.Ssl.createFromCsr.package_id')
           ],
           'approver_email' => [
             Util::TYPE_ARRAY,
             true,
             'approver_email (array): Required. ' .
             Language::get(
-              'resource.Ssl.createCertificateFromCsr.approver_email'
+              'resource.Ssl.createFromCsr.approver_email'
             )
           ],
         ]
@@ -244,9 +244,9 @@ class EndpointTest extends EndpointTestCase {
   }
 
   /**
-   * @covers Ssl::createCertificateFromCsr
+   * @covers Ssl::createFromCsr
    */
-  public function testCreateCertificateFromCsr() {
+  public function testCreateFromCsr() {
     // kick off
     $this->_getSandbox()
       ->play(function ($api, $sandbox) {
@@ -262,7 +262,7 @@ class EndpointTest extends EndpointTestCase {
           $this->_getResource(static::_RESOURCE_GET_1)
         );
         $endpoint = $api->getEndpoint(static::_SUBJECT_MODULE);
-        $results = $endpoint->createCertificateFromCsr(
+        $results = $endpoint->createFromCsr(
           $this->_getResource(static::_RESOURCE_CSR_2),
           $this->_getResource(static::_RESOURCE_KEY_2),
           179,
