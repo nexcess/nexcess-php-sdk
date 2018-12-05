@@ -72,6 +72,9 @@ class EndpointTest extends EndpointTestCase {
   /** @var string The decoded csr payload */
   protected const _RESOURCE_GET_DECODED_CSR = 'decoded_csr.txt';
 
+  /** @var string json encoded distinguished name */
+  protected const _RESOURCE_DISTINGUISHED_NAME = 'distinguished_name.json';
+
   /**
    * {@inheritDoc}
    */
@@ -295,15 +298,7 @@ class EndpointTest extends EndpointTestCase {
         $endpoint = $api->getEndpoint(static::_SUBJECT_MODULE);
         $results = $endpoint->create(
           'example.com',
-          [
-            'email' => 'john@example.com',
-            'street' => '123 Main Street',
-            'locality' => 'Anytown',
-            'state' => 'MI',
-            'country' => 'US',
-            'organization' => 'Acme Examples',
-            'organizational_unit' => 'marketing'
-          ],
+          $this->_getResource(self::_RESOURCE_DISTINGUISHED_NAME),
           179,
           12,
           ['example.com' => 'admin@example.com']
@@ -387,15 +382,7 @@ class EndpointTest extends EndpointTestCase {
         $endpoint = $api->getEndpoint(static::_SUBJECT_MODULE);
         $results = $endpoint->getCsrDetails(
           'example.com',
-          [
-            'email' => 'john@example.com',
-            'street' => '123 Main Street',
-            'locality' => 'Anytown',
-            'state' => 'MI',
-            'country' => 'US',
-            'organization' => 'Acme Examples',
-            'organizational_unit' => 'marketing'
-          ],
+          $this->_getResource(self::_RESOURCE_DISTINGUISHED_NAME),
           179
         );
 

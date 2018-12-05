@@ -172,6 +172,7 @@ class Endpoint extends ReadableEndpoint implements Creatable{
     int $package_id,
     array $approver_email
   ) : Ssl {
+
     $response = $this->_client->post(
       self::_URI,
       [
@@ -184,7 +185,6 @@ class Endpoint extends ReadableEndpoint implements Creatable{
         ]
       ]
     );
-
     return $this->retrieveByServiceId(
       Util::decodeResponse($response)['service_id']
     );
