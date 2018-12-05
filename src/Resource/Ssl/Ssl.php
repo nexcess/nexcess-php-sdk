@@ -59,7 +59,6 @@ class Ssl extends Model {
     'is_expired',
     'is_installable',
     'is_multi_domain',
-    'is_real',
     'is_wildcard',
     'valid_from_date',
     'valid_to_date'

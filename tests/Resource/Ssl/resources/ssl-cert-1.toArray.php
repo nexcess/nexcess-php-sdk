@@ -54,7 +54,6 @@ df6VNFF4+x1ub1x92UZ6ag==
   'is_expired' => false,
   'is_installable' => true,
   'is_multi_domain' => false,
-  'is_real' => true,
   'is_wildcard' => false,
   'key' => null,
   'months' => null,
