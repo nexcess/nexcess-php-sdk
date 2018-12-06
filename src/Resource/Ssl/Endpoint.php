@@ -20,7 +20,7 @@ use Nexcess\Sdk\ {
 /**
  * API endpoint for Ssl.
  */
-class Endpoint extends ReadableEndpoint implements Creatable{
+class Endpoint extends ReadableEndpoint implements Creatable {
 
   /** {@inheritDoc} */
   public const MODULE_NAME = 'Ssl';
@@ -67,9 +67,9 @@ class Endpoint extends ReadableEndpoint implements Creatable{
   ];
 
   /**
-   * Retrieve a certificate by it's service_id
+   * Retrieves a certificate by looking up it's service_id.
    *
-   * @param int $service_id a valid service_id for a certificate
+   * @param int $service_id A valid service_id for a certificate
    * @return Ssl
    */
   public function retrieveByServiceId(int $service_id) : Ssl {
@@ -81,14 +81,12 @@ class Endpoint extends ReadableEndpoint implements Creatable{
   }
 
   /**
-   * Import an existing certificate
+   * Imports an existing certificate.
    *
-   * @param string $key the key to the crt
-   * @param string $crt the crt
+   * @param string $key The key to the crt
+   * @param string $crt The crt
    * @param string $chain The chain certificate
-   *
    * @return Ssl
-   * @throws \GuzzleHttp\Exception\ClientException If request fails
    */
   public function importCertificate(
     string $key,
@@ -98,26 +96,23 @@ class Endpoint extends ReadableEndpoint implements Creatable{
     return $this->getModel()->sync(
       Util::decodeResponse(
         $this->_client->post(
-              self::_URI,
-              ['json' => ['key' => $key, 'crt' => $crt, 'chain' => $chain]]
+          self::_URI,
+          ['json' => ['key' => $key, 'crt' => $crt, 'chain' => $chain]]
         )
       )
     );
   }
 
  /**
-   * Create a new certificate from a csr
+   * Creates a new certificate from a Certificate Signing Request.
    *
    * @param string $csr A valid csr
    * @param string $key The key for the csr
-   * @param int $months The number of months to make this certificate valid for.
+   * @param int $months The number of months to make this certificate valid for
    * @param int $package_id The SSL package purchased
-   * @param array $approver_email format
-   *              'domain.name' => 'approver@domain.name' Must be one of the
-   *              approved 'approver emails'
-   *
+   * @param array $approver_email Format: [domain.name => approver@domain.name]
+   *  Must be one of the approved 'approver emails'
    * @return Ssl
-   * @throws \GuzzleHttp\Exception\ClientException If request fails
    */
   public function createFromCsr(
     string $csr,
@@ -144,26 +139,21 @@ class Endpoint extends ReadableEndpoint implements Creatable{
   }
 
 /**
-   * Create a new certificate
+   * Creates a new certificate.
    *
    * @param string $domain the domain this certificate is for
-   * @param array $distinguished_name Contains the following seven elements
-   *              string email An email address used to contact the
-   *                organization.
-   *              string organization Legal name of the organization that owns
-   *                the domain
-   *              string street The street address for the owner of the domain
-   *              string locality The city where the organization is located
-   *              string state The state/region where the organization is
-   *                located
-   *              string country The two-letter code for the country where the
-   *                organization is located
-   * @param array $approver_email format
-   *              'domain.name' => 'approver@domain.name' Must be one of the
-   *              approved 'approver emails'
-   *
+   * @param array $distinguished_name Contains the following elements:
+   *  - string "organization" Legal name of the org that owns the domain
+   *  - string "email" Email address used to contact the organization
+   *  - string "organizational_unit" Responsible department in organization
+   *  - string "street" Organizations's street address
+   *  - string "locality" City where the organization is located
+   *  - string "state" State/region where the organization is located
+   *  - string "country" Two-letter ISO-3166-2 country code
+   *    where the organization is located
+   * @param array $approver_email Format: [domain.name => approver@domain.name]
+   *  Must be one of the approved 'approver emails'
    * @return Ssl
-   * @throws \GuzzleHttp\Exception\ClientException If request fails
    */
   public function create(
     string $domain,
@@ -172,7 +162,6 @@ class Endpoint extends ReadableEndpoint implements Creatable{
     int $package_id,
     array $approver_email
   ) : Ssl {
-
     $response = $this->_client->post(
       self::_URI,
       [
@@ -191,54 +180,53 @@ class Endpoint extends ReadableEndpoint implements Creatable{
   }
 
   /**
-   * Decode an existing CSR and compare it to the package_id
+   * Decodes an existing CSR and compares it to the package_id.
    *
    * @param string $csr The CSR to decode
-   * @param int $package_id valid package_id for the type of csr
-   *
-   * @return array
-   * @throws \GuzzleHttp\Exception\ClientException If request fails
+   * @param int $package_id Valid package_id for the type of csr
+   * @return array Decoded CSR details
    */
   public function decodeCsr(string $csr, int $package_id) : array {
-    return Util::decodeResponse($this->_client->post(
-      self::_URI . '/decode-csr',
-      ['json' => ['csr' => $csr, 'package_id' => $package_id]]
-    ));
+    return Util::decodeResponse(
+      $this->_client->post(
+        self::_URI . '/decode-csr',
+        ['json' => ['csr' => $csr, 'package_id' => $package_id]]
+      )
+    );
   }
 
   /**
-   * Create a CSR and make sure the type matches the package type.
+   * Creates a CSR, making sure the type matches the package type.
    *
-   * @param string $domain The primary hostName for this certificate
-   * @param array $distinguished_name Contains the following seven elements
-   *              string email An email address used to contact the
-   *                organization.
-   *              string organization Legal name of the organization that owns
-   *                the domain
-   *              string street The street address for the owner of the domain
-   *              string locality The city where the organization is located
-   *              string state The state/region where the organization is
-   *                located
-   *              string country The two-letter code for the country where the
-   *                organization is located
-   * @param int $package_id valid package_id for the type of csr
-   * @return array
-   * @throws \GuzzleHttp\Exception\ClientException If request fails
+   * @param string $domain Primary hostname for this certificate
+   * @param array $distinguished_name Contains the following elements:
+   *  - string "organization" Legal name of the org that owns the domain
+   *  - string "email" Email address used to contact the organization
+   *  - string "organizational_unit" Responsible department in organization
+   *  - string "street" Organizations's street address
+   *  - string "locality" City where the organization is located
+   *  - string "state" State/region where the organization is located
+   *  - string "country" Two-letter ISO-3166-2 country code
+   *    where the organization is located
+   * @param int $package_id Valid package_id for the type of CSR
+   * @return array Details of the new CSR
    */
   public function getCsrDetails(
     string $domain,
     array $distinguished_name,
     int $package_id
   ) : array {
-    return Util::decodeResponse($this->_client->post(
-      self::_URI . '/get-csr-details',
-      [
-        'json' => [
-          'domains' => $domain,
-          'package_id' => $package_id,
-          'distinguished_name' => $distinguished_name
+    return Util::decodeResponse(
+      $this->_client->post(
+        self::_URI . '/get-csr-details',
+        [
+          'json' => [
+            'domains' => $domain,
+            'package_id' => $package_id,
+            'distinguished_name' => $distinguished_name
+          ]
         ]
-      ]
-    ));
+      )
+    );
   }
 }

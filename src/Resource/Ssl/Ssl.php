@@ -23,17 +23,13 @@ class Ssl extends Model {
   public const MODULE_NAME = 'Ssl';
 
   /** {@inheritDoc} */
-  protected const _PROPERTY_ALIASES = [
-    'id' => 'cert_id'
-  ];
+  protected const _PROPERTY_ALIASES = ['id' => 'cert_id'];
 
   /** {@inheritDoc} */
   protected const _PROPERTY_COLLAPSED = [];
 
   /** {@inheritDoc} */
-  protected const _PROPERTY_MODELS = [
-    'client' => Client::class
-  ];
+  protected const _PROPERTY_MODELS = ['client' => Client::class];
 
   /** {@inheritDoc} */
   protected const _PROPERTY_NAMES = [
@@ -42,10 +38,7 @@ class Ssl extends Model {
     'chain',
     'common_name',
     'crt',
-    'csr',
-    'distinguished_name',
     'domain',
-    'id',
     'key',
     'months',
     'package_id'
@@ -65,11 +58,24 @@ class Ssl extends Model {
   ];
 
   /**
-   * Create a new Ssl
-   * @param array $distinguished_name
+   * Creates a new Ssl Certificate.
    *
+   * Be sure the following properties are set before invoking this method:
+   *  - "domain"
+   *  - "months"
+   *  - "package_id"
+   *  - "approver_email"
+   *
+   * @param array $distinguished_name Contains the following elements:
+   *  - string "organization" Legal name of the org that owns the domain
+   *  - string "email" Email address used to contact the organization
+   *  - string "organizational_unit" Responsible department in organization
+   *  - string "street" Organizations's street address
+   *  - string "locality" City where the organization is located
+   *  - string "state" State/region where the organization is located
+   *  - string "country" Two-letter ISO-3166-2 country code
+   *    where the organization is located
    * @return Ssl
-   * @throws \GuzzleHttp\Exception\ClientException on fail
    */
   public function create(array $distinguished_name) : Ssl {
     $endpoint = $this->_getEndpoint();
@@ -85,39 +91,48 @@ class Ssl extends Model {
   }
 
   /**
-   * Create a new Ssl from a CSR
-   * @param string $csr a valid CSR
+   * Creates a new Ssl from a CSR.
    *
+   * Be sure the following properties are set before invoking this method:
+   *  - "key"
+   *  - "months"
+   *  - "package_id"
+   *  - "approver_email"
+   *
+   * @param string $csr a valid CSR
    * @return Ssl
-   * @throws \GuzzleHttp\Exception\ClientException on fail
    */
   public function createFromCsr(string $csr) : Ssl {
     $endpoint = $this->_getEndpoint();
     assert($endpoint instanceof Endpoint);
 
-      return $endpoint->createFromCsr(
-        $csr,
-        $this->get('key'),
-        $this->get('months'),
-        $this->get('package_id'),
-        $this->get('approver_email')
-      );
+    return $endpoint->createFromCsr(
+      $csr,
+      $this->get('key'),
+      $this->get('months'),
+      $this->get('package_id'),
+      $this->get('approver_email')
+    );
   }
 
   /**
-   * Import a certificate
+   * Imports an existing certificate into your account.
+   *
+   * Be sure the following properties are set before invoking this method:
+   *  - "key"
+   *  - "crt"
+   *  - "chain"
    *
    * @return Ssl
-   * @throws \GuzzleHttp\Exception\ClientException on fail
    */
   public function import() : Ssl {
     $endpoint = $this->_getEndpoint();
     assert($endpoint instanceof Endpoint);
 
-      return $endpoint->importCertificate(
-        $this->get('key'),
-        $this->get('crt'),
-        $this->get('chain')
-      );
+    return $endpoint->importCertificate(
+      $this->get('key'),
+      $this->get('crt'),
+      $this->get('chain')
+    );
   }
 }
