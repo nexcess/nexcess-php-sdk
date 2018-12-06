@@ -142,7 +142,7 @@ class SslTest extends ModelTestCase {
       ]
     );
 
-    $response = $ssl->createFromCsr(
+    $response = $ssl->import(
           $this->_getResource(self::_RESOURCE_CSR)
         );
 
