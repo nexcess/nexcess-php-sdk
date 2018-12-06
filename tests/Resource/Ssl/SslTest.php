@@ -39,6 +39,10 @@ class SslTest extends ModelTestCase {
 
   protected const _RESOURCE_GET_BY_SERVICE_ID = 'ssl-by-service-id.json';
 
+  protected const _RESOURCE_CSR = 'csr_2.txt';
+
+  protected const _RESOURCE_KEY = 'key_2.txt';
+
   /**
    * @covers Ssl::create
    */
@@ -73,5 +77,42 @@ class SslTest extends ModelTestCase {
     $this->assertEquals(123, $response->get('id'));
     $this->assertEquals('example.com', $response->get('common_name'));
   }
+
+  public function testCreateFromCsr() {
+    $endpoint = $this->createMock(Endpoint::class);
+    $endpoint->expects($this->once())
+      ->method('createFromCsr')
+      ->willReturn(
+        (new Ssl())->sync(
+          $this->_getResource(self::_RESOURCE_GET_BY_SERVICE_ID)[0]
+        )
+      );
+
+    $ssl = Ssl::__set_state(
+      [
+        '_endpoint' => $endpoint,
+        '_values' => [
+          'months' => 12,
+          'package_id' => 179,
+          'domain' => 'example.com',
+          'approver_email' => ['example.com' => ['admin@example.com']],
+          'key' => $this->_getResource(self::_RESOURCE_KEY)
+        ]
+      ]
+    );
+
+    $response = $ssl->createFromCsr(
+          $this->_getResource(self::_RESOURCE_CSR)
+        );
+
+    $this->assertEquals(Ssl::class, get_class($response));
+    $this->assertEquals(123, $response->get('id'));
+    $this->assertEquals('example.com', $response->get('common_name'));
+  }
+
+  public function testImport() {
+  }
+
+
 
 }
