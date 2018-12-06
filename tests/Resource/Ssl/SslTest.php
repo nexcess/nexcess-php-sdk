@@ -37,16 +37,22 @@ class SslTest extends ModelTestCase {
   /** {@inheritDoc} */
   protected const _SUBJECT_FQCN = Ssl::class;
 
+  /** @var string JSON representation of an Ssl entity */
   protected const _RESOURCE_GET_BY_SERVICE_ID = 'ssl-by-service-id.json';
 
+  /** @var string CRT paired with key.txt */
   protected const _RESOURCE_CRT = 'crt.txt';
 
+  /** @var string Private Key paired with crt.txt*/
   protected const _RESOURCE_KEY = 'key.txt';
 
+  /** @var string Chain certificate for crt.txt */
   protected const _RESOURCE_CHAIN = 'chain.txt';
 
+  /** @var string CSR paired with key_2.txt */
   protected const _RESOURCE_CSR_2 = 'csr_2.txt';
 
+  /** @var string Private Key for csr_2.txt */
   protected const _RESOURCE_KEY_2 = 'key_2.txt';
 
   /**
@@ -84,6 +90,9 @@ class SslTest extends ModelTestCase {
     $this->assertEquals('example.com', $response->get('common_name'));
   }
 
+  /**
+   * @covers Ssl::createFromCsr
+   */
   public function testCreateFromCsr() {
     $endpoint = $this->createMock(Endpoint::class);
     $endpoint->expects($this->once())
@@ -107,15 +116,16 @@ class SslTest extends ModelTestCase {
       ]
     );
 
-    $response = $ssl->createFromCsr(
-          $this->_getResource(self::_RESOURCE_CSR_2)
-        );
+    $response = $ssl->createFromCsr($this->_getResource(self::_RESOURCE_CSR_2));
 
     $this->assertEquals(Ssl::class, get_class($response));
     $this->assertEquals(123, $response->get('id'));
     $this->assertEquals('example.com', $response->get('common_name'));
   }
 
+  /**
+   * @covers Ssl::import
+   */
   public function testImport() {
     $endpoint = $this->createMock(Endpoint::class);
     $endpoint->expects($this->once())
