@@ -39,7 +39,7 @@ class SslTest extends ModelTestCase {
 
   protected const _RESOURCE_GET_BY_SERVICE_ID = 'ssl-by-service-id.json';
 
-  protected const _RESOURCE_CRT = 'csr.txt';
+  protected const _RESOURCE_CRT = 'crt.txt';
 
   protected const _RESOURCE_KEY = 'key.txt';
 
@@ -119,17 +119,12 @@ class SslTest extends ModelTestCase {
   public function testImport() {
     $endpoint = $this->createMock(Endpoint::class);
     $endpoint->expects($this->once())
-      ->method('import')
+      ->method('importCertificate')
       ->willReturn(
         (new Ssl())->sync(
           $this->_getResource(self::_RESOURCE_GET_BY_SERVICE_ID)[0]
         )
       );
-      /*
-        $this->get('key'),
-        $this->get('crt'),
-        $this->get('chain')
-      */
 
     $ssl = Ssl::__set_state(
       [
@@ -142,9 +137,7 @@ class SslTest extends ModelTestCase {
       ]
     );
 
-    $response = $ssl->import(
-          $this->_getResource(self::_RESOURCE_CSR)
-        );
+    $response = $ssl->import();
 
     $this->assertEquals(Ssl::class, get_class($response));
     $this->assertEquals(123, $response->get('id'));
