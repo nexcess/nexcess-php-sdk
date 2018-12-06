@@ -15,6 +15,7 @@ use Nexcess\Sdk\Exception;
  * Error conditions for Ssl resources.
  */
 class SslException extends Exception {
+
   /** @var int No certificates were found to match the given filter. */
   const NO_MATCHING_CERTS = 1;
 
