@@ -110,6 +110,42 @@
     "no_such_service_model": "No service type '{model}' exists",
     "not_cancelable": "This service cannot be canceled via the API"
   },
+  "Ssl": {
+    "create" : {
+      "approver_email": "Array of approver email addresses, one per domain. Must be from the list of approver email addresses!",
+      "distinguished_name": "A map of information used to create the certificate, including organization, organization_name, email, street, locality, state, and country.",
+      "domain": "The host name to create a certificate for.",
+      "months": "How many months this certificate is good for.",
+      "package_id": "ID for the service package appropriate for this type of certificate."
+    },
+    "createFromCsr" : {
+      "approver_email": "Array of approver email addresses, one per domain. Must be from the list of approver email addresses!",
+      "csr": "The Certificate Signing Request.",
+      "key": "The private key for this certificate.",
+      "months": "How many months this certificate is good for.",
+      "package_id": "The NocWorx package id appropriate for this type of certificate."
+    },
+    "decodeCsr" : {
+      "csr": "The Certificate Signing Request to decode.",
+      "distinguished_name": "A map of information used to create the certificate, including organization, organization_name, email, street, locality, state, and country."
+    },
+    "Exception": {
+      "no_matching_certs": "No certificates were found matching the filter provided"
+    },
+    "getCsrDetails" : {
+      "distinguished_name": "A map of information used to create the certificate, including organization, organization_name, email, street, locality, state, and country.",
+      "domain": "The host name to create a certificate for",
+      "package_id": "The NocWorx package id appropriate for this type of certificate."
+    },
+    "importCertificate" : {
+      "chain": "An optional chain certificate.",
+      "crt": "The certificate.",
+      "key": "The private key for this certificate."
+    },
+    "retrieveByServiceId" : {
+      "service_id": "The service id for the certificate you wish to retrieve."
+    }
+  },
   "util": {
     "file_not_readable": "File '{file}' is not readable",
     "invalid_config_option": "Invalid configuration: {option} must be {rule}; '{value}' provided",

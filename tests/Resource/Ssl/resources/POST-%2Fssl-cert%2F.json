@@ -1,0 +1,163 @@
+{
+    "order_id": 22222,
+    "order_date": 1543866693,
+    "package_id": 179,
+    "client_id": 11111,
+    "service_id": 33333,
+    "invoice_id": 444444,
+    "facility_id": 0,
+    "cloud_id": 0,
+    "months": 12,
+    "status": "allocated",
+    "type": "ssl",
+    "configuration_id": 0,
+    "id": 22222,
+    "identity": "#22222 SSL Certificate",
+    "is_real": true,
+    "meta": {
+        "scope": "order"
+    },
+    "total": 29.95,
+    "package": {
+        "id": 179,
+        "identity": "SSL Certificate",
+        "meta": {
+            "scope": "package"
+        },
+        "type": "ssl"
+    },
+    "setup_fee": 0,
+    "recurring_total": 29.95,
+    "service": {
+        "id": 33333,
+        "identity": "SSL Certificate - example.com",
+        "is_real": true,
+        "meta": {
+            "scope": "service"
+        },
+        "type": "ssl",
+        "status": "enabled",
+        "description": "SSL Certificate - example.com",
+        "nickname": "",
+        "next_bill_date": 1575349200
+    },
+    "custom_inputs": {
+        "approver_email": "admin@example.com"
+    },
+    "invoice": {
+        "note": "",
+        "purchase_order_number": "",
+        "invoice_date": 1543866694,
+        "due_date": 1543899599,
+        "paid_date": 1543866701,
+        "payment_type": "cc",
+        "status": "paid",
+        "id": 444444,
+        "identity": "Nexcess Client - #444444",
+        "is_real": true,
+        "full_id": "444444-P",
+        "total": 29.95,
+        "due": 0,
+        "description": "SSL Certificate",
+        "line_items": [
+            {
+                "description": "SSL Certificate",
+                "quantity": 1,
+                "price": 29.95,
+                "type": "item",
+                "id": 1733673,
+                "identity": "",
+                "is_real": true,
+                "total": 29.95
+            }
+        ],
+        "bill_to": {
+            "address_id": 73385,
+            "first_name": "Bing",
+            "last_name": "Crosby",
+            "company": "",
+            "email": "jCrosby@nexcess.net",
+            "address1": "123 Main St.",
+            "address2": "",
+            "city": "Anytown",
+            "state": "MI",
+            "zip": "55555",
+            "country": "US",
+            "phone": "",
+            "fax": "",
+            "cell": "",
+            "is_residence": 1,
+            "type": "default",
+            "id": 73385,
+            "identity": "Bing Crosby",
+            "is_real": true
+        },
+        "bill_from": {
+            "company": "Nexcess",
+            "email": "omorissette@example.net",
+            "address1": "931 Veum Vista Suite 438",
+            "address2": "",
+            "city": "Anytown",
+            "state": "MI",
+            "zip": "55555",
+            "country": "US",
+            "phone": "6666666666",
+            "fax": "6666666666",
+            "cell": "",
+            "id": 4,
+            "identity": "Nexcess",
+            "is_real": true,
+            "meta": {
+                "scope": "company"
+            },
+            "company_id": 4,
+            "label": "nexcess",
+            "logo_url": "https:\/\/smhttp-nex.nexcesscdn.net\/803313\/static\/vten\/brand\/Nexcess_logo_tm.svg",
+            "billed_as_name": "Nexcess",
+            "email_signature": "",
+            "gateway_id": 1,
+            "text_email_header": "",
+            "text_email_footer": "",
+            "html_email_header": "",
+            "html_email_footer": "",
+            "internal_domain": "example.net",
+            "external_domain": "example.net",
+            "client_domain": "nxcli.net",
+            "is_used": true
+        },
+        "is_payable": false,
+        "is_overdue": false,
+        "client": {
+            "name": "Nexcess Client",
+            "payment_type": "cc",
+            "status": "active",
+            "pin": "880274",
+            "purchase_order_number": "",
+            "id": 11111,
+            "identity": "Nexcess Client",
+            "is_real": true,
+            "company": {
+                "id": 4,
+                "identity": "Nexcess",
+                "is_real": true,
+                "meta": {
+                    "scope": "company"
+                },
+                "label": "nexcess"
+            },
+            "has_rdnsable_ips": false,
+            "has_rdns_records": false,
+            "has_address": true,
+            "has_creditcards": true,
+            "requires_creditcard": true,
+            "has_agent": false,
+            "can_create_order": true,
+            "package_limits": [],
+            "credits": 3744.47
+        },
+        "order_id": 22222,
+        "service_id": 33333,
+        "has_payments": true,
+        "class": "user"
+    }
+}

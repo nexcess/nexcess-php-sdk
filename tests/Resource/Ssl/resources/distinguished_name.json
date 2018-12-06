@@ -1,0 +1,9 @@
+{
+  "email": "john@example.com",
+  "street": "123 Main Street",
+  "locality": "Anytown",
+  "state": "MI",
+  "country": "US",
+  "organization": "Acme Examples",
+  "organizational_unit": "marketing"
+}
