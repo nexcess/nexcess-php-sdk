@@ -135,8 +135,8 @@ class SslTest extends ModelTestCase {
       [
         '_endpoint' => $endpoint,
         '_values' => [
-          'key' => $this->_getResource(self::_RESOURCE_KEY)
-          'crt' => $this->_getResource(self::_RESOURCE_CRT)
+          'key' => $this->_getResource(self::_RESOURCE_KEY),
+          'crt' => $this->_getResource(self::_RESOURCE_CRT),
           'chain' => $this->_getResource(self::_RESOURCE_CHAIN)
         ]
       ]
