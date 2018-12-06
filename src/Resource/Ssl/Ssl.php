@@ -42,8 +42,6 @@ class Ssl extends Model {
     'chain',
     'common_name',
     'crt',
-    'csr',
-    'distinguished_name',
     'domain',
     'id',
     'key',

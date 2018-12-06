@@ -47,8 +47,6 @@ K7Iorb/mh+2WFokKTzqVzTup+D3+BFKFHc3giy0zLKf0uzOzGtIoWB72vuJh04fM
 gInCCoyPSIRMKy1l84XmzgFV065g3kqxHCK8O0jpkFWgF2xbZBJCj0tWnNaWXPId
 df6VNFF4+x1ub1x92UZ6ag==
 -----END CERTIFICATE-----',
-  'csr' => null,
-  'distinguished_name' => null,
   'domain' => null,
   'identity' => 'example.com',
   'is_expired' => false,
