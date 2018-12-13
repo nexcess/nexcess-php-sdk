@@ -129,7 +129,7 @@ class Ssl extends Model {
     $endpoint = $this->_getEndpoint();
     assert($endpoint instanceof Endpoint);
 
-    return $endpoint->importCertificate(
+    return $endpoint->import(
       $this->get('key'),
       $this->get('crt'),
       $this->get('chain')
