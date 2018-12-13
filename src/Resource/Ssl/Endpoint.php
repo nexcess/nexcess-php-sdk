@@ -175,7 +175,7 @@ class Endpoint extends ReadableEndpoint implements Creatable {
       ]
     );
     return $this->retrieveByServiceId(
-      Util::decodeResponse($response)['service_id'][0]
+      Util::decodeResponse($response)['service_id']
     );
   }
 
