@@ -88,7 +88,7 @@ class Endpoint extends ReadableEndpoint implements Creatable {
    * @param string $chain The chain certificate
    * @return Ssl
    */
-  public function importCertificate(
+  public function import(
     string $key,
     string $crt,
     string $chain = ''

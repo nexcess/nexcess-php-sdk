@@ -237,7 +237,7 @@ class EndpointTest extends EndpointTestCase {
     $this->_getSandbox(null, $handler)
       ->play(function ($api, $sandbox) {
         $endpoint = $api->getEndpoint(static::_SUBJECT_MODULE);
-        $results = $endpoint->importCertificate(
+        $results = $endpoint->import(
           $this->_getResource(static::_RESOURCE_KEY),
           $this->_getResource(static::_RESOURCE_CRT),
           $this->_getResource(static::_RESOURCE_CHAIN)
