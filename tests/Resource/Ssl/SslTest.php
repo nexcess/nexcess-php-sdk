@@ -129,7 +129,7 @@ class SslTest extends ModelTestCase {
   public function testImport() {
     $endpoint = $this->createMock(Endpoint::class);
     $endpoint->expects($this->once())
-      ->method('importCertificate')
+      ->method('import')
       ->willReturn(
         (new Ssl())->sync(
           $this->_getResource(self::_RESOURCE_GET_BY_SERVICE_ID)[0]
