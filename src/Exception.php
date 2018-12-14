@@ -21,6 +21,7 @@ abstract class Exception extends Exceptable {
    */
   protected function _makeMessage(string $message = null, int $code) : string {
     $key = $message ?? static::get_info($code)['message'];
-    return $this->_makeTrMessage(Language::get($key), $code) ?? $key;
+    $tpl = Language::get($key);
+    return $this->_makeTrMessage($tpl, $code) ?? $tpl;
   }
 }
